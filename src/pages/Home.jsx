@@ -1,19 +1,19 @@
-import CloudBackground from '../components/CloudBackground'
+import SpaceBackground from '../components/SpaceBackground'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import AboutTeaser from '../components/AboutTeaser'
 
 /* ─────────────────────────────────────────────
    Home page
-   Stacks: fixed sky background → Navbar → Hero → AboutTeaser
-   The CloudBackground stays fixed so subsequent
-   sections (Events, Team, etc.) share the same sky.
+   Stacks: fixed space & planets backdrop → Navbar → Hero → AboutTeaser
+   The SpaceBackground stays fixed so subsequent
+   sections (Events, Team, etc.) share the same cosmos.
 ───────────────────────────────────────────── */
 export default function Home() {
   return (
     <div className="relative min-h-screen">
-      {/* ── Persistent sky backdrop (z-index: 0, position: fixed) ── */}
-      <CloudBackground />
+      {/* ── Persistent space & planets backdrop (z-index: 0, position: fixed) ── */}
+      <SpaceBackground />
 
       {/* ── Navbar ── */}
       <Navbar />
