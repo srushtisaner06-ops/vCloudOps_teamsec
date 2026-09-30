@@ -10,7 +10,7 @@
   --cloud-white: rgba(184, 212, 255, 0.6);
   --glow-blue:  #8EC5FF;
   --accent:     #4CD6FF;
-  --font-main:  'Space Grotesk', system-ui, sans-serif;
+  --font-main:  'Plus Jakarta Sans', system-ui, sans-serif;
   --font-mono:  'JetBrains Mono', monospace;
 }
 
@@ -140,23 +140,23 @@ body {
 
 @keyframes shootingStar {
   0% {
-    transform: translateX(0) translateY(0) rotate(-35deg) scaleX(0);
+    transform: translateX(0) translateY(0) rotate(35deg) scaleX(0);
     opacity: 0;
   }
   5% {
     opacity: 1;
-    transform: translateX(40px) translateY(28px) rotate(-35deg) scaleX(1);
+    transform: translateX(40px) translateY(28px) rotate(35deg) scaleX(1);
   }
   20% {
-    transform: translateX(280px) translateY(196px) rotate(-35deg) scaleX(1.4);
+    transform: translateX(280px) translateY(196px) rotate(35deg) scaleX(1.4);
     opacity: 0.9;
   }
   30% {
-    transform: translateX(420px) translateY(294px) rotate(-35deg) scaleX(0.4);
+    transform: translateX(420px) translateY(294px) rotate(35deg) scaleX(0.4);
     opacity: 0;
   }
   100% {
-    transform: translateX(420px) translateY(294px) rotate(-35deg) scaleX(0);
+    transform: translateX(420px) translateY(294px) rotate(35deg) scaleX(0);
     opacity: 0;
   }
 }

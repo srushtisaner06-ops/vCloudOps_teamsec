@@ -731,7 +731,7 @@ function PixelStarField({ count = 220 }) {
             width: 130,
             height: 2,
             background: 'linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.6) 40%, #FFFFFF 100%)',
-            borderRadius: 999,
+            borderRadius: 999, opacity: 0,
             filter: 'drop-shadow(0 0 6px rgba(56, 189, 248, 0.8))',
             animation: `shootingStar ${ss.dur}s linear ${ss.delay}s infinite`,
             transformOrigin: 'left center',
