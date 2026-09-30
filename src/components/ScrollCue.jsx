@@ -1,67 +1,63 @@
-import { motion } from 'framer-motion'
-import { useReducedMotion } from '../hooks/useReducedMotion'
+import { useRef } from 'react'
+import { gsap } from 'gsap'
+import { useGSAP } from '@gsap/react'
 
-/* ─────────────────────────────────────────────
-   ScrollCue
-   Animated mouse + scroll-wheel icon + chevrons,
-   gently bouncing at the bottom of the Hero.
-───────────────────────────────────────────── */
 export default function ScrollCue() {
-  const reduced = useReducedMotion()
+  const containerRef = useRef(null)
+
+  useGSAP(() => {
+    const tl = gsap.timeline({ repeat: -1, defaults: { ease: 'power2.inOut' } })
+    
+    tl.to('.mouse-wheel', {
+      y: 10,
+      opacity: 0.3,
+      duration: 1
+    }).to('.mouse-wheel', {
+      y: 0,
+      opacity: 1,
+      duration: 1
+    }, '<')
+
+    gsap.to('.mouse-body', {
+      y: 8,
+      duration: 1.2,
+      repeat: -1,
+      yoyo: true,
+      ease: 'power1.inOut'
+    })
+
+    gsap.to('.chevron', {
+      opacity: 1,
+      stagger: 0.2,
+      duration: 0.6,
+      repeat: -1,
+      yoyo: true,
+      ease: 'power2.inOut'
+    })
+
+  }, { scope: containerRef })
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 2.4, duration: 0.8 }}
+    <div
+      ref={containerRef}
       className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       aria-label="Scroll down"
     >
       {/* Mouse icon */}
-      <motion.div
-        animate={reduced ? {} : { y: [0, 8, 0] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        style={{
-          width: 26,
-          height: 40,
-          borderRadius: 13,
-          border: '2px solid rgba(56, 189, 248, 0.65)',
-          boxShadow: '0 0 14px rgba(56, 189, 248, 0.3), inset 0 0 8px rgba(56, 189, 248, 0.15)',
-          display: 'flex',
-          justifyContent: 'center',
-          paddingTop: 7,
-          background: 'rgba(5, 12, 28, 0.4)',
-        }}
+      <div
+        className="mouse-body flex justify-center pt-2 rounded-full border-2 border-white/20 bg-[#050505]/40 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.05),inset_0_0_10px_rgba(255,255,255,0.05)]"
+        style={{ width: 26, height: 40 }}
       >
-        <motion.div
-          animate={reduced ? {} : { y: [0, 10, 0], opacity: [1, 0.3, 1] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          style={{
-            width: 4,
-            height: 8,
-            borderRadius: 2,
-            background: '#38BDF8',
-            boxShadow: '0 0 8px #38BDF8',
-          }}
-        />
-      </motion.div>
+        <div className="mouse-wheel w-1 h-2 rounded-full bg-slate-300 shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+      </div>
 
       {/* Chevrons */}
       {[0, 1, 2].map((i) => (
-        <motion.div
+        <div
           key={i}
-          animate={reduced ? {} : { opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
-          style={{
-            width: 10,
-            height: 10,
-            borderRight: '2.5px solid #38BDF8',
-            borderBottom: '2.5px solid #38BDF8',
-            transform: 'rotate(45deg)',
-            filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8))',
-          }}
+          className="chevron opacity-20 w-2.5 h-2.5 border-r-[2.5px] border-b-[2.5px] border-slate-400 rotate-45 -mt-1"
         />
       ))}
-    </motion.div>
+    </div>
   )
 }

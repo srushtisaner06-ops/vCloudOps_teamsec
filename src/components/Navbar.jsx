@@ -1,313 +1,139 @@
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useScrolled } from '../hooks/useScrolled'
+import { useState, useEffect, useRef } from 'react'
+import { gsap } from 'gsap'
+import { useGSAP } from '@gsap/react'
+import { List, X, ArrowUpRight } from '@phosphor-icons/react'
 
-/* ─────────────────────────────────────────────────────────────
-   Navigation links
-───────────────────────────────────────────────────────────── */
 const NAV_LINKS = [
-  { label: 'Home',    href: '#home'    },
-  { label: 'About',   href: '#about'   },
-  { label: 'Events',  href: '#events'  },
-  { label: 'Team',    href: '#team'    },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '#home' },
+  { label: 'Events', href: '#events' },
+  { label: 'Team', href: '#team' },
+  { label: 'About', href: '#about' },
 ]
 
-/* ─────────────────────────────────────────────────────────────
-   Club Logo — Official brand mark rendered at high clarity
-   with Apple-style specular drop shadow for dark mode depth.
-───────────────────────────────────────────────────────────── */
-function LogoIcon({ className = "h-12 sm:h-14 md:h-16 w-auto" }) {
-  return (
-    <img
-      src="/logo.png"
-      alt="vCloudOps Official Logo"
-      draggable={false}
-      className={`${className} object-contain transition-transform duration-300 group-hover:scale-105`}
-      style={{
-        display: 'block',
-        flexShrink: 0,
-        filter: 'drop-shadow(0 0 1px rgba(255,255,255,0.75)) drop-shadow(0 4px 14px rgba(76,214,255,0.40))',
-      }}
-    />
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Navbar — Apple Class Frosted Glass Floating Island
-   inspired by Apple VisionOS & GDG Community websites.
-───────────────────────────────────────────────────────────── */
 export default function Navbar() {
-  const scrolled = useScrolled(30)
-  const [menuOpen, setMenuOpen]     = useState(false)
-  const [active, setActive]         = useState('#home')
-  const [hoveredIdx, setHoveredIdx] = useState(null)
+  const [active, setActive] = useState('#home')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef(null)
 
-  /* Close mobile menu on resize to desktop */
+  // Scroll active detection
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth >= 768) setMenuOpen(false) }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    const handleScroll = () => {
+      const sections = NAV_LINKS.map(link => document.querySelector(link.href))
+      const scrollPos = window.scrollY + 200
+      sections.forEach((sec) => {
+        if (sec && sec.offsetTop <= scrollPos && (sec.offsetTop + sec.offsetHeight) > scrollPos) {
+          setActive('#' + sec.id)
+        }
+      })
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  /* Lock body scroll when mobile menu is open */
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+  // GSAP Menu Animation
+  useGSAP(() => {
+    if (menuOpen) {
+      gsap.to(menuRef.current, {
+        y: 0,
+        opacity: 1,
+        pointerEvents: 'auto',
+        duration: 0.6,
+        ease: 'power4.out',
+      })
+      gsap.fromTo(
+        '.mobile-nav-link',
+        { y: 32, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power4.out', delay: 0.1 }
+      )
+    } else {
+      gsap.to(menuRef.current, {
+        y: -12,
+        opacity: 0,
+        pointerEvents: 'none',
+        duration: 0.4,
+        ease: 'power3.in',
+      })
+    }
   }, [menuOpen])
 
-  const handleNav = (href) => {
-    setActive(href)
-    setMenuOpen(false)
-  }
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-6 pt-3 sm:pt-4 pointer-events-none">
-      {/* ── Apple-Class Floating Capsule ── */}
-      <nav
-        className="pointer-events-auto max-w-7xl mx-auto rounded-2xl sm:rounded-full transition-all duration-500 ease-out"
-        style={{
-          background: scrolled
-            ? 'rgba(5, 11, 24, 0.78)'
-            : 'rgba(7, 15, 32, 0.55)',
-          backdropFilter: 'blur(24px) saturate(190%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(190%)',
-          border: scrolled
-            ? '1px solid rgba(255, 255, 255, 0.14)'
-            : '1px solid rgba(255, 255, 255, 0.10)',
-          boxShadow: scrolled
-            ? '0 20px 48px -10px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 30px rgba(76, 214, 255, 0.12)'
-            : '0 12px 32px -8px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 18px rgba(76, 214, 255, 0.05)',
-        }}
-      >
-        <div className="px-4 sm:px-6 h-[72px] sm:h-[82px] flex items-center justify-between gap-4">
+    <>
+      <header className="fixed top-0 left-0 w-full z-50 pt-6 px-4 md:px-0">
+        <nav className="mx-auto w-max rounded-full p-1.5 bg-[#050505]/60 border border-white/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center gap-4">
+          
+          <div className="pl-4 pr-2 py-1 flex items-center">
+            <span className="font-extrabold text-white text-lg tracking-tight">vCloudOps</span>
+          </div>
 
-          {/* ── Left: Official Brand Logo & GDG Status Badge ── */}
-          <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-            <a
-              href="#home"
-              onClick={() => handleNav('#home')}
-              className="flex items-center group"
-              aria-label="vCloudOps — Home"
-            >
-              <LogoIcon />
+          <ul className="hidden md:flex items-center gap-1 px-4 border-l border-white/10">
+            {NAV_LINKS.map(({ label, href }) => {
+              const isActive = active === href
+              return (
+                <li key={label}>
+                  <a
+                    href={href}
+                    onClick={() => setActive(href)}
+                    className={`relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                      isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span className="relative z-10">{label}</span>
+                    {isActive && (
+                      <div className="absolute inset-0 bg-white/10 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-none" />
+                    )}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+
+          <div className="hidden md:flex pr-1">
+            <a href="#contact" className="group flex items-center gap-2 pl-4 pr-1 py-1 rounded-full bg-white text-slate-900 font-bold text-sm transition-all duration-[700ms] ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-slate-200 hover:scale-[0.98]">
+              Join
+              <div className="w-7 h-7 rounded-full bg-[#050505]/10 flex items-center justify-center transition-transform duration-[700ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105 group-hover:-translate-y-[1px] group-hover:translate-x-[1px]">
+                <ArrowUpRight weight="bold" className="w-3 h-3" />
+              </div>
             </a>
           </div>
 
-          {/* ── Center: Apple Sliding Pill Tray Navigation ── */}
-          <div className="hidden md:flex items-center p-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
-            <ul className="flex items-center gap-1 list-none m-0 p-0 relative" onMouseLeave={() => setHoveredIdx(null)}>
-              {NAV_LINKS.map(({ label, href }, idx) => {
-                const isActive = active === href
-                const isHovered = hoveredIdx === idx
-
-                return (
-                  <li key={label} className="relative">
-                    <a
-                      href={href}
-                      onClick={() => handleNav(href)}
-                      onMouseEnter={() => setHoveredIdx(idx)}
-                      className={`relative z-10 px-4 py-2 rounded-full text-sm transition-colors duration-200 block text-center ${
-                        isActive
-                          ? 'text-white font-bold'
-                          : isHovered
-                          ? 'text-white font-semibold'
-                          : 'text-slate-100/90 hover:text-white font-medium'
-                      }`}
-                      style={{
-                        fontFamily: 'var(--font-main)',
-                        textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)',
-                      }}
-                    >
-                      {label}
-
-                      {/* Active indicator dot */}
-                      {isActive && (
-                        <motion.span
-                          layoutId="activeDot"
-                          className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#38BDF8]"
-                          style={{ boxShadow: '0 0 8px #38BDF8' }}
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </a>
-
-                    {/* Apple sliding glass pill behind hovered link */}
-                    {isHovered && (
-                      <motion.div
-                        layoutId="navHoverPill"
-                        className="absolute inset-0 rounded-full bg-white/[0.12] border border-white/[0.16] shadow-[0_2px_12px_rgba(0,0,0,0.25)]"
-                        transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                      />
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-
-          {/* ── Right: Apple Class CTA & Mobile Trigger ── */}
-          <div className="flex items-center gap-3">
-            {/* Apple style gradient glass pill button */}
-            <motion.a
-              href="#contact"
-              onClick={() => handleNav('#contact')}
-              className="hidden sm:inline-flex items-center gap-2 text-sm font-bold rounded-full px-5 py-2.5 transition-all duration-300 relative group overflow-hidden"
-              style={{
-                fontFamily: 'var(--font-main)',
-                background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(2, 132, 199, 0.38) 100%)',
-                border: '1px solid rgba(56, 189, 248, 0.55)',
-                color: '#FFFFFF',
-                boxShadow: '0 4px 20px rgba(56, 189, 248, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.45)',
-                textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)',
-                textDecoration: 'none',
-              }}
-              whileHover={{
-                scale: 1.04,
-                boxShadow: '0 6px 28px rgba(56, 189, 248, 0.50), inset 0 1px 2px rgba(255, 255, 255, 0.70)',
-              }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            >
-              {/* Shimmer reflection sweep on hover */}
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-              <span className="relative z-10 flex items-center gap-2">
-                Join Community
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  className="transition-transform duration-300 group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M3.33334 8H12.6667M12.6667 8L8.66668 4M12.6667 8L8.66668 12"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </motion.a>
-
-            {/* Apple styled Hamburger (Mobile) */}
-            <button
-              className="md:hidden flex flex-col justify-center items-center w-11 h-11 rounded-full gap-1.5 transition-all"
-              style={{
-                background: menuOpen ? 'rgba(76,214,255,0.15)' : 'rgba(255,255,255,0.06)',
-                border: '1px solid ' + (menuOpen ? 'rgba(76,214,255,0.40)' : 'rgba(255,255,255,0.12)'),
-                cursor: 'pointer',
-              }}
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              aria-expanded={menuOpen}
-            >
-              {[0, 1, 2].map(i => (
-                <span
-                  key={i}
-                  style={{
-                    display: 'block',
-                    width: 20,
-                    height: 2,
-                    borderRadius: 4,
-                    background: menuOpen ? '#4CD6FF' : '#EEF7FF',
-                    transformOrigin: 'center',
-                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                    transform: menuOpen
-                      ? i === 0 ? 'translateY(7px) rotate(45deg)'
-                      : i === 1 ? 'scaleX(0)'
-                      : 'translateY(-7px) rotate(-45deg)'
-                      : 'none',
-                    opacity: menuOpen && i === 1 ? 0 : 1,
-                    width: i === 1 && !menuOpen ? 14 : 20,
-                  }}
-                />
-              ))}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* ── Apple iOS Style Glass Sheet Mobile Drawer ── */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            key="mobile-drawer"
-            initial={{ opacity: 0, y: -12, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.98 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden pointer-events-auto max-w-7xl mx-auto mt-2 rounded-2xl overflow-hidden"
-            style={{
-              background: 'rgba(5, 11, 24, 0.88)',
-              backdropFilter: 'blur(28px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(28px) saturate(200%)',
-              border: '1px solid rgba(255, 255, 255, 0.14)',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.18)',
-            }}
+          {/* Mobile hamburger morph */}
+          <button
+            className="md:hidden relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-1"
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            <div className="px-5 py-4 flex flex-col gap-1">
-              {NAV_LINKS.map(({ label, href }, i) => {
-                const isActive = active === href
-                return (
-                  <motion.a
-                    key={label}
-                    href={href}
-                    onClick={() => handleNav(href)}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05, duration: 0.25 }}
-                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-semibold transition-colors ${
-                      isActive
-                        ? 'bg-sky-500/15 text-[#38BDF8] border border-sky-500/30'
-                        : 'text-slate-100 hover:bg-white/[0.08] hover:text-white'
-                    }`}
-                    style={{
-                      fontFamily: 'var(--font-main)',
-                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
-                    }}
-                  >
-                    <span>{label}</span>
-                    {isActive && (
-                      <span className="w-2 h-2 rounded-full bg-[#38BDF8] shadow-[0_0_10px_#38BDF8]" />
-                    )}
-                  </motion.a>
-                )
-              })}
+            {menuOpen ? <X weight="bold" className="text-white w-5 h-5" /> : <List weight="bold" className="text-white w-5 h-5" />}
+          </button>
+        </nav>
+      </header>
 
-              {/* Mobile CTA */}
-              <div className="pt-3 pb-1">
-                <a
-                  href="#contact"
-                  onClick={() => handleNav('#contact')}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white text-center"
-                  style={{
-                    fontFamily: 'var(--font-main)',
-                    background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.45) 100%)',
-                    border: '1px solid rgba(56, 189, 248, 0.55)',
-                    boxShadow: '0 4px 18px rgba(56, 189, 248, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.5)',
-                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
-                  }}
-                >
-                  Join Community
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path
-                      d="M3.33334 8H12.6667M12.6667 8L8.66668 4M12.6667 8L8.66668 12"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </a>
-              </div>
+      {/* Massive Mobile Overlay */}
+      <div
+        ref={menuRef}
+        className="fixed inset-0 z-40 bg-[#050505]/95 backdrop-blur-3xl pt-32 px-6 opacity-0 pointer-events-none"
+      >
+        <div className="flex flex-col gap-6">
+          {NAV_LINKS.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              onClick={() => { setActive(href); setMenuOpen(false); }}
+              className="mobile-nav-link text-4xl font-bold text-slate-400 hover:text-white transition-colors duration-300"
+            >
+              {label}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={() => setMenuOpen(false)}
+            className="mobile-nav-link mt-8 w-full group flex justify-between items-center pl-6 pr-2 py-2 rounded-full bg-white text-slate-900 font-bold text-xl transition-all hover:bg-slate-200"
+          >
+            Join Community
+            <div className="w-12 h-12 rounded-full bg-[#050505]/10 flex items-center justify-center">
+              <ArrowUpRight weight="bold" className="w-5 h-5" />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+          </a>
+        </div>
+      </div>
+    </>
   )
 }
