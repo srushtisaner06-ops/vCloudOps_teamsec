@@ -1,85 +1,139 @@
 import { useState, useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { List, X, ArrowUpRight } from '@phosphor-icons/react'
+import { List, X, ArrowUpRight, DiscordLogo, GithubLogo, LinkedinLogo } from '@phosphor-icons/react'
+import { scrollToTarget } from '../utils/smoothScroll'
+import { useScrolled } from '../hooks/useScrolled'
 
 const NAV_LINKS = [
   { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
   { label: 'Team', href: '#team' },
-  { label: 'About', href: '#about' },
+  { label: 'Community', href: '#contact' },
 ]
 
 export default function Navbar() {
   const [active, setActive] = useState('#home')
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
+  const isScrolled = useScrolled(25)
 
-  // Scroll active detection
+  // Scroll active detection with passive listener
   useEffect(() => {
     const handleScroll = () => {
-      const sections = NAV_LINKS.map(link => document.querySelector(link.href))
-      const scrollPos = window.scrollY + 200
-      sections.forEach((sec) => {
-        if (sec && sec.offsetTop <= scrollPos && (sec.offsetTop + sec.offsetHeight) > scrollPos) {
-          setActive('#' + sec.id)
+      const scrollPos = window.scrollY + 140
+      for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
+        const sec = document.querySelector(NAV_LINKS[i].href)
+        if (sec) {
+          const top = sec.offsetTop
+          const height = sec.offsetHeight
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActive(NAV_LINKS[i].href)
+            break
+          }
         }
-      })
+      }
     }
+
     window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // GSAP Menu Animation
+  // Lock body scroll and handle Escape key when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') setMenuOpen(false)
+      }
+      window.addEventListener('keydown', handleKeyDown)
+      return () => {
+        document.body.style.overflow = ''
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    } else {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  // GSAP Mobile Menu Animation
   useGSAP(() => {
     if (menuOpen) {
       gsap.to(menuRef.current, {
         y: 0,
         opacity: 1,
         pointerEvents: 'auto',
-        duration: 0.6,
-        ease: 'power4.out',
+        duration: 0.45,
+        ease: 'power3.out',
       })
       gsap.fromTo(
-        '.mobile-nav-link',
-        { y: 32, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power4.out', delay: 0.1 }
+        '.mobile-nav-item',
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, ease: 'power3.out', delay: 0.1 }
       )
     } else {
       gsap.to(menuRef.current, {
-        y: -12,
+        y: -10,
         opacity: 0,
         pointerEvents: 'none',
-        duration: 0.4,
-        ease: 'power3.in',
+        duration: 0.3,
+        ease: 'power2.in',
       })
     }
   }, [menuOpen])
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault()
+    setActive(href)
+    setMenuOpen(false)
+    scrollToTarget(href, -85)
+  }
+
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 pt-6 px-4 md:px-0">
-        <nav className="mx-auto w-max rounded-full p-1.5 bg-[#050505]/60 border border-white/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center gap-4">
-          
-          <div className="pl-4 pr-2 py-1 flex items-center">
-            <span className="font-extrabold text-white text-lg tracking-tight">vCloudOps</span>
-          </div>
+      <header className="fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6 transition-all duration-300">
+        <nav
+          className={`mx-auto w-full md:w-max rounded-full px-3 sm:px-4 py-2 border transition-all duration-500 flex items-center justify-between md:justify-center gap-2 sm:gap-4 flex-nowrap ${
+            isScrolled
+              ? 'bg-[#050B18]/85 border-sky-500/25 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)]'
+              : 'bg-[#050505]/65 border-white/10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.1)]'
+          }`}
+          aria-label="Main Navigation"
+        >
+          {/* Logo brand */}
+          <a
+            href="#home"
+            onClick={(e) => handleNavClick(e, '#home')}
+            className="flex items-center gap-2.5 pl-1.5 sm:pl-2.5 pr-2 py-1 select-none group shrink-0 whitespace-nowrap min-w-0"
+          >
+            <img
+              src="/logo-mark.png"
+              alt="vCloudOps Logo"
+              className="h-6 sm:h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(56,189,248,0.5)] shrink-0"
+            />
+            <span className="font-extrabold text-white text-base sm:text-lg tracking-tight whitespace-nowrap">
+              vCloud<span className="text-sky-400">Ops</span>
+            </span>
+          </a>
 
-          <ul className="hidden md:flex items-center gap-1 px-4 border-l border-white/10">
+          {/* Desktop Navigation Links */}
+          <ul className="hidden md:flex items-center gap-1 px-3 border-l border-white/10 list-none m-0">
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = active === href
               return (
                 <li key={label}>
                   <a
                     href={href}
-                    onClick={() => setActive(href)}
-                    className={`relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                      isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                    onClick={(e) => handleNavClick(e, href)}
+                    className={`relative px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                      isActive ? 'text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-white/5'
                     }`}
                   >
                     <span className="relative z-10">{label}</span>
                     {isActive && (
-                      <div className="absolute inset-0 bg-white/10 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-none" />
+                      <div className="absolute inset-0 bg-white/10 border border-white/10 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] pointer-events-none" />
                     )}
                   </a>
                 </li>
@@ -87,51 +141,120 @@ export default function Navbar() {
             })}
           </ul>
 
-          <div className="hidden md:flex pr-1">
-            <a href="#contact" className="group flex items-center gap-2 pl-4 pr-1 py-1 rounded-full bg-white text-slate-900 font-bold text-sm transition-all duration-[700ms] ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-slate-200 hover:scale-[0.98]">
-              Join
-              <div className="w-7 h-7 rounded-full bg-[#050505]/10 flex items-center justify-center transition-transform duration-[700ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105 group-hover:-translate-y-[1px] group-hover:translate-x-[1px]">
-                <ArrowUpRight weight="bold" className="w-3 h-3" />
+          {/* Desktop CTA */}
+          <div className="hidden md:flex pl-2 pr-1">
+            <a
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
+              className="group flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-xs sm:text-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Join Us
+              <div className="w-6 h-6 rounded-full bg-slate-950/15 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
               </div>
             </a>
           </div>
 
-          {/* Mobile hamburger morph */}
-          <button
-            className="md:hidden relative w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-1"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X weight="bold" className="text-white w-5 h-5" /> : <List weight="bold" className="text-white w-5 h-5" />}
-          </button>
+          {/* Mobile Right Controls: Hamburger Toggle (+ optional tablet Join) */}
+          <div className="flex md:hidden items-center gap-2 shrink-0">
+            {/* Tablet-only quick Join button; hidden on narrow mobile (<640px) to prevent overlap */}
+            {!menuOpen && (
+              <a
+                href="#contact"
+                onClick={(e) => handleNavClick(e, '#contact')}
+                className="hidden sm:inline-flex px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-300 text-slate-950 font-bold text-xs items-center gap-1 active:scale-95 transition-all shadow-[0_0_12px_rgba(56,189,248,0.3)] shrink-0 whitespace-nowrap"
+              >
+                <span>Join</span>
+                <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
+              </a>
+            )}
+
+            <button
+              type="button"
+              aria-label={menuOpen ? 'Close Menu' : 'Open Menu'}
+              aria-expanded={menuOpen}
+              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white active:scale-95 transition-all hover:bg-white/15 shrink-0"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X weight="bold" className="w-5 h-5 text-sky-400" /> : <List weight="bold" className="w-5 h-5" />}
+            </button>
+          </div>
         </nav>
       </header>
 
-      {/* Massive Mobile Overlay */}
+      {/* Modern Accessible Mobile Drawer */}
       <div
         ref={menuRef}
-        className="fixed inset-0 z-40 bg-[#050505]/95 backdrop-blur-3xl pt-32 px-6 opacity-0 pointer-events-none"
+        className="fixed inset-0 z-40 bg-[#050B18]/96 backdrop-blur-2xl pt-28 pb-8 px-6 opacity-0 pointer-events-none flex flex-col justify-between overflow-y-auto"
+        onClick={(e) => {
+          if (e.target === menuRef.current) setMenuOpen(false)
+        }}
       >
-        <div className="flex flex-col gap-6">
-          {NAV_LINKS.map(({ label, href }) => (
+        <div className="flex flex-col gap-2 max-w-sm mx-auto w-full pt-2">
+          <p className="text-[11px] font-mono tracking-widest text-sky-400 uppercase mb-2 px-2">Navigation</p>
+          {NAV_LINKS.map(({ label, href }) => {
+            const isActive = active === href
+            return (
+              <a
+                key={label}
+                href={href}
+                onClick={(e) => handleNavClick(e, href)}
+                className={`mobile-nav-item flex items-center justify-between py-3 px-4 rounded-2xl text-xl sm:text-2xl font-bold transition-all ${
+                  isActive
+                    ? 'text-white bg-white/10 border border-white/15'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span>{label}</span>
+                {isActive && <div className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_#38BDF8]" />}
+              </a>
+            )
+          })}
+
+          <div className="mobile-nav-item pt-4">
             <a
-              key={label}
-              href={href}
-              onClick={() => { setActive(href); setMenuOpen(false); }}
-              className="mobile-nav-link text-4xl font-bold text-slate-400 hover:text-white transition-colors duration-300"
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
+              className="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-base shadow-[0_0_25px_rgba(56,189,248,0.35)] active:scale-98 transition-transform"
             >
-              {label}
+              <span>Join Community</span>
+              <ArrowUpRight weight="bold" className="w-4 h-4" />
             </a>
-          ))}
-          <a
-            href="#contact"
-            onClick={() => setMenuOpen(false)}
-            className="mobile-nav-link mt-8 w-full group flex justify-between items-center pl-6 pr-2 py-2 rounded-full bg-white text-slate-900 font-bold text-xl transition-all hover:bg-slate-200"
-          >
-            Join Community
-            <div className="w-12 h-12 rounded-full bg-[#050505]/10 flex items-center justify-center">
-              <ArrowUpRight weight="bold" className="w-5 h-5" />
-            </div>
-          </a>
+          </div>
+        </div>
+
+        {/* Mobile footer within drawer */}
+        <div className="max-w-sm mx-auto w-full pt-8 border-t border-white/10 flex flex-col items-center gap-4">
+          <div className="flex items-center gap-6">
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+              className="p-2 rounded-full bg-white/5 text-slate-300 hover:text-white transition-colors"
+            >
+              <GithubLogo weight="fill" className="w-6 h-6" />
+            </a>
+            <a
+              href="https://discord.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Discord"
+              className="p-2 rounded-full bg-white/5 text-slate-300 hover:text-white transition-colors"
+            >
+              <DiscordLogo weight="fill" className="w-6 h-6" />
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+              className="p-2 rounded-full bg-white/5 text-slate-300 hover:text-white transition-colors"
+            >
+              <LinkedinLogo weight="fill" className="w-6 h-6" />
+            </a>
+          </div>
+          <span className="text-xs font-mono text-slate-500">vCloudOps • Official Student Chapter</span>
         </div>
       </div>
     </>

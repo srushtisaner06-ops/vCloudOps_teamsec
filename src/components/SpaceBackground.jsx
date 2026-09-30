@@ -17,7 +17,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion'
 function TopRightMoon() {
   return (
     <div
-      className="absolute -top-12 -right-12 sm:-top-16 sm:-right-16 md:-top-20 md:-right-20 pointer-events-none select-none"
+      className="absolute -top-8 -right-8 sm:-top-16 sm:-right-16 md:-top-20 md:-right-20 pointer-events-none select-none"
       style={{
         animation: 'planetFloat 13s ease-in-out infinite',
         willChange: 'transform',
@@ -26,9 +26,9 @@ function TopRightMoon() {
     >
       <svg
         viewBox="0 0 400 400"
-        className="w-64 h-64 sm:w-84 sm:h-84 md:w-[380px] md:h-[380px] lg:w-[440px] lg:h-[440px]"
+        className="w-44 h-44 sm:w-64 sm:h-64 md:w-[340px] md:h-[340px] lg:w-[420px] lg:h-[420px]"
         style={{
-          filter: 'drop-shadow(0 0 35px rgba(125, 211, 252, 0.35)) drop-shadow(0 0 70px rgba(56, 189, 248, 0.18))',
+          filter: 'drop-shadow(0 0 28px rgba(125, 211, 252, 0.3))',
         }}
       >
         <defs>
@@ -133,7 +133,7 @@ function TopRightMoon() {
 function BottomLeftPlanet() {
   return (
     <div
-      className="absolute -bottom-14 -left-14 sm:-bottom-20 sm:-left-20 md:-bottom-24 md:-left-24 pointer-events-none select-none"
+      className="absolute -bottom-10 -left-10 sm:-bottom-16 sm:-left-16 md:-bottom-24 md:-left-24 pointer-events-none select-none"
       style={{
         animation: 'planetFloatSlow 15s ease-in-out infinite',
         willChange: 'transform',
@@ -144,9 +144,9 @@ function BottomLeftPlanet() {
         {/* ── Main Continental Exoplanet ── */}
         <svg
           viewBox="0 0 360 360"
-          className="w-56 h-56 sm:w-76 sm:h-76 md:w-[340px] md:h-[340px] lg:w-[400px] lg:h-[400px]"
+          className="w-44 h-44 sm:w-60 sm:h-60 md:w-[320px] md:h-[320px] lg:w-[380px] lg:h-[380px]"
           style={{
-            filter: 'drop-shadow(0 0 40px rgba(56, 189, 248, 0.40)) drop-shadow(0 0 80px rgba(14, 165, 233, 0.22))',
+            filter: 'drop-shadow(0 0 28px rgba(56, 189, 248, 0.32))',
           }}
         >
           <defs>
@@ -488,7 +488,7 @@ function TealRingedPlanet() {
 function RubyLavaPlanet() {
   return (
     <div
-      className="absolute top-[8%] left-[44%] sm:left-[47%] pointer-events-none select-none"
+      className="absolute top-[8%] left-[20%] sm:left-[47%] pointer-events-none select-none hidden sm:block"
       style={{
         animation: 'floatOrbit3 17s ease-in-out infinite',
         willChange: 'transform',
@@ -613,25 +613,35 @@ function GoldenPearlPlanet() {
   )
 }
 
+/* ── Deterministic PRNG for pure celestial star generation ────────────── */
+function createPRNG(initialSeed = 1337) {
+  let s = initialSeed
+  return () => {
+    s = (s * 16807) % 2147483647
+    return (s - 1) / 2147483646
+  }
+}
+
 /* ── Pixel Star Field & Cross Stars (Matching Club Theme Poster) ──────────── */
-function PixelStarField({ count = 220 }) {
+function PixelStarField({ count = 130 }) {
   const { pixelCrossStars, dotStars, shootingStars } = useMemo(() => {
+    const rand = createPRNG(2026)
     const crosses = []
     const dots = []
 
     for (let i = 0; i < count; i++) {
-      const x = Math.random() * 100
-      const y = Math.random() * 95
+      const x = rand() * 100
+      const y = rand() * 95
 
-      if (i < 36) {
+      if (i < 30) {
         // Distinct pixel '+' cross stars as seen in the theme image
         crosses.push({
           id: `pc-${i}`,
           x, y,
           size: i % 3 === 0 ? 8 : 6,
           color: i % 2 === 0 ? '#BAE6FD' : '#38BDF8',
-          dur: 2 + Math.random() * 2.5,
-          delay: Math.random() * 4,
+          dur: 2 + rand() * 2.5,
+          delay: rand() * 4,
           glow: i % 4 === 0,
         })
       } else {
@@ -641,8 +651,8 @@ function PixelStarField({ count = 220 }) {
           x, y,
           r: i % 4 === 0 ? 1.4 : 0.8,
           color: i % 3 === 0 ? '#38BDF8' : i % 5 === 0 ? '#7DD3FC' : '#FFFFFF',
-          dur: 1.6 + Math.random() * 2.8,
-          delay: Math.random() * 3.5,
+          dur: 1.6 + rand() * 2.8,
+          delay: rand() * 3.5,
         })
       }
     }
@@ -837,7 +847,7 @@ export default function SpaceBackground() {
         style={reduced ? {} : { y: starsY }}
         className="absolute inset-0 pointer-events-none"
       >
-        <PixelStarField count={220} />
+        <PixelStarField count={130} />
       </motion.div>
 
       {/* ── Primary Major Planets (Scroll-linked Parallax) ── */}

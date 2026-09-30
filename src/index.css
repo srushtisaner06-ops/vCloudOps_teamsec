@@ -1,6 +1,6 @@
 /* ─── Google Fonts ─── */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
+@import "lenis/dist/lenis.css";
 @import "tailwindcss";
 
 /* ─── CSS Custom Properties ─── */
@@ -10,16 +10,41 @@
   --cloud-white: rgba(184, 212, 255, 0.6);
   --glow-blue:  #8EC5FF;
   --accent:     #4CD6FF;
-  --font-main:  'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-main:  'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono:  'JetBrains Mono', monospace;
 }
 
 /* ─── Reset / Base ─── */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
   background-color: var(--navy-deep);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Lenis smooth scrolling integration */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -30,33 +55,60 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  background-color: var(--navy-deep);
+}
+
+/* ─── Smooth Custom Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030814;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.28);
+  border-radius: 9999px;
+  border: 2px solid #030814;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.55);
+}
+
+/* Touch manipulation: removes tap delays on mobile */
+a, button, input, select, textarea {
+  touch-action: manipulation;
 }
 
 /* ─── Planetary Floating & Orbital Keyframes ─── */
 @keyframes planetFloat {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translateY(-16px) rotate(1.2deg);
+    transform: translate3d(0, -14px, 0) rotate(1.2deg);
   }
 }
 
 @keyframes planetFloatSlow {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translateY(18px) rotate(-1.5deg);
+    transform: translate3d(0, 16px, 0) rotate(-1.5deg);
   }
 }
 
 @keyframes moonOrbit {
   0%, 100% {
-    transform: translate3d(0px, 0px, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translate3d(12px, -14px, 0) scale(1.04);
+    transform: translate3d(10px, -12px, 0) scale(1.03);
   }
 }
 
@@ -65,10 +117,10 @@ body {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
   33% {
-    transform: translate3d(15px, -18px, 0) rotate(3deg);
+    transform: translate3d(12px, -15px, 0) rotate(3deg);
   }
   66% {
-    transform: translate3d(-10px, -8px, 0) rotate(-2deg);
+    transform: translate3d(-8px, -6px, 0) rotate(-2deg);
   }
 }
 
@@ -77,7 +129,7 @@ body {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(-18px, 16px, 0) rotate(-4deg);
+    transform: translate3d(-15px, 14px, 0) rotate(-4deg);
   }
 }
 
@@ -86,7 +138,7 @@ body {
     transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translate3d(14px, -12px, 0) scale(1.06);
+    transform: translate3d(12px, -10px, 0) scale(1.05);
   }
 }
 
@@ -95,7 +147,7 @@ body {
     transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate3d(16px, 14px, 0) rotate(3deg);
+    transform: translate3d(14px, 12px, 0) rotate(3deg);
   }
 }
 
@@ -104,38 +156,29 @@ body {
     transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translate3d(-12px, -15px, 0);
+    transform: translate3d(-10px, -12px, 0);
   }
 }
 
-@keyframes planetGlowPulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 25px rgba(76, 214, 255, 0.25));
-  }
-  50% {
-    filter: drop-shadow(0 0 45px rgba(76, 214, 255, 0.45));
-  }
-}
-
-/* ─── Tuned Celestial Star Keyframes ─── */
+/* ─── Celestial Star Keyframes ─── */
 @keyframes twinkle {
   0%, 100% { opacity: 0.2; }
   50%       { opacity: 0.95; }
 }
 
 @keyframes twinkleSoft {
-  0%, 100% { opacity: 0.15; transform: scale(0.9); }
-  50%       { opacity: 0.75; transform: scale(1.05); }
+  0%, 100% { opacity: 0.18; transform: scale(0.92); }
+  50%       { opacity: 0.82; transform: scale(1.04); }
 }
 
 @keyframes twinkleSparkle {
   0%, 100% { opacity: 0.25; transform: scale(0.85); }
-  45%, 55% { opacity: 1; transform: scale(1.3); }
+  45%, 55% { opacity: 1; transform: scale(1.25); }
 }
 
 @keyframes twinkleGlow {
-  0%, 100% { opacity: 0.35; filter: drop-shadow(0 0 2px rgba(76,214,255,0.4)); transform: scale(0.95); }
-  50%       { opacity: 1; filter: drop-shadow(0 0 8px rgba(76,214,255,0.95)) drop-shadow(0 0 16px rgba(142,197,255,0.8)); transform: scale(1.25); }
+  0%, 100% { opacity: 0.35; transform: scale(0.95); }
+  50%       { opacity: 1; transform: scale(1.2); }
 }
 
 @keyframes shootingStar {
@@ -164,14 +207,21 @@ body {
 /* ─── Bounce scroll cue ─── */
 @keyframes bounce-y {
   0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(10px); }
+  50%       { transform: translateY(8px); }
 }
 
-/* ─── prefers-reduced-motion: pause all animations ─── */
+/* ─── Pulse Glow ─── */
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ─── prefers-reduced-motion: pause all heavy animations ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

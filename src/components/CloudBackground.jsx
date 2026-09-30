@@ -335,28 +335,37 @@ function CloudStrip({ clouds, animName, duration }) {
   )
 }
 
+function createCloudPRNG(initialSeed = 777) {
+  let s = initialSeed
+  return () => {
+    s = (s * 16807) % 2147483647
+    return (s - 1) / 2147483646
+  }
+}
+
 /* ── Twinkling celestial star field & shooting stars ──────────────────────── */
 function StarField({ count = 400 }) {
   const { microStars, midStars, flareStars, shootingStars } = useMemo(() => {
+    const rand = createCloudPRNG(999)
     const micro = []
     const mid = []
     const flare = []
 
     for (let i = 0; i < count; i++) {
       // Natural sky distribution: spans atmosphere with organic falloff
-      const rawY = Math.random()
+      const rawY = rand()
       const y = Math.pow(rawY, 1.22) * 84
-      const x = Math.random() * 100
+      const x = rand() * 100
 
       if (i < 165) {
         // Micro stardust — soft, ambient celestial shimmer
         micro.push({
           id: `m-${i}`,
           x, y,
-          r: 0.35 + Math.random() * 0.45,
-          delay: Math.random() * 4,
-          dur: 2.2 + Math.random() * 2.8,
-          color: Math.random() > 0.4 ? '#FFFFFF' : '#8EC5FF',
+          r: 0.35 + rand() * 0.45,
+          delay: rand() * 4,
+          dur: 2.2 + rand() * 2.8,
+          color: rand() > 0.4 ? '#FFFFFF' : '#8EC5FF',
         })
       } else if (i < 242) {
         // Medium stars — crisp sparkling celestial points
@@ -364,21 +373,21 @@ function StarField({ count = 400 }) {
         mid.push({
           id: `mid-${i}`,
           x, y,
-          r: 0.75 + Math.random() * 0.7,
-          delay: Math.random() * 3.5,
-          dur: 1.8 + Math.random() * 2.2,
-          color: colorPalette[Math.floor(Math.random() * colorPalette.length)],
-          anim: Math.random() > 0.45 ? 'twinkleSparkle' : 'twinkle',
+          r: 0.75 + rand() * 0.7,
+          delay: rand() * 3.5,
+          dur: 1.8 + rand() * 2.2,
+          color: colorPalette[Math.floor(rand() * colorPalette.length)],
+          anim: rand() > 0.45 ? 'twinkleSparkle' : 'twinkle',
         })
       } else {
         // Beacon flare stars — clean high-magnitude stars with 4-point cross diffraction
         flare.push({
           id: `f-${i}`,
           x, y,
-          r: 1.6 + Math.random() * 0.7,
-          delay: Math.random() * 4,
-          dur: 2.2 + Math.random() * 2.5,
-          color: Math.random() > 0.35 ? '#FFFFFF' : '#4CD6FF',
+          r: 1.6 + rand() * 0.7,
+          delay: rand() * 4,
+          dur: 2.2 + rand() * 2.5,
+          color: rand() > 0.35 ? '#FFFFFF' : '#4CD6FF',
         })
       }
     }

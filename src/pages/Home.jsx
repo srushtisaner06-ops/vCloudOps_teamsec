@@ -1,52 +1,42 @@
+import { useEffect } from 'react'
+import { initSmoothScroll } from '../utils/smoothScroll'
 import SpaceBackground from '../components/SpaceBackground'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import AboutTeaser from '../components/AboutTeaser'
+import EventsSection from '../components/EventsSection'
+import TeamSection from '../components/TeamSection'
+import CommunitySection from '../components/CommunitySection'
+import Footer from '../components/Footer'
 
-/* ─────────────────────────────────────────────
-   Home page
-   Stacks: fixed space & planets backdrop → Navbar → Hero → AboutTeaser
-   The SpaceBackground stays fixed so subsequent
-   sections (Events, Team, etc.) share the same cosmos.
-───────────────────────────────────────────── */
 export default function Home() {
+  // Initialize Lenis buttery-smooth scrolling with GSAP ScrollTrigger synchronization
+  useEffect(() => {
+    const lenis = initSmoothScroll()
+    return () => {
+      if (lenis) lenis.destroy()
+    }
+  }, [])
+
   return (
-    <div className="relative min-h-screen">
-      {/* ── Persistent space & planets backdrop (z-index: 0, position: fixed) ── */}
+    <div className="relative min-h-screen bg-[#050B18] text-[#F8FAFC] selection:bg-sky-500/30 selection:text-sky-200">
+      {/* ── Persistent Cosmic Planet Backdrop ── */}
       <SpaceBackground />
 
-      {/* ── Navbar ── */}
+      {/* ── Fixed Floating Island Navigation ── */}
       <Navbar />
 
-      {/* ── Main content stack ── */}
+      {/* ── Main Content Flow ── */}
       <main className="relative" style={{ zIndex: 1 }}>
         <Hero />
         <AboutTeaser />
-
-        {/* Placeholder anchors for future sections */}
-        <section id="events"  style={{ minHeight: '40vh', zIndex: 1, position: 'relative' }} />
-        <section id="team"    style={{ minHeight: '20vh', zIndex: 1, position: 'relative' }} />
-        <section id="contact" style={{ minHeight: '20vh', zIndex: 1, position: 'relative' }} />
+        <EventsSection />
+        <TeamSection />
+        <CommunitySection />
       </main>
 
-      {/* ── Footer strip ── */}
-      <footer
-        className="relative py-8 text-center"
-        style={{
-          zIndex: 1,
-          borderTop: '1px solid rgba(56, 189, 248, 0.2)',
-          background: 'rgba(5, 11, 24, 0.75)',
-          backdropFilter: 'blur(12px)',
-          fontFamily: 'var(--font-mono)',
-          color: '#94A3B8',
-          fontSize: '0.8rem',
-          fontWeight: 500,
-          letterSpacing: '0.05em',
-          textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
-        }}
-      >
-        © {new Date().getFullYear()} vCloudOps — Built by the community, for the community.
-      </footer>
+      {/* ── Polished Community Footer ── */}
+      <Footer />
     </div>
   )
 }
