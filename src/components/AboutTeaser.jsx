@@ -42,8 +42,15 @@ export default function AboutTeaser() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="mb-8 text-xs tracking-[0.25em] uppercase"
-        style={{ fontFamily: 'var(--font-mono)', color: 'rgba(76,214,255,0.7)' }}
+        className="mb-8 inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs tracking-[0.22em] uppercase font-semibold backdrop-blur-md"
+        style={{
+          fontFamily: 'var(--font-mono)',
+          color: '#38BDF8',
+          background: 'rgba(10, 22, 44, 0.75)',
+          border: '1px solid rgba(56, 189, 248, 0.35)',
+          textShadow: '0 1px 4px rgba(0, 0, 0, 0.9)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+        }}
       >
         [ Mission Statement ]
       </motion.span>
@@ -53,9 +60,9 @@ export default function AboutTeaser() {
         className="max-w-3xl leading-tight"
         style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: 'clamp(1.6rem, 4vw, 3rem)',
-          fontWeight: 500,
-          color: 'rgba(184,212,255,0.85)',
+          fontSize: 'clamp(1.7rem, 4.2vw, 3.15rem)',
+          fontWeight: 600,
+          color: '#F8FAFC',
         }}
       >
         {MISSION_WORDS.map((w, i) => (
@@ -71,8 +78,10 @@ export default function AboutTeaser() {
             }}
             className="inline-block mr-[0.3em]"
             style={{
-              color: w.accent ? '#4CD6FF' : undefined,
-              textShadow: w.accent ? '0 0 24px rgba(76,214,255,0.5)' : undefined,
+              color: w.accent ? '#38BDF8' : '#F8FAFC',
+              textShadow: w.accent
+                ? '0 2px 10px rgba(0, 0, 0, 0.95), 0 0 25px rgba(56, 189, 248, 0.75), 0 0 50px rgba(56, 189, 248, 0.4)'
+                : '0 2px 10px rgba(0, 0, 0, 0.95), 0 4px 20px rgba(2, 6, 23, 0.9)',
             }}
           >
             {w.text}
@@ -89,8 +98,9 @@ export default function AboutTeaser() {
         className="mt-8 max-w-xl text-base sm:text-lg leading-relaxed"
         style={{
           fontFamily: 'var(--font-main)',
-          color: 'rgba(142,197,255,0.55)',
-          fontWeight: 300,
+          color: '#E2E8F0',
+          fontWeight: 400,
+          textShadow: '0 2px 8px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.9)',
         }}
       >
         vCloudOps is a student-led technical community at the intersection of
@@ -116,12 +126,14 @@ export default function AboutTeaser() {
         ].map((tag) => (
           <span
             key={tag}
-            className="px-4 py-2 rounded-full text-sm"
+            className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-md"
             style={{
               fontFamily: 'var(--font-mono)',
-              background: 'rgba(76,214,255,0.06)',
-              border: '1px solid rgba(76,214,255,0.15)',
-              color: 'rgba(142,197,255,0.7)',
+              background: 'rgba(10, 22, 44, 0.75)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              color: '#F0F9FF',
+              textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
             }}
           >
             {tag}

@@ -34,13 +34,15 @@ export default function Home() {
         className="relative py-8 text-center"
         style={{
           zIndex: 1,
-          borderTop: '1px solid rgba(76,214,255,0.08)',
-          background: 'rgba(5,11,24,0.6)',
+          borderTop: '1px solid rgba(56, 189, 248, 0.2)',
+          background: 'rgba(5, 11, 24, 0.75)',
           backdropFilter: 'blur(12px)',
           fontFamily: 'var(--font-mono)',
-          color: 'rgba(142,197,255,0.35)',
-          fontSize: '0.75rem',
+          color: '#94A3B8',
+          fontSize: '0.8rem',
+          fontWeight: 500,
           letterSpacing: '0.05em',
+          textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
         }}
       >
         © {new Date().getFullYear()} vCloudOps — Built by the community, for the community.
