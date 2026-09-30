@@ -25,9 +25,11 @@ html {
 body {
   margin: 0;
   font-family: var(--font-main);
-  color: #e8f0fe;
+  color: #F8FAFC;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* ─── Planetary Floating & Orbital Keyframes ─── */

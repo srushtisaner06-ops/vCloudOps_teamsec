@@ -107,14 +107,17 @@ export default function Navbar() {
                       href={href}
                       onClick={() => handleNav(href)}
                       onMouseEnter={() => setHoveredIdx(idx)}
-                      className={`relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 block text-center ${
+                      className={`relative z-10 px-4 py-2 rounded-full text-sm transition-colors duration-200 block text-center ${
                         isActive
-                          ? 'text-white'
+                          ? 'text-white font-bold'
                           : isHovered
-                          ? 'text-white'
-                          : 'text-blue-100/70 hover:text-white'
+                          ? 'text-white font-semibold'
+                          : 'text-slate-100/90 hover:text-white font-medium'
                       }`}
-                      style={{ fontFamily: 'var(--font-main)' }}
+                      style={{
+                        fontFamily: 'var(--font-main)',
+                        textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)',
+                      }}
                     >
                       {label}
 
@@ -122,8 +125,8 @@ export default function Navbar() {
                       {isActive && (
                         <motion.span
                           layoutId="activeDot"
-                          className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#4CD6FF]"
-                          style={{ boxShadow: '0 0 8px #4CD6FF' }}
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#38BDF8]"
+                          style={{ boxShadow: '0 0 8px #38BDF8' }}
                           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                         />
                       )}
@@ -133,7 +136,7 @@ export default function Navbar() {
                     {isHovered && (
                       <motion.div
                         layoutId="navHoverPill"
-                        className="absolute inset-0 rounded-full bg-white/[0.10] border border-white/[0.12] shadow-[0_2px_12px_rgba(0,0,0,0.25)]"
+                        className="absolute inset-0 rounded-full bg-white/[0.12] border border-white/[0.16] shadow-[0_2px_12px_rgba(0,0,0,0.25)]"
                         transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                       />
                     )}
@@ -149,18 +152,19 @@ export default function Navbar() {
             <motion.a
               href="#contact"
               onClick={() => handleNav('#contact')}
-              className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold rounded-full px-5 py-2.5 transition-all duration-300 relative group overflow-hidden"
+              className="hidden sm:inline-flex items-center gap-2 text-sm font-bold rounded-full px-5 py-2.5 transition-all duration-300 relative group overflow-hidden"
               style={{
                 fontFamily: 'var(--font-main)',
-                background: 'linear-gradient(135deg, rgba(76, 214, 255, 0.16) 0%, rgba(56, 162, 226, 0.28) 100%)',
-                border: '1px solid rgba(76, 214, 255, 0.45)',
-                color: '#EEF7FF',
-                boxShadow: '0 4px 20px rgba(76, 214, 255, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.45)',
+                background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(2, 132, 199, 0.38) 100%)',
+                border: '1px solid rgba(56, 189, 248, 0.55)',
+                color: '#FFFFFF',
+                boxShadow: '0 4px 20px rgba(56, 189, 248, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.45)',
+                textShadow: '0 1px 3px rgba(0, 0, 0, 0.85)',
                 textDecoration: 'none',
               }}
               whileHover={{
                 scale: 1.04,
-                boxShadow: '0 6px 28px rgba(76, 214, 255, 0.40), inset 0 1px 2px rgba(255, 255, 255, 0.70)',
+                boxShadow: '0 6px 28px rgba(56, 189, 248, 0.50), inset 0 1px 2px rgba(255, 255, 255, 0.70)',
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
@@ -256,16 +260,19 @@ export default function Navbar() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05, duration: 0.25 }}
-                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-medium transition-colors ${
+                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-semibold transition-colors ${
                       isActive
-                        ? 'bg-white/[0.08] text-[#4CD6FF]'
-                        : 'text-blue-100/80 hover:bg-white/[0.04] hover:text-white'
+                        ? 'bg-sky-500/15 text-[#38BDF8] border border-sky-500/30'
+                        : 'text-slate-100 hover:bg-white/[0.08] hover:text-white'
                     }`}
-                    style={{ fontFamily: 'var(--font-main)' }}
+                    style={{
+                      fontFamily: 'var(--font-main)',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
+                    }}
                   >
                     <span>{label}</span>
                     {isActive && (
-                      <span className="w-2 h-2 rounded-full bg-[#4CD6FF] shadow-[0_0_10px_#4CD6FF]" />
+                      <span className="w-2 h-2 rounded-full bg-[#38BDF8] shadow-[0_0_10px_#38BDF8]" />
                     )}
                   </motion.a>
                 )
@@ -276,12 +283,13 @@ export default function Navbar() {
                 <a
                   href="#contact"
                   onClick={() => handleNav('#contact')}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-semibold text-white text-center"
+                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold text-white text-center"
                   style={{
                     fontFamily: 'var(--font-main)',
-                    background: 'linear-gradient(135deg, rgba(76, 214, 255, 0.25) 0%, rgba(56, 162, 226, 0.35) 100%)',
-                    border: '1px solid rgba(76, 214, 255, 0.45)',
-                    boxShadow: '0 4px 18px rgba(76, 214, 255, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
+                    background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.45) 100%)',
+                    border: '1px solid rgba(56, 189, 248, 0.55)',
+                    boxShadow: '0 4px 18px rgba(56, 189, 248, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.5)',
+                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
                   }}
                 >
                   Join Community
@@ -289,7 +297,7 @@ export default function Navbar() {
                     <path
                       d="M3.33334 8H12.6667M12.6667 8L8.66668 4M12.6667 8L8.66668 12"
                       stroke="currentColor"
-                      strokeWidth="1.8"
+                      strokeWidth="2.2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
