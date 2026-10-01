@@ -207,7 +207,7 @@ const GlowCursor = ({
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
 
-    const pointData = new Float32Array(MAX_POINTS * 2);
+    const pointData = Array(MAX_POINTS * 2).fill(0);
     const points = Array.from({ length: MAX_POINTS }, () => ({ x: 0, y: 0 }));
     const target = { x: 0, y: 0 };
     const head = { x: 0, y: 0 };
