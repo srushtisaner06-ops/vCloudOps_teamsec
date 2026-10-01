@@ -1,52 +1,56 @@
-# Antigravity Handoff
+# Antigravity Handoff & Architecture Log
 
-This document tracks the modifications made to the `vCloudOps` repository by the Antigravity agent in this session, and outlines the skills required to maintain and build upon these changes.
+This document tracks modifications made to the `vCloudOps` repository by the Antigravity agent, outlining architecture decisions, performance optimizations, and integration guidelines for future sessions.
 
-## 1. Required Skills & Setup
-To continue development seamlessly, the following Antigravity skills must be loaded/installed in the agent's environment:
-- **Taste Skill (Leonxlnx/taste-skill)**: Enforces "High-End Visual Design" principles (Double-Bezel architecture, Island Navigation, Ethereal Glass archetypes).
-  - *Install via*: `npx skills add Leonxlnx/taste-skill`
-- **GSAP Skills (greensock/gsap-skills)**: Dictates the usage of GSAP and GSAP ScrollTrigger for cinematic, non-linear motion.
-  - *Install via*: `npx skills add https://github.com/greensock/gsap-skills --agent antigravity`
-- **Impeccable Skill**: Acts as a strict design auditor to avoid cheap, "AI-generated" generic patterns.
-  - *Note*: Ensure the agent has read `impeccable` guidelines to adhere to the high-bar production craft.
+---
 
-## 2. Dependency Changes
-- Installed `gsap` and `@gsap/react` for complex choreography and React hook integration.
-- Installed `@phosphor-icons/react` to replace generic SVGs with premium, lightweight linework icons.
-- Installed `@fontsource/plus-jakarta-sans` to replace generic UI fonts (e.g., Space Grotesk/Inter).
+## 1. Key Architectural Implementations
 
-## 3. Structural & Component Changes Made
-The following components were entirely refactored from generic Framer Motion / Tailwind setups to premium GSAP / Double-Bezel architectures:
+### A. Dynamic Particle Typography (`ParticleText.jsx` & `ParticleText.css`)
+- **Canvas Particle Physics Engine**: Replaced static headline text with an interactive 2D canvas particle system.
+- **360° Screen-Wide Scatter**: Particles originate across the entire screen perimeter rather than a localized box, converging along sinusoidal trajectory arcs into letter target coordinates.
+- **Color Segmentation**:
+  - Foundational words (*"Architect the"*, *"Deploy the"*) render in **Pure White** (`#FFFFFF`).
+  - Tech accents (*"Cloud."*, *"Future."*) render in **Electric Blue** (`#0088FF`).
+- **Mobile Responsive Adaptation**:
+  - Automatically reformats to a 4-line layout on screens `<640px` (`"Architect the \n Cloud. \n Deploy the \n Future."`).
+  - Upscaled font sizing (`clamp(1.9rem, 7.8vw, 2.5rem)`) with dense 2px sampling ensures solid, readable letter strokes on small screens.
+  - Idle drift dampened on mobile (0.12px) to prevent small glyph distortion.
+- **Interactive Physics**: Cursor/touch repulsion with rotational swirl and subtle Brownian harmonic idle drift.
 
-### Global CSS (`src/index.css` & `src/main.jsx`)
-- Imported `Plus Jakarta Sans` font weights.
-- Replaced the generic CSS `--font-main` variable to enforce `Plus Jakarta Sans` globally.
-- Corrected the `shootingStar` CSS math (fixed translation vs rotation angle mismatch to `rotate(35deg)`).
+### B. Cinematic Hero Entrance & Rolling Counters (`Hero.jsx`)
+- **Synchronized Choreography**: The timeline begins as particle text settles (~1.75s), avoiding dead delay and orchestrating:
+  - Floating island navbar slide-in with optical focus (`y: -24 -> 0`, blur clearing).
+  - Tagline fade and blur resolution (`y: 18 -> 0`).
+  - CTA buttons spring-in (`y: 26 -> 0`, `scale: 0.92 -> 1`, `back.out(1.18)`).
+  - Primary CTA luminous cyan bloom (`0 0 35px rgba(56, 189, 248, 0.65)`).
+  - Stats cards cascade with spring overshoot (`back.out(1.25)`) and illuminated neon border boot-up flash.
+- **Live Metric Rolling Counters**:
+  - Metrics animate dynamically on card arrival: `0 -> 40+`, `0 -> 12+`, `0 -> 6+`, `0 -> 100%`.
+  - Formatted with `tabular-nums font-mono` to prevent width jitter during roll-up.
 
-### Hero (`src/components/Hero.jsx`)
-- Rewrote the entire timeline using `@gsap/react` `useGSAP`.
-- Replaced standard CTA buttons with the **Island Button-in-Button** architecture.
-- Replaced the floating badge with a minimalist, unbolded text element floating cleanly with a custom blue glow.
-- Staggered all typography, badges, and stats with `power4.out` blur reveals.
+### C. Performance & Frame Rate Engineering (60+ FPS)
+- **Eliminated CPU `shadowBlur`**: Replaced per-frame `ctx.shadowBlur` with pre-rendered offscreen GPU texture sprites (`createParticleSprite` + `ctx.drawImage`), eliminating canvas frame drop.
+- **IntersectionObserver Suspension**: The particle animation loop pauses completely when scrolled offscreen.
+- **Scroll Throttling**: Navbar scroll position detection is throttled with `window.requestAnimationFrame`.
+- **Lenis Smooth Scroll Synchronization**: GSAP ticker coupled with Lenis smooth scroll and lag smoothing (`gsap.ticker.lagSmoothing(500, 33)`).
 
-### Navbar (`src/components/Navbar.jsx`)
-- Replaced standard fixed navigation with a **Fluid Island Nav** (a floating glass pill with white/10 hairlines).
-- Integrated GSAP morphing for the mobile overlay and active state detection.
+---
 
-### AboutTeaser (`src/components/AboutTeaser.jsx`)
-- Upgraded the feature pills to an **Asymmetrical Bento Grid** using the Double-Bezel (Doppelrand) technique.
-- Integrated `gsap/ScrollTrigger` so the grid items cascade into view on scroll.
-- Swapped standard emojis with `@phosphor-icons/react` (e.g., `HardDrives`, `CloudArrowUp`).
+## 2. Upstream Git & Pull Request Status
 
-### ScrollCue (`src/components/ScrollCue.jsx`)
-- Replaced `framer-motion` with `gsap` timeline animations.
-- Ensured the scroll cue was properly animated into visibility within the `Hero` component timeline.
+- **Branch**: `sanskar`
+- **Upstream Synchronization**: Pulled and merged `origin/main` (`fe12a17 feat: update the logo`), incorporating all new brand assets in `public/Logo/`, updating component logos, and cleanly resolving merge conflicts in `Hero.jsx`.
+- **Pull Request**: Open and active on GitHub:
+  - **PR Link**: [vCloudOps Pull Request #5](https://github.com/vCloudOps-x-AWS/vCloudOps/pull/5)
+  - **Head**: `sanskar`
+  - **Base**: `main`
+  - **Merge State**: `mergeable: true` (0 conflicts)
 
-### SpaceBackground (`src/components/SpaceBackground.jsx`)
-- Fixed a bug where CSS `shootingStar` animations were sitting stationary during their `animation-delay` by adding `opacity: 0` to their base inline styles.
+---
 
-## 4. Next Steps for Agents
-- When making new components, always reference `design.md` for styling constraints.
-- Do not install `framer-motion` for new features; rely entirely on the `gsap` stack.
-- Execute `npm run dev` in the background to ensure Vite hot-reloading operates correctly during UI iteration.
+## 3. Tooling & Development Standards
+
+- **Dev Server**: Run on port 3000 (`npm run dev`) configured in `vite.config.js` to avoid PWA port 5173 collisions.
+- **Linter**: Run `npm run lint` (`oxlint`). Must maintain 0 errors and 0 warnings.
+- **Design Guidelines**: Always reference `design.md` for the *Ethereal Glass* design system (Double-Bezel architecture, Phosphor Icons, and color palettes).
