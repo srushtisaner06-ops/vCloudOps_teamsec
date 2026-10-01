@@ -123,11 +123,10 @@ export default function Hero() {
           return (
             <span
               key={i}
-              className={`word inline-block mr-[0.22em] ${
-                isAccent
-                  ? 'text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-sky-400 to-sky-600 drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]'
-                  : 'text-white'
-              }`}
+              className={`word inline-block mr-[0.22em] ${isAccent
+                ? 'text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-sky-400 to-sky-600 drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]'
+                : 'text-white'
+                }`}
             >
               {word}
             </span>

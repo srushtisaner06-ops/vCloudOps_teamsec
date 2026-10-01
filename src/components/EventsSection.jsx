@@ -244,9 +244,12 @@ export default function EventsSection() {
               <X weight="bold" className="w-4 h-4" />
             </button>
 
-            <span className="text-[10px] font-mono tracking-widest text-sky-400 uppercase font-semibold">
-              Event Registration
-            </span>
+            <div className="flex items-center gap-2 mb-2">
+              <img src="/Logo/logo-icon.png" alt="vCloudOps" className="w-5 h-5 object-contain" />
+              <span className="text-[10px] font-mono tracking-widest text-sky-400 uppercase font-semibold">
+                Event Registration • vCloudOps
+              </span>
+            </div>
 
             <h3 className="text-xl sm:text-2xl font-bold text-white mt-1 mb-2">
               {modalEvent.title}

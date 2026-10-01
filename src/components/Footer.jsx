@@ -31,9 +31,9 @@ export default function Footer() {
           <div className="max-w-md">
             <div className="flex items-center gap-2.5 mb-3">
               <img
-                src="/logo-mark.png"
+                src="/Logo/logo-icon.png"
                 alt="vCloudOps Logo"
-                className="h-7 w-auto object-contain drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
+                className="h-8 w-auto object-contain drop-shadow-[0_0_12px_rgba(56,189,248,0.4)]"
               />
               <span className="font-extrabold text-white text-xl tracking-tight">
                 vCloud<span className="text-sky-400">Ops</span>
@@ -112,7 +112,10 @@ export default function Footer() {
 
         {/* Bottom Tier: Copyright */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
-          <p>© {new Date().getFullYear()} vCloudOps. Built by students, for students.</p>
+          <div className="flex items-center gap-2">
+            <img src="/Logo/logo-icon.png" alt="" className="w-3.5 h-3.5 object-contain opacity-70" />
+            <p>© {new Date().getFullYear()} vCloudOps. Built by students, for students.</p>
+          </div>
           <a
             href="#home"
             onClick={(e) => handleNav(e, '#home')}

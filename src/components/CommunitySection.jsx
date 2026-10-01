@@ -71,6 +71,18 @@ export default function CommunitySection() {
           {/* Subtle Ambient Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-sky-500/20 rounded-full blur-[90px] pointer-events-none" />
 
+          {/* Logo Showcase Emblem */}
+          <div className="relative mb-6 z-10 group">
+            <div className="absolute -inset-3 bg-gradient-to-r from-sky-500/30 to-blue-600/30 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/5 border border-sky-400/30 backdrop-blur-xl p-3 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-transform duration-300">
+              <img
+                src="/Logo/logo-icon.png"
+                alt="vCloudOps Logo"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(56,189,248,0.7)]"
+              />
+            </div>
+          </div>
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-sky-400/20 backdrop-blur-xl mb-6 relative z-10">
             <Sparkle weight="fill" className="w-3.5 h-3.5 text-sky-400" />

@@ -135,7 +135,8 @@ export default function AboutTeaser() {
 
       {/* Mission Label */}
       <div className="mission-label mb-6 sm:mb-8">
-        <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/5 border border-sky-400/20 backdrop-blur-xl">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-sky-400/20 backdrop-blur-xl">
+          <img src="/Logo/logo-icon.png" alt="vCloudOps" className="w-4 h-4 object-contain drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]" />
           <span className="text-[10px] sm:text-xs tracking-[0.22em] uppercase font-bold text-sky-400 drop-shadow-[0_0_12px_rgba(56,189,248,0.5)]">
             Our Core Mission
           </span>
