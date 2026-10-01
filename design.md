@@ -79,3 +79,13 @@ To ensure a continuous 60+ FPS on all devices (including mobile):
 ## 7. Iconography
 
 - **Phosphor Icons**: Standardized on `@phosphor-icons/react` (`weight="bold"` or `"fill"`) for consistent stroke weights and modern technical linework.
+
+---
+
+## 8. WebGL Cursor Dynamics (`GlowCursor.jsx`)
+
+- **Celestial Glow Palette**: Uses electric cyan (`#67E8F9`) transitioning to cosmic lavender (`#A78BFA`) to complement the space background.
+- **Shader-Driven Trail**: 64-point parametric curve with distance falloff, hotspot core, film grain noise, and subtle breathing pulse.
+- **Deep Sleep State**: When pointer is idle for >700ms, the trail dissolves over 900ms and completely pauses its `requestAnimationFrame` loop, dropping CPU and GPU consumption to 0%. It wakes instantaneously upon pointer interaction.
+- **Mobile Graceful Degradation**: Pure touch devices (`pointer: coarse`) bypass cursor rendering to preserve battery life and eliminate touch overhead.
+

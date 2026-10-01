@@ -35,6 +35,12 @@ This document tracks modifications made to the `vCloudOps` repository by the Ant
 - **Scroll Throttling**: Navbar scroll position detection is throttled with `window.requestAnimationFrame`.
 - **Lenis Smooth Scroll Synchronization**: GSAP ticker coupled with Lenis smooth scroll and lag smoothing (`gsap.ticker.lagSmoothing(500, 33)`).
 
+### D. Interactive WebGL Glow Cursor (`GlowCursor.jsx` & `GlowCursor.css`)
+- **Hardware-Accelerated OGL Engine**: Installed `ogl` (`^1.0.11`) to render high-efficiency GLSL shaders for a global trailing glow cursor across the entire viewport.
+- **Dual-Tone Cosmic Shading**: Electric cyan (`#67E8F9`) core with cosmic lavender (`#A78BFA`) falloff, hotspot expansion, and film grain noise.
+- **Deep Sleep State (0% Idle Overhead)**: Automatically pauses the animation loop when the mouse is still, waking instantly on motion.
+- **Seamless Fixed Overlay**: Positioned in a fixed full-screen overlay with `pointer-events: none` and `mix-blend-mode: screen`, leaving all page elements, links, and scrolling 100% unobstructed.
+
 ---
 
 ## 2. Upstream Git & Pull Request Status

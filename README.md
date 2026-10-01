@@ -36,6 +36,7 @@ The application is built on an **Ethereal Glass** architectural design system wi
 | **Particle Physics**| **HTML5 Canvas 2D** | Native | Custom GPU-accelerated particle system with pre-rendered texture blitting, 360° scatter trajectories, and cursor repulsion. |
 | **Iconography** | **Phosphor Icons** | `^2.1.10` | High-precision linework iconography (`@phosphor-icons/react`) tailored for modern developer interfaces. |
 | **Linter & Quality**| **Oxlint** | `^1.81.0` | High-speed Rust-based linter enforcing clean React patterns and zero-warning syntax hygiene. |
+| **WebGL Cursor Engine**| **OGL** | `^1.0.11` | Minimal, high-performance WebGL library rendering custom vertex & fragment shaders for the global glowing cursor trail. |
 | **Typography** | **Plus Jakarta Sans & Space Grotesk** | `@fontsource` / Google Fonts | Modern geometric grotesk typography for razor-sharp legibility and futuristic headings. |
 
 ---
@@ -79,6 +80,11 @@ The application is built on an **Ethereal Glass** architectural design system wi
 - **Multi-Layered Planetary Field**: Layered SVGs including Moon, Ocean Exoplanet, Ringed Titan, Dwarf planets, and twinkling starfields.
 - **Smooth Parallax Coupling**: Synchronized with Lenis smooth scroll for deep celestial depth perception.
 
+### 9. Interactive Shader Glow Cursor (`GlowCursor.jsx`)
+- **Custom OGL Shaders**: Full-viewport WebGL cursor trail with cyan/violet dual-color gradient, pulse dynamics, and film grain noise.
+- **Deep Sleep Optimization**: Automatically suspends the WebGL loop when the cursor is idle (zero CPU & GPU usage).
+- **Non-Obtrusive Overlay**: `pointer-events: none` overlay ensures 100% responsiveness on all underlying buttons, links, and text.
+
 ---
 
 ## 📁 Project Structure
@@ -97,6 +103,8 @@ vCloudOps/
 │   │   ├── CommunitySection.jsx# FAQ accordion & community onboarding
 │   │   ├── EventsSection.jsx # Workshop cards & registration modal
 │   │   ├── Footer.jsx        # Dual-tier footer with navigation & social links
+│   │   ├── GlowCursor.jsx    # Hardware-accelerated OGL WebGL glow cursor
+│   │   ├── GlowCursor.css    # Cursor canvas layering and viewport styling
 │   │   ├── Hero.jsx          # Hero section with CTAs & live rolling stats
 │   │   ├── Navbar.jsx        # Floating capsule island navigation
 │   │   ├── ParticleText.jsx  # 2D canvas particle physics headline
