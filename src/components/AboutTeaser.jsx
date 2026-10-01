@@ -85,7 +85,6 @@ export default function AboutTeaser() {
     gsap.from('.mission-label', {
       y: 20,
       opacity: 0,
-      filter: 'blur(8px)',
       duration: 0.8,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.mission-label', start: 'top 85%' },
@@ -93,10 +92,9 @@ export default function AboutTeaser() {
 
     // Words
     gsap.from('.mission-word', {
-      y: 30,
+      y: 24,
       opacity: 0,
-      filter: 'blur(6px)',
-      duration: 0.9,
+      duration: 0.85,
       stagger: 0.04,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.mission-word-container', start: 'top 82%' },
@@ -104,20 +102,19 @@ export default function AboutTeaser() {
 
     // Sub-copy
     gsap.from('.about-sub', {
-      y: 24,
+      y: 20,
       opacity: 0,
       duration: 0.8,
-      delay: 0.2,
+      delay: 0.15,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.mission-word-container', start: 'top 82%' },
     })
 
     // Features Bento cascade
     gsap.from('.feature-card', {
-      y: 40,
+      y: 35,
       opacity: 0,
-      filter: 'blur(8px)',
-      duration: 0.8,
+      duration: 0.75,
       stagger: 0.08,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.features-grid', start: 'top 85%' },

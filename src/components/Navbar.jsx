@@ -19,20 +19,27 @@ export default function Navbar() {
   const menuRef = useRef(null)
   const isScrolled = useScrolled(25)
 
-  // Scroll active detection with passive listener
+  // Scroll active detection throttled with requestAnimationFrame
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      const scrollPos = window.scrollY + 140
-      for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
-        const sec = document.querySelector(NAV_LINKS[i].href)
-        if (sec) {
-          const top = sec.offsetTop
-          const height = sec.offsetHeight
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActive(NAV_LINKS[i].href)
-            break
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollPos = window.scrollY + 140
+          for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
+            const sec = document.querySelector(NAV_LINKS[i].href)
+            if (sec) {
+              const top = sec.offsetTop
+              const height = sec.offsetHeight
+              if (scrollPos >= top && scrollPos < top + height) {
+                setActive(NAV_LINKS[i].href)
+                break
+              }
+            }
           }
-        }
+          ticking = false
+        })
+        ticking = true
       }
     }
 
@@ -93,7 +100,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6 transition-all duration-300">
+      <header className="main-nav-header fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6">
         <nav
           className={`mx-auto w-full md:w-max rounded-full px-3 sm:px-4 py-2 border transition-all duration-500 flex items-center justify-between md:justify-center gap-2 sm:gap-4 flex-nowrap ${
             isScrolled

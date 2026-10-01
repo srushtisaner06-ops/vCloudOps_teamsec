@@ -54,19 +54,17 @@ export default function TeamSection() {
 
   useGSAP(() => {
     gsap.from('.team-header', {
-      y: 30,
+      y: 25,
       opacity: 0,
-      filter: 'blur(8px)',
-      duration: 0.9,
+      duration: 0.85,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.team-header', start: 'top 85%' },
     })
 
     gsap.from('.team-card', {
-      y: 45,
+      y: 35,
       opacity: 0,
-      filter: 'blur(8px)',
-      duration: 0.8,
+      duration: 0.75,
       stagger: 0.08,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.team-grid', start: 'top 85%' },
