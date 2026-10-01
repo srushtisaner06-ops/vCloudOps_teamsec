@@ -3,7 +3,6 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import {
-  Sparkle,
   GithubLogo,
   LinkedinLogo,
 } from '@phosphor-icons/react'
@@ -80,7 +79,7 @@ export default function TeamSection() {
       {/* Header */}
       <div className="team-header flex flex-col items-center max-w-3xl mb-12 sm:mb-16">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-sky-400/20 backdrop-blur-xl mb-6">
-          <Sparkle weight="fill" className="w-3.5 h-3.5 text-sky-400" />
+          <img src="/Logo/logo-icon.png" alt="vCloudOps" className="w-4 h-4 object-contain" />
           <span className="text-[10px] sm:text-xs tracking-[0.22em] uppercase font-bold text-sky-400">
             Core Leadership
           </span>

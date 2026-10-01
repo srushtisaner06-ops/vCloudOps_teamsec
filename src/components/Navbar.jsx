@@ -116,7 +116,7 @@ export default function Navbar() {
             className="flex items-center gap-2.5 pl-1.5 sm:pl-2.5 pr-2 py-1 select-none group shrink-0 whitespace-nowrap min-w-0"
           >
             <img
-              src="/logo-mark.png"
+              src="/Logo/logo-icon.png"
               alt="vCloudOps Logo"
               className="h-6 sm:h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(56,189,248,0.5)] shrink-0"
             />
