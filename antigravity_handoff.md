@@ -54,9 +54,11 @@ This document tracks modifications made to the `vCloudOps` repository by the Ant
 ## 2. Upstream Git & Pull Request Status
 
 - **Branch**: `sanskar`
-- **Upstream Synchronization**: Pulled and merged `origin/main` (`fe12a17 feat: update the logo`), incorporating all new brand assets in `public/Logo/`, updating component logos, and cleanly resolving merge conflicts in `Hero.jsx`.
-- **Pull Request**: Open and active on GitHub:
-  - **PR Link**: [vCloudOps Pull Request #5](https://github.com/vCloudOps-x-AWS/vCloudOps/pull/5)
+- **Upstream Synchronization**: Pulled and merged `origin/main` (`39ee40d Merge pull request #5 from vCloudOps-x-AWS/sanskar`), cleanly resolving all dependencies with 0 conflicts.
+- **Previous PR**: [vCloudOps Pull Request #5](https://github.com/vCloudOps-x-AWS/vCloudOps/pull/5) — **Merged** into `main`.
+- **Current Head**: `291fdcf` (pushed to `origin/sanskar`).
+- **New Pull Request**: Ready to open from `sanskar` to `main`:
+  - **Direct Compare & Create Link**: [Create Pull Request: sanskar → main](https://github.com/vCloudOps-x-AWS/vCloudOps/compare/main...sanskar?expand=1)
   - **Head**: `sanskar`
   - **Base**: `main`
   - **Merge State**: `mergeable: true` (0 conflicts)
