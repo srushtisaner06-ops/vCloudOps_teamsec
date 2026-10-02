@@ -95,7 +95,6 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   const gestureLock = useRef(false)
   const unlockTimer = useRef(null)
   const touchStartY = useRef(null)
-  const savedScrollY = useRef(0)
   const activeIndexRef = useRef(activeIndex)
   useEffect(() => { activeIndexRef.current = activeIndex }, [activeIndex])
 
@@ -120,34 +119,21 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   }, [close, reduced, setActiveIndex, team.members.length])
 
   useEffect(() => {
-    const scrollRoot = document.scrollingElement || document.documentElement
-    savedScrollY.current = scrollRoot.scrollTop
     const html = document.documentElement
     const body = document.body
     const lenis = getLenis()
     const lenisWasStopped = Boolean(lenis?.isStopped)
     const saved = {
       htmlOverflow: html.style.overflow,
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyWidth: body.style.width,
-      bodyPaddingRight: body.style.paddingRight,
       bodyOverflow: body.style.overflow,
-      bodyTouchAction: body.style.touchAction,
     }
     const savedFocus = document.activeElement
     const focusTarget = openerRef.current
-    const scrollbarWidth = Math.max(0, window.innerWidth - html.clientWidth)
-    // Lenis must stop before any fixed-body/overflow mutation. Otherwise its
-    // next RAF can overwrite the scroll root while the lock is being applied.
+    // Stop Lenis before locking overflow. Native scroll position remains
+    // untouched, so closing does not need to call window.scrollTo().
     lenis?.stop()
     html.style.overflow = 'hidden'
-    body.style.position = 'fixed'
-    body.style.top = `-${savedScrollY.current}px`
-    body.style.width = '100%'
     body.style.overflow = 'hidden'
-    body.style.touchAction = 'none'
-    if (scrollbarWidth) body.style.paddingRight = `${scrollbarWidth}px`
     viewRef.current?.focus({ preventScroll: true })
 
     const onWheel = (event) => {
@@ -186,14 +172,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       view?.removeEventListener('touchend', onTouchEnd)
       view?.removeEventListener('keydown', onKeyDown)
       html.style.overflow = saved.htmlOverflow
-      body.style.position = saved.bodyPosition
-      body.style.top = saved.bodyTop
-      body.style.width = saved.bodyWidth
-      body.style.paddingRight = saved.bodyPaddingRight
       body.style.overflow = saved.bodyOverflow
-      body.style.touchAction = saved.bodyTouchAction
-      scrollRoot.scrollTop = savedScrollY.current
-      window.scrollTo({ top: savedScrollY.current, behavior: 'auto' })
       if (lenis && !lenisWasStopped) lenis.start()
       if (savedFocus instanceof HTMLElement) savedFocus.focus({ preventScroll: true })
       else focusTarget?.focus({ preventScroll: true })
