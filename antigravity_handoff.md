@@ -41,14 +41,24 @@ This document tracks modifications made to the `vCloudOps` repository by the Ant
 - **Deep Sleep State (0% Idle Overhead)**: Automatically pauses the animation loop when the mouse is still, waking instantly on motion.
 - **Seamless Fixed Overlay**: Positioned in a fixed full-screen overlay with `pointer-events: none` and `mix-blend-mode: screen`, leaving all page elements, links, and scrolling 100% unobstructed.
 
+### E. 3D WebGL Plus-Shape Cosmic Starfield (`Particles.jsx` & `Particles.css`)
+- **Hardware-Accelerated OGL Particles Engine**: Built with `ogl` (`Renderer`, `Camera`, `Geometry`, `Program`, `Mesh`).
+- **Plus (`+`) Shape Fragment Shader**: Signed distance field in GLSL carves out crisp retro pixel cross stars with brilliant diamond-white center core and luminous cyan-blue arms (`#7DD3FC`, `#38BDF8`, `#BAE6FD`, `#67E8F9`, `#93C5FD`).
+- **Stratified Full-Bleed Grid Distribution**: 14x10 jittered grid sampling covering the exact visible camera frustum with 25% margin, guaranteeing 100% even screen coverage with no clustering or empty corners.
+- **Controlled Scale Clamping**: Strictly clamped `gl_PointSize` between 4.5px and 9.5px, preventing oversized stars when moving closer to the camera.
+- **Unified 3D Mouse Parallax**: Fluid mouse tracking with smooth lerping, translational sway, and subtle perspective tilt synchronized across every star.
+- **Preserved Planetary System**: All SVG celestial bodies, atmospheres, and meteors in `SpaceBackground.jsx` remain intact.
+
 ---
 
 ## 2. Upstream Git & Pull Request Status
 
 - **Branch**: `sanskar`
-- **Upstream Synchronization**: Pulled and merged `origin/main` (`fe12a17 feat: update the logo`), incorporating all new brand assets in `public/Logo/`, updating component logos, and cleanly resolving merge conflicts in `Hero.jsx`.
-- **Pull Request**: Open and active on GitHub:
-  - **PR Link**: [vCloudOps Pull Request #5](https://github.com/vCloudOps-x-AWS/vCloudOps/pull/5)
+- **Upstream Synchronization**: Pulled and merged `origin/main` (`39ee40d Merge pull request #5 from vCloudOps-x-AWS/sanskar`), cleanly resolving all dependencies with 0 conflicts.
+- **Previous PR**: [vCloudOps Pull Request #5](https://github.com/vCloudOps-x-AWS/vCloudOps/pull/5) — **Merged** into `main`.
+- **Current Head**: `291fdcf` (pushed to `origin/sanskar`).
+- **New Pull Request**: Ready to open from `sanskar` to `main`:
+  - **Direct Compare & Create Link**: [Create Pull Request: sanskar → main](https://github.com/vCloudOps-x-AWS/vCloudOps/compare/main...sanskar?expand=1)
   - **Head**: `sanskar`
   - **Base**: `main`
   - **Merge State**: `mergeable: true` (0 conflicts)
