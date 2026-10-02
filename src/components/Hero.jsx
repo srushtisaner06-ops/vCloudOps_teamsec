@@ -1,89 +1,151 @@
 import { useRef } from 'react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { ArrowUpRight, Sparkle } from '@phosphor-icons/react'
+import { ArrowUpRight } from '@phosphor-icons/react'
 import ScrollCue from './ScrollCue'
+import ParticleText from './ParticleText'
 import { scrollToTarget } from '../utils/smoothScroll'
 
-const HEADLINE_WORDS = ['Architect', 'the', 'Cloud.', 'Deploy', 'the', 'Future.']
-
 const STATS = [
-  { value: '40+', label: 'Active Members' },
-  { value: '12+', label: 'Sprints & Labs' },
-  { value: '6+', label: 'Live Deployments' },
-  { value: '100%', label: 'Student-Driven' },
+  { num: 40, suffix: '+', label: 'Active Members' },
+  { num: 12, suffix: '+', label: 'Sprints & Labs' },
+  { num: 6, suffix: '+', label: 'Live Deployments' },
+  { num: 100, suffix: '%', label: 'Student-Driven' },
 ]
 
 export default function Hero() {
   const containerRef = useRef(null)
+  const counterRefs = useRef([])
 
   useGSAP(() => {
-    gsap.set('.hero-element', { y: 40, opacity: 0, filter: 'blur(8px)' })
-    gsap.set('.word', { y: 30, opacity: 0, filter: 'blur(6px)', rotateX: -15 })
+    // ─── Initial States with Optical Blur & Subtle Physical Offsets ───
+    gsap.set('.main-nav-header', { y: -24, opacity: 0, filter: 'blur(8px)' })
+    gsap.set('.hero-desc', { y: 18, opacity: 0, filter: 'blur(8px)' })
+    gsap.set('.hero-cta', {
+      y: 26,
+      opacity: 0,
+      scale: 0.92,
+      filter: 'blur(10px)',
+    })
+    gsap.set('.hero-stat-card', {
+      y: 32,
+      opacity: 0,
+      scale: 0.88,
+      filter: 'blur(12px)',
+    })
+    gsap.set('.hero-scroll', { y: 15, opacity: 0, filter: 'blur(6px)' })
 
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-    tl.to('.hero-badge', {
+    // Step 1: Particles gather first over ~1.6s
+    // Step 2: Navbar glides down right as headline particles settle
+    tl.to('.main-nav-header', {
       y: 0,
       opacity: 1,
       filter: 'blur(0px)',
-      duration: 0.9,
-      delay: 0.15,
+      duration: 0.7,
+      delay: 1.75,
     })
-      .to(
-        '.word',
-        {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          rotateX: 0,
-          duration: 0.9,
-          stagger: 0.04,
-        },
-        '-=0.6'
-      )
+      // Step 3: Tagline fades and clears blur
       .to(
         '.hero-desc',
         {
           y: 0,
           opacity: 1,
           filter: 'blur(0px)',
-          duration: 0.9,
+          duration: 0.65,
         },
-        '-=0.7'
+        '-=0.4'
       )
+      // Step 4: CTA buttons spring into focus with tactile bloom
       .to(
         '.hero-cta',
         {
           y: 0,
           opacity: 1,
+          scale: 1,
           filter: 'blur(0px)',
+          duration: 0.75,
+          stagger: 0.1,
+          ease: 'back.out(1.18)',
+        },
+        '-=0.3'
+      )
+      // Radiant energy bloom on primary CTA button
+      .fromTo(
+        '.hero-cta-primary',
+        {
+          boxShadow: '0 0 35px rgba(56, 189, 248, 0.65), 0 4px 20px rgba(255, 255, 255, 0.3)',
+        },
+        {
+          boxShadow: '0 4px 24px rgba(255, 255, 255, 0.2)',
+          duration: 0.85,
+          ease: 'power2.out',
+        },
+        '<0.1'
+      )
+      // Step 5: Stat cards cascade in with spring overshoot
+      .to(
+        '.hero-stat-card',
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          stagger: 0.08,
+          ease: 'back.out(1.25)',
+        },
+        '-=0.45'
+      )
+      // Flash card borders with electric cyan glow that resolves to sleek dark glass
+      .fromTo(
+        '.hero-stat-card',
+        {
+          borderColor: 'rgba(56, 189, 248, 0.55)',
+          boxShadow: '0 0 20px rgba(56, 189, 248, 0.2)',
+        },
+        {
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 0 0px rgba(0, 0, 0, 0)',
           duration: 0.9,
           stagger: 0.08,
+          ease: 'power2.out',
         },
-        '-=0.8'
+        '<'
       )
-      .to(
-        '.hero-stats',
+
+    // Synchronized dynamic rolling counters for each stat card
+    STATS.forEach((stat, i) => {
+      const el = counterRefs.current[i]
+      if (!el) return
+      const obj = { val: 0 }
+      tl.to(
+        obj,
         {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 0.9,
+          val: stat.num,
+          duration: 1.25,
+          ease: 'power2.out',
+          onUpdate: () => {
+            el.textContent = `${Math.round(obj.val)}${stat.suffix}`
+          },
         },
-        '-=0.8'
+        `<${0.08 * i}`
       )
-      .to(
-        '.hero-scroll',
-        {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          duration: 0.9,
-        },
-        '-=0.8'
-      )
-  }, { scope: containerRef })
+    })
+
+    // Step 6: Scroll cue appears softly
+    tl.to(
+      '.hero-scroll',
+      {
+        y: 0,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.6,
+      },
+      '-=0.4'
+    )
+  })
 
   const handleNav = (e, href) => {
     e.preventDefault()
@@ -94,62 +156,78 @@ export default function Hero() {
     <section
       id="home"
       ref={containerRef}
-      className="relative flex flex-col items-center justify-center text-center min-h-[100dvh] pt-28 pb-12 sm:pt-36 sm:pb-16 md:pt-40 md:pb-20 px-4 sm:px-6 md:px-8 scroll-mt-24"
+      className="relative flex flex-col items-center justify-start sm:justify-center text-center min-h-[100dvh] pt-24 pb-8 sm:pt-24 sm:pb-12 md:pt-28 md:pb-16 px-4 sm:px-6 md:px-8 scroll-mt-24 overflow-hidden"
       style={{ zIndex: 1 }}
     >
       {/* Subtle Ethereal Ambient Radial Glows */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden opacity-30">
-        <div className="w-[320px] sm:w-[500px] md:w-[700px] h-[320px] sm:h-[500px] md:h-[700px] bg-sky-500/25 rounded-full blur-[100px] sm:blur-[140px]" />
-        <div className="w-[240px] sm:w-[380px] md:w-[500px] h-[240px] sm:h-[380px] md:h-[500px] bg-indigo-500/20 rounded-full blur-[90px] sm:blur-[120px] translate-y-20" />
-      </div>
-
-      {/* Floating Community Badge */}
-      <div className="hero-element hero-badge mb-6 sm:mb-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-sky-400/20 backdrop-blur-xl shadow-[0_0_20px_rgba(56,189,248,0.15)]">
-          <Sparkle weight="fill" className="w-3.5 h-3.5 text-sky-400" />
-          <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold text-sky-300">
-            Official Cloud & DevOps Student Club
-          </span>
-        </div>
-      </div>
-
-      {/* Fluid Dynamic Headline */}
-      <h1
-        className="font-extrabold leading-[1.08] tracking-tight max-w-4xl text-white mb-6 sm:mb-8"
-        style={{ fontSize: 'clamp(2.1rem, 6.2vw, 5rem)' }}
+      <div
+        className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden opacity-30"
+        style={{ transform: 'translateZ(0)' }}
       >
-        {HEADLINE_WORDS.map((word, i) => {
-          const isAccent = word === 'Cloud.' || word === 'Future.'
-          return (
-            <span
-              key={i}
-              className={`word inline-block mr-[0.22em] ${isAccent
-                ? 'text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-sky-400 to-sky-600 drop-shadow-[0_0_25px_rgba(56,189,248,0.35)]'
-                : 'text-white'
-                }`}
-            >
-              {word}
-            </span>
-          )
-        })}
-      </h1>
+        <div
+          className="w-[320px] sm:w-[500px] md:w-[700px] h-[320px] sm:h-[500px] md:h-[700px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%)',
+          }}
+        />
+        <div
+          className="w-[240px] sm:w-[380px] md:w-[500px] h-[240px] sm:h-[380px] md:h-[500px] rounded-full translate-y-20"
+          style={{
+            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0.05) 45%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      {/* Subtle Text Contrast Shield: ensures blue & white particles pop against any background elements */}
+      <div
+        className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden"
+        style={{ zIndex: 0 }}
+      >
+        <div
+          className="w-[90vw] max-w-4xl h-[340px] rounded-full opacity-65"
+          style={{
+            background: 'radial-gradient(ellipse at center, rgba(3, 8, 20, 0.72) 0%, rgba(3, 8, 20, 0.3) 55%, transparent 75%)',
+            transform: 'translateY(10px)',
+          }}
+        />
+      </div>
+
+      {/* Fluid Dynamic Particle Headline with whole-screen scatter & crisp white/blue colors */}
+      <ParticleText
+        text={"Architect the Cloud.\nDeploy the Future."}
+        particleSize={2.6}
+        density={4}
+        color="#ffffff"
+        highlightColor="#0088ff"
+        gatherDuration={1600}
+        stagger={420}
+        pointerRepel={45}
+        repelRadius={120}
+        idleDrift={0.8}
+        trigger="mount"
+        fontSize="clamp(1.65rem, 5.8vw, 4.4rem)"
+        fontWeight={800}
+        fontFamily="'Plus Jakarta Sans', sans-serif"
+        glow
+        className="w-full max-w-4xl mx-auto mt-2 sm:mt-0 mb-3 sm:mb-5"
+      />
 
       {/* Tagline */}
-      <p className="hero-element hero-desc max-w-2xl text-base sm:text-lg md:text-xl leading-relaxed text-slate-300 font-normal mb-8 sm:mb-10 px-2">
+      <p className="hero-desc max-w-2xl text-xs sm:text-base md:text-lg leading-relaxed text-slate-300 font-normal mb-5 sm:mb-7 px-3 sm:px-2">
         Where student engineers build, deploy, and scale — real cloud infrastructure, real CI/CD pipelines, real community.
       </p>
 
-      {/* Responsive CTAs */}
-      <div className="flex flex-col sm:flex-row items-center gap-3.5 sm:gap-5 w-full sm:w-auto mb-14 sm:mb-18">
+      {/* Responsive CTAs (Touch & Mobile Friendly) */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto mb-5 sm:mb-8 px-4 sm:px-0">
         {/* Primary CTA */}
         <a
           href="#events"
           onClick={(e) => handleNav(e, '#events')}
-          className="hero-element hero-cta group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 pl-6 pr-2 py-2 rounded-full font-bold text-sm sm:text-base text-slate-950 bg-gradient-to-r from-white via-slate-100 to-sky-100 shadow-[0_4px_24px_rgba(255,255,255,0.2)] hover:shadow-[0_4px_30px_rgba(56,189,248,0.4)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          className="hero-cta hero-cta-primary group relative w-full sm:w-auto max-w-[270px] sm:max-w-none inline-flex items-center justify-center gap-3 pl-5 pr-2 py-2 rounded-full font-bold text-xs sm:text-sm md:text-base text-slate-950 bg-gradient-to-r from-white via-slate-100 to-sky-100 shadow-[0_4px_24px_rgba(255,255,255,0.2)] hover:shadow-[0_4px_30px_rgba(56,189,248,0.4)] transition-[box-shadow,transform] duration-300 hover:scale-[1.03] active:scale-[0.98]"
         >
           <span>Explore Workshops</span>
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-950/10 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-            <ArrowUpRight weight="bold" className="w-4 h-4 text-slate-950" />
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/10 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+            <ArrowUpRight weight="bold" className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950" />
           </div>
         </a>
 
@@ -157,26 +235,29 @@ export default function Hero() {
         <a
           href="#about"
           onClick={(e) => handleNav(e, '#about')}
-          className="hero-element hero-cta group w-full sm:w-auto inline-flex items-center justify-center p-0.5 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300"
+          className="hero-cta hero-cta-secondary group w-full sm:w-auto max-w-[270px] sm:max-w-none inline-flex items-center justify-center p-0.5 rounded-full bg-white/10 hover:bg-white/20 transition-[background-color,transform] duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <div className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#050B18]/80 text-white font-semibold text-sm sm:text-base border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] group-hover:border-sky-400/30 transition-all">
+          <div className="w-full sm:w-auto inline-flex items-center justify-center px-5 sm:px-6 py-2 sm:py-2.5 rounded-full bg-[#050B18]/80 text-white font-semibold text-xs sm:text-sm md:text-base border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] group-hover:border-sky-400/40 group-hover:bg-[#071126] transition-all">
             About the Club
           </div>
         </a>
       </div>
 
       {/* Responsive Stats Grid */}
-      <div className="hero-element hero-stats grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full max-w-4xl px-2">
-        {STATS.map(({ value, label }) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4 w-full max-w-3xl px-3 sm:px-2 mb-4 sm:mb-6">
+        {STATS.map(({ suffix, label }, index) => (
           <div
             key={label}
-            className="p-1 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl transition-all duration-300 hover:border-sky-400/30 hover:scale-[1.02]"
+            className="hero-stat-card p-1 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl transition-[border-color,box-shadow,transform] duration-300 hover:border-sky-400/40 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(56,189,248,0.12)] will-change-transform"
           >
-            <div className="flex flex-col items-center justify-center gap-1 py-4 sm:py-5 px-3 rounded-[calc(1rem-2px)] bg-[#050505]/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-              <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.12)]">
-                {value}
+            <div className="flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-3 sm:py-4 px-2 sm:px-3 rounded-[calc(1rem-2px)] bg-[#050505]/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+              <span
+                ref={(el) => (counterRefs.current[index] = el)}
+                className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.12)] font-mono tabular-nums"
+              >
+                0{suffix}
               </span>
-              <span className="text-[10px] sm:text-xs tracking-wider uppercase font-semibold text-slate-400 text-center">
+              <span className="text-[9px] sm:text-[11px] tracking-wider uppercase font-semibold text-slate-400 text-center">
                 {label}
               </span>
             </div>
@@ -185,7 +266,7 @@ export default function Hero() {
       </div>
 
       {/* Interactive Scroll Cue */}
-      <div className="hero-element hero-scroll mt-10 sm:mt-14">
+      <div className="hero-scroll">
         <ScrollCue />
       </div>
     </section>

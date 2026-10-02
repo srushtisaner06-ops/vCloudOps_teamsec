@@ -1,22 +1,24 @@
 # ☁️ vCloudOps — Official Cloud & DevOps Community Portal
 
-> **"Architect The Cloud. Command The Future."**  
-> Where student engineers build, deploy, and scale — real infrastructure, real pipelines, real community.
+> **"Architect The Cloud. Deploy The Future."**  
+> Where student engineers build, deploy, and scale — real cloud infrastructure, real CI/CD pipelines, real community.
 
 [![React](https://img.shields.io/badge/React-19.2.8-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.3.0-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3.3-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-13.4.4-FF0055?style=flat-square&logo=framer&logoColor=white)](https://www.framer.com/motion/)
+[![GSAP](https://img.shields.io/badge/GSAP-3.15.2-0AE448?style=flat-square&logo=greensock&logoColor=white)](https://greensock.com/)
+[![Lenis](https://img.shields.io/badge/Lenis-1.3.1-black?style=flat-square)](https://lenis.darkroom.engineering/)
+[![Phosphor Icons](https://img.shields.io/badge/Phosphor_Icons-2.1.10-6366F1?style=flat-square)](https://phosphoricons.com/)
 [![Oxlint](https://img.shields.io/badge/Oxlint-1.81.0-F59E0B?style=flat-square&logo=rust&logoColor=white)](https://oxc.rs/)
-[![Status](https://img.shields.io/badge/Branch-feature%2Fhome--screen-38BDF8?style=flat-square)](https://github.com/CodeBySatyajit/vCloudOps)
+[![Repository](https://img.shields.io/badge/GitHub-vCloudOps--x--AWS-181717?style=flat-square&logo=github)](https://github.com/vCloudOps-x-AWS/vCloudOps)
 
 ---
 
 ## 📖 Overview
 
-**vCloudOps** is a modern, high-performance community portal engineered for an official student-led Cloud Computing and DevOps club. The platform serves as the central hub for workshops, hackathons, student-led open-source cloud projects, and real-world infrastructure deployments.
+**vCloudOps** is a modern, high-performance community portal engineered for the official student-led Cloud Computing and DevOps community. The platform serves as the central nexus for hands-on bootcamps, workshops, hackathons, cloud labs, and live infrastructure deployments.
 
-The frontend is designed with an **Apple VisionOS & GDG-inspired frosted glass aesthetic**, featuring an immersive SVG cosmic universe with interactive scroll-driven parallax physics, glassmorphic UI components, and accessible motion controls.
+The application is built on an **Ethereal Glass** architectural design system with an interactive cosmic space theme. It combines canvas particle physics, buttery 60+ FPS Lenis smooth scrolling, non-linear GSAP timelines, and tactile responsive design across desktop and mobile devices.
 
 ---
 
@@ -26,105 +28,62 @@ The frontend is designed with an **Apple VisionOS & GDG-inspired frosted glass a
 | :--- | :--- | :--- | :--- |
 | **Frontend Core** | **React** | `^19.2.8` | Component-based UI library utilizing modern hooks, concurrent rendering, and clean functional architecture. |
 | **DOM Engine** | **ReactDOM** | `^19.2.8` | React DOM renderer supporting React 19 fiber reconciler features. |
-| **Build System** | **Vite** | `^8.3.0` | Ultra-fast build engine and HMR (Hot Module Replacement) development server. |
-| **Vite Plugin** | **@vitejs/plugin-react** | `^6.1.1` | Fast Refresh and Babel/SWC JSX transformation for React under Vite. |
-| **Styling & Design**| **Tailwind CSS** | `^4.3.3` | Next-generation engine with `@tailwindcss/vite` integration, utility classes, and reactive dark styling. |
-| **Animation Engine**| **Framer Motion** | `^13.4.4` | Production-ready motion library powering spring physics, layout animations (`layoutId`), staggered reveals, and scroll parallax hooks (`useScroll`, `useTransform`, `useSpring`). |
-| **Linter & Quality**| **Oxlint** | `^1.81.0` | High-speed Rust-based linter enforcing clean React patterns and syntax hygiene. |
-| **Asset Processing**| **Sharp** | `^0.35.4` | High-performance Node.js image processing library used in scripts for automated background removal and image optimization (`scripts/remove-bg.mjs`). |
-| **Typography** | **Space Grotesk & JetBrains Mono** | Google Fonts | Space Grotesk (`var(--font-main)`) for futuristic headings and JetBrains Mono (`var(--font-mono)`) for engineering & terminal aesthetics. |
+| **Build System** | **Vite** | `^8.3.0` | Ultra-fast build engine with Hot Module Replacement configured for port 3000. |
+| **Styling Engine**| **Tailwind CSS** | `^4.3.3` | Next-generation Tailwind v4 engine using `@tailwindcss/vite` integration and custom tokens. |
+| **Primary Animation**| **GSAP & @gsap/react** | `^3.15.2` / `^2.1.2` | Core cinematic timeline animation engine, ScrollTrigger kinetic reveals, and number count-up interpolation. |
+| **Smooth Scrolling**| **Lenis** | `^1.3.1` | Hardware-accelerated inertial smooth scrolling synchronized with the GSAP ticker and lag smoothing. |
+| **Parallax Engine**| **Framer Motion** | `^13.4.4` | Powering scroll-linked celestial transforms (`useScroll`, `useTransform`) in the cosmic background. |
+| **Particle Physics**| **HTML5 Canvas 2D** | Native | Custom GPU-accelerated particle system with pre-rendered texture blitting, 360° scatter trajectories, and cursor repulsion. |
+| **Iconography** | **Phosphor Icons** | `^2.1.10` | High-precision linework iconography (`@phosphor-icons/react`) tailored for modern developer interfaces. |
+| **Linter & Quality**| **Oxlint** | `^1.81.0` | High-speed Rust-based linter enforcing clean React patterns and zero-warning syntax hygiene. |
+| **WebGL Cursor Engine**| **OGL** | `^1.0.11` | Minimal, high-performance WebGL library rendering custom vertex & fragment shaders for the global glowing cursor trail. |
+| **Typography** | **Plus Jakarta Sans & Space Grotesk** | `@fontsource` / Google Fonts | Modern geometric grotesk typography for razor-sharp legibility and futuristic headings. |
 
 ---
 
-## 🤖 Agentic Skills & MCP Servers
+## 🌟 Key Features & Architecture
 
-The project development and pair programming workflow is powered by an agentic AI ecosystem utilizing specialized **Skills** and **Model Context Protocol (MCP) Servers**:
+### 1. Interactive Particle Headline (`ParticleText.jsx`)
+- **Fluid Gathering Animation**: Text forms organically from a 360° screen-wide particle scatter using parametric trajectory curves.
+- **Color Segmentation**: Seamlessly highlights words—pure white (`#FFFFFF`) for `"Architect the"` / `"Deploy the"` and vibrant electric blue (`#0088FF`) for `"Cloud."` / `"Future."`.
+- **Mobile Responsive Layout**: Automatically reformats to a spacious 4-line layout on viewports under 640px for maximum readability.
+- **GPU-Accelerated Blitting**: Employs pre-rendered canvas sprites (`ctx.drawImage`) instead of runtime `ctx.shadowBlur` for solid 60+ FPS rendering.
+- **Cursor Repulsion & Brownian Drift**: Multi-harmonic organic drift with interactive spring-damped pointer repulsion.
 
-### 🔌 MCP Servers (Model Context Protocol)
+### 2. Ethereal Glass Hero Section (`Hero.jsx`)
+- **Multi-Stage Entrance Timeline**: Orchestrated arrival sequence (particles gather → navbar slides down → tagline clears blur → CTAs spring in → stats cards cascade).
+- **Radiant Energy Bloom**: Primary CTA button receives a soft cyan glow pulse (`rgba(56, 189, 248, 0.65)`).
+- **Tactile Spring Physics**: Stats cards arrive with `back.out(1.25)` overshoot and neon border flash.
+- **Dynamic Rolling Counters**: Live animated number counters (`0 -> 40+`, `0 -> 12+`, `0 -> 6+`, `0 -> 100%`) configured with monospace `tabular-nums`.
 
-- **`gemini-api_gemini-api-docs`**:
-  - **Tools**: `gemini_search_docs`, `gemini_get_doc`
-  - **Role**: Provides real-time, upstream search and retrieval of Google Gemini API & SDK documentation, implementation guides, and type references directly inside the editor for rapid integration and verification.
+### 3. Floating Capsule Navbar (`Navbar.jsx`)
+- **Detached Glass Pill**: Frosted glass backdrop blur (`backdrop-blur-xl`) with sleek white/10 borders.
+- **Active Section Tracking**: Throttled with `requestAnimationFrame` to ensure zero scroll lag.
+- **Mobile Drawer**: Responsive glass drawer navigation with smooth slide animations.
 
-### 🧠 Agentic Skills
+### 4. Mission Briefing & Bento Grid (`AboutTeaser.jsx`)
+- **Asymmetrical Bento Grid**: Double-bezel (`Doppelrand`) cards highlighting Cloud Architecture, CI/CD Pipelines, Containers & Kubernetes, and DevSecOps.
+- **ScrollTrigger Kinetics**: Staggered scroll reveals with smooth blur clearing.
 
-- **`generative_ui`**:
-  - Enables rich interactive component generation, UI mockups, inline artifact previews, and visual iteration.
-- **`agy-customizations`**:
-  - Manages agent configurations, prompt rules, workspace hooks, skill loading priorities, and environment definitions.
-- **`antigravity-guide`**:
-  - Provides workflow orchestration, keybinding guidance, and project CLI standards for the Antigravity workspace.
-- **Autonomous Engineering Skills**:
-  - Automated code review, static analysis, accessibility validation (`prefers-reduced-motion`), and build verification.
+### 5. Workshops & Events Showcase (`EventsSection.jsx`)
+- **Categorized Tabs**: Filter workshops by *All*, *Workshops*, *Bootcamps*, and *Labs*.
+- **Interactive Registration Modal**: Full event modal with quick registration form, speaker tags, and prerequisites.
 
----
+### 6. Core Leadership & Team (`TeamSection.jsx`)
+- **Double-Bezel Member Cards**: Showcases leads and mentors with roles, tech tags, and direct GitHub/LinkedIn links.
 
-## 📊 Development Status: Completed vs. Remaining
+### 7. Community Hub & FAQ (`CommunitySection.jsx`)
+- **Interactive FAQ Accordion**: Expandable Q&A accordion with smooth GSAP height transitions.
+- **Community Onboarding**: Direct links for Discord, GitHub, and WhatsApp community groups.
 
-### ✅ Completed Work (Current Phase — Home Screen & Core UI)
+### 8. Cosmic Parallax Universe (`SpaceBackground.jsx`)
+- **Multi-Layered Planetary Field**: Layered SVGs including Moon, Ocean Exoplanet, Ringed Titan, Dwarf planets, and twinkling starfields.
+- **Smooth Parallax Coupling**: Synchronized with Lenis smooth scroll for deep celestial depth perception.
 
-- [x] **Project Scaffolding & Build Configuration**:
-  - Configured Vite 8 with React 19 and `@tailwindcss/vite` 4.3.3.
-  - Setup Oxlint configuration (`.oxlintrc.json`) and clean build pipeline.
-- [x] **Apple-Inspired Floating Capsule Navbar (`src/components/Navbar.jsx`)**:
-  - Frosted glass backdrop blur (`backdrop-filter: blur(24px) saturate(190%)`).
-  - Animated sliding glass pill hover effect with Framer Motion `layoutId`.
-  - Active section indicator spring dot.
-  - Specular drop-shadow brand logo integration (`/logo.png`).
-  - Full-screen responsive iOS-style glass drawer for mobile devices with body-scroll locking.
-- [x] **Hero Section (`src/components/Hero.jsx`)**:
-  - Staggered word-by-word entrance animation ("*Architect The Cloud. Command The Future.*").
-  - Monospace animated community badge (`Official Cloud & DevOps Club`).
-  - Glowing pulse Call-to-Action buttons ("*Explore Events*" and "*About the Club*").
-  - Responsive community metrics counter strip (40+ Members, Events, Projects, Years).
-- [x] **Mission Statement & About Teaser (`src/components/AboutTeaser.jsx`)**:
-  - Viewport-triggered word-by-word text reveal with monospace styling.
-  - Domain highlight badges: Cloud Architecture, CI/CD Automation, Containers & Kubernetes, DevSecOps, Observability, and Hackathons.
-- [x] **Cosmic Parallax Space Background (`src/components/SpaceBackground.jsx`)**:
-  - Multi-layered vector space theme with deep midnight navy void (`#050B18`).
-  - Stepped pixel-cratered icy lunar planet (top-right).
-  - Continental ocean exoplanet with orbiting mini-satellite moon (bottom-left).
-  - Mid-distance ringed gas giant.
-  - 5 floating dwarf planets and moons (Amethyst, Emerald ringed, Ruby lava, Cyan ice, and Golden pearl).
-  - Twinkling pixel-art cross stars, celestial field, and dynamic shooting meteor trails.
-  - Smooth spring-interpolated scroll parallax (`useSpring(useScroll())`).
-- [x] **Alternative Animated Cloud Background (`src/components/CloudBackground.jsx`)**:
-  - Procedural cloud-layering background system with adjustable drift speeds.
-- [x] **Accessibility & Motion Optimization**:
-  - Custom `useReducedMotion` hook respecting user system accessibility preferences (`prefers-reduced-motion`).
-  - Optimized scroll listeners (`useScrolled`).
-  - Bouncing interactive scroll indicator (`ScrollCue.jsx`).
-- [x] **Automated Asset Pipelines (`scripts/remove-bg.mjs`)**:
-  - Script using `sharp` to strip white backgrounds and generate transparent PNG assets for logos.
-
----
-
-### ⏳ Remaining Work (Upcoming Roadmap & Modules)
-
-- [ ] **Events & Workshops Showcase (`#events`)**:
-  - [ ] Interactive event cards for upcoming cloud bootcamps, AWS/GCP certification study jams, and hackathons.
-  - [ ] Modal dialogue for event RSVPs and speaker info.
-  - [ ] Past events archive with photo galleries and slide decks.
-- [ ] **Core Team & Contributors Section (`#team`)**:
-  - [ ] Member profile cards featuring leads, coordinators, and mentors.
-  - [ ] Social badges (GitHub, LinkedIn, Portfolio links).
-  - [ ] Dynamic badge representation for DevOps, Cloud, and Web team roles.
-- [ ] **Community Onboarding & Contact Section (`#contact`)**:
-  - [ ] Interactive community join form (Discord, Slack, WhatsApp community links).
-  - [ ] Contact/inquiry form with validation.
-  - [ ] Newsletter subscription for club updates.
-- [ ] **Projects & Labs Showcase**:
-  - [ ] Interactive portfolio displaying open-source cloud architectures, Terraform modules, and Kubernetes deployments created by students.
-- [ ] **Backend / CMS & Dynamic Data**:
-  - [ ] Real-time member count and live RSVP counters via Firebase / Supabase / AWS Lambda.
-  - [ ] Markdown or Headless CMS integration for club announcements.
-- [ ] **Multi-Page Routing**:
-  - [ ] Optional client-side routing (`react-router-dom`) for dedicated `/events`, `/team`, and `/blog` routes.
-- [ ] **Theme Switcher**:
-  - [ ] Live toggle switch between the Cosmic Space theme and Daylight Cloud theme.
-- [ ] **CI/CD & Cloud Deployment Pipeline**:
-  - [ ] GitHub Actions workflow for automated testing, linting (`npm run lint`), and build checks (`npm run build`).
-  - [ ] Production deployment to Vercel, Netlify, or AWS (S3 + CloudFront).
+### 9. Interactive Shader Glow Cursor (`GlowCursor.jsx`)
+- **Custom OGL Shaders**: Full-viewport WebGL cursor trail with cyan/violet dual-color gradient, pulse dynamics, and film grain noise.
+- **Deep Sleep Optimization**: Automatically suspends the WebGL loop when the cursor is idle (zero CPU & GPU usage).
+- **Non-Obtrusive Overlay**: `pointer-events: none` overlay ensures 100% responsiveness on all underlying buttons, links, and text.
 
 ---
 
@@ -133,34 +92,41 @@ The project development and pair programming workflow is powered by an agentic A
 ```text
 vCloudOps/
 ├── public/
-│   ├── clouds/               # High-res cloud imagery for atmospheric backdrop
-│   ├── favicon.svg           # Project favicon
-│   ├── icons.svg             # Community SVG sprite icons
-│   └── logo.png              # Official vCloudOps high-resolution logo
-├── scripts/
-│   └── remove-bg.mjs         # Sharp utility script for background transparency
+│   ├── Logo/                 # Official brand icons and marks (PNG/SVG)
+│   ├── clouds/               # Atmospheric cloud imagery
+│   ├── favicon.svg           # Site favicon
+│   └── logo-mark.png         # Legacy brand icon
 ├── src/
-│   ├── assets/               # Local static graphics and SVGs
 │   ├── components/
-│   │   ├── AboutTeaser.jsx   # Scroll-revealed mission briefing & domain badges
+│   │   ├── AboutTeaser.jsx   # Mission briefing & asymmetrical bento grid
 │   │   ├── CloudBackground.jsx # Alternative procedural cloud backdrop
-│   │   ├── Hero.jsx          # Primary hero landing with headline & stats
-│   │   ├── Navbar.jsx        # Apple VisionOS frosted glass floating navbar
-│   │   ├── ScrollCue.jsx     # Scroll guidance indicator with bouncing arrow
-│   │   └── SpaceBackground.jsx # Cosmic theme with SVG planets & parallax physics
+│   │   ├── CommunitySection.jsx# FAQ accordion & community onboarding
+│   │   ├── EventsSection.jsx # Workshop cards & registration modal
+│   │   ├── Footer.jsx        # Dual-tier footer with navigation & social links
+│   │   ├── GlowCursor.jsx    # Hardware-accelerated OGL WebGL glow cursor
+│   │   ├── GlowCursor.css    # Cursor canvas layering and viewport styling
+│   │   ├── Hero.jsx          # Hero section with CTAs & live rolling stats
+│   │   ├── Navbar.jsx        # Floating capsule island navigation
+│   │   ├── ParticleText.jsx  # 2D canvas particle physics headline
+│   │   ├── ParticleText.css  # Particle text layout & responsive anchors
+│   │   ├── ScrollCue.jsx     # Animated scroll guidance indicator
+│   │   ├── SpaceBackground.jsx# Parallax cosmic vector background
+│   │   └── TeamSection.jsx   # Core leadership cards with social badges
 │   ├── hooks/
-│   │   ├── useReducedMotion.js # Motion accessibility hook
-│   │   └── useScrolled.js    # Window scroll position threshold hook
+│   │   ├── useReducedMotion.js # Accessibility hook for motion preferences
+│   │   └── useScrolled.js    # Scroll threshold detection hook
 │   ├── pages/
-│   │   └── Home.jsx          # Root page composing background, nav, hero, and teaser
-│   ├── App.css               # Component utility rules
-│   ├── App.jsx               # Application entry wrapper
-│   ├── index.css             # Tailwind imports, custom typography, & keyframes
+│   │   └── Home.jsx          # Primary single-page composition
+│   ├── utils/
+│   │   └── smoothScroll.js   # Lenis initialization & GSAP ticker binding
+│   ├── App.css               # Global utility rules
+│   ├── App.jsx               # Root application component
+│   ├── index.css             # Tailwind v4 directives, custom properties, & keyframes
 │   └── main.jsx              # DOM entry point
 ├── .oxlintrc.json            # Oxlint configuration
-├── index.html                # HTML entry template with meta tags
-├── package.json              # Dependencies and run scripts
-├── vite.config.js            # Vite build configuration with Tailwind plugin
+├── index.html                # HTML entry template with meta tags & SEO
+├── package.json              # Project dependencies & scripts
+├── vite.config.js            # Vite configuration (port 3000, host enabled)
 └── README.md                 # Complete project documentation
 ```
 
@@ -177,13 +143,13 @@ vCloudOps/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/CodeBySatyajit/vCloudOps.git
+   git clone https://github.com/vCloudOps-x-AWS/vCloudOps.git
    cd vCloudOps
    ```
 
-2. **Checkout the active feature branch**:
+2. **Checkout the active branch**:
    ```bash
-   git checkout feature/home-screen
+   git checkout sanskar
    ```
 
 3. **Install dependencies**:
@@ -193,15 +159,15 @@ vCloudOps/
 
 ### Running the Development Server
 
-Start Vite with Hot Module Replacement (HMR):
+Start Vite on port 3000 with Hot Module Replacement (HMR):
 ```bash
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Building for Production
 
-Compile production-optimized static assets to the `dist/` directory:
+Compile optimized static assets to the `dist/` directory:
 ```bash
 npm run build
 ```
@@ -211,18 +177,11 @@ Preview the production build locally:
 npm run preview
 ```
 
-### Running Code Quality & Lint Checks
+### Code Quality & Lint Checks
 
 Run the high-speed Rust-based linter:
 ```bash
 npm run lint
-```
-
-### Asset Background Stripping Script
-
-Run the automated Sharp script to process transparent assets:
-```bash
-node scripts/remove-bg.mjs
 ```
 
 ---
@@ -231,17 +190,18 @@ node scripts/remove-bg.mjs
 
 1. **Branching Strategy**:
    - `main`: Production-ready code.
-   - `feature/<feature-name>`: Active feature branches (e.g., `feature/home-screen`, `feature/events-section`).
+   - `<feature-or-contributor-branch>`: Feature and development branches.
 2. **Commit Standard**: Follow [Conventional Commits](https://www.conventionalcommits.org/):
    - `feat:` for new capabilities.
    - `fix:` for bug fixes.
+   - `perf:` for performance optimizations.
    - `style:` for UI/CSS modifications.
    - `docs:` for documentation updates.
-3. **Verification**: Always run `npm run lint` and `npm run build` prior to submitting a pull request.
+3. **Verification**: Always run `npm run lint` and verify build correctness prior to opening a pull request.
 
 ---
 
 ## 📄 License
 
-This project is maintained for the **vCloudOps** Community.  
-Built by the community, for the community.
+Maintained for the **vCloudOps** Community.  
+Built by students, for students.

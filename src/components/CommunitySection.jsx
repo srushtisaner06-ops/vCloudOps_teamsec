@@ -37,19 +37,17 @@ export default function CommunitySection() {
 
   useGSAP(() => {
     gsap.from('.community-cta-box', {
-      y: 40,
+      y: 35,
       opacity: 0,
-      filter: 'blur(8px)',
-      duration: 0.9,
+      duration: 0.85,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.community-cta-box', start: 'top 85%' },
     })
 
     gsap.from('.faq-container', {
-      y: 35,
+      y: 30,
       opacity: 0,
-      filter: 'blur(8px)',
-      duration: 0.8,
+      duration: 0.75,
       ease: 'power3.out',
       scrollTrigger: { trigger: '.faq-container', start: 'top 85%' },
     })

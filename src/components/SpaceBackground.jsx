@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -28,7 +28,8 @@ function TopRightMoon() {
         viewBox="0 0 400 400"
         className="w-44 h-44 sm:w-64 sm:h-64 md:w-[340px] md:h-[340px] lg:w-[420px] lg:h-[420px]"
         style={{
-          filter: 'drop-shadow(0 0 28px rgba(125, 211, 252, 0.3))',
+          filter: 'drop-shadow(0 0 18px rgba(125, 211, 252, 0.22))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -146,7 +147,8 @@ function BottomLeftPlanet() {
           viewBox="0 0 360 360"
           className="w-44 h-44 sm:w-60 sm:h-60 md:w-[320px] md:h-[320px] lg:w-[380px] lg:h-[380px]"
           style={{
-            filter: 'drop-shadow(0 0 28px rgba(56, 189, 248, 0.32))',
+            filter: 'drop-shadow(0 0 18px rgba(56, 189, 248, 0.22))',
+            transform: 'translateZ(0)',
           }}
         >
           <defs>
@@ -278,7 +280,8 @@ function BottomLeftPlanet() {
             viewBox="0 0 80 80"
             className="w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22"
             style={{
-              filter: 'drop-shadow(0 0 16px rgba(99, 102, 241, 0.55)) drop-shadow(0 0 6px rgba(129, 140, 248, 0.4))',
+              filter: 'drop-shadow(0 0 10px rgba(99, 102, 241, 0.45))',
+              transform: 'translateZ(0)',
             }}
           >
             <defs>
@@ -325,7 +328,8 @@ function RingedPlanet() {
         viewBox="0 0 180 120"
         className="w-24 h-16 sm:w-28 sm:h-20 md:w-32 md:h-24 opacity-85"
         style={{
-          filter: 'drop-shadow(0 0 20px rgba(56, 189, 248, 0.35))',
+          filter: 'drop-shadow(0 0 12px rgba(56, 189, 248, 0.22))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -400,7 +404,8 @@ function PurpleDwarfPlanet() {
         viewBox="0 0 80 80"
         className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
         style={{
-          filter: 'drop-shadow(0 0 16px rgba(168, 85, 247, 0.45)) drop-shadow(0 0 6px rgba(192, 132, 252, 0.5))',
+          filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.4))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -447,7 +452,8 @@ function TealRingedPlanet() {
         viewBox="0 0 120 90"
         className="w-16 h-12 sm:w-20 sm:h-15 md:w-24 md:h-18"
         style={{
-          filter: 'drop-shadow(0 0 18px rgba(45, 212, 191, 0.4))',
+          filter: 'drop-shadow(0 0 12px rgba(45, 212, 191, 0.3))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -499,7 +505,8 @@ function RubyLavaPlanet() {
         viewBox="0 0 60 60"
         className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11"
         style={{
-          filter: 'drop-shadow(0 0 14px rgba(244, 63, 94, 0.55)) drop-shadow(0 0 5px rgba(251, 113, 133, 0.7))',
+          filter: 'drop-shadow(0 0 10px rgba(244, 63, 94, 0.45))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -543,7 +550,8 @@ function CyanIceMoon() {
         viewBox="0 0 70 70"
         className="w-9 h-9 sm:w-11 sm:h-11 md:w-13 md:h-13"
         style={{
-          filter: 'drop-shadow(0 0 16px rgba(56, 189, 248, 0.55)) drop-shadow(0 0 6px rgba(186, 230, 253, 0.6))',
+          filter: 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.45))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -576,7 +584,7 @@ function CyanIceMoon() {
 function GoldenPearlPlanet() {
   return (
     <div
-      className="absolute top-[26%] right-[16%] sm:right-[22%] pointer-events-none select-none"
+      className="absolute top-[18%] right-[4%] sm:top-[26%] sm:right-[22%] pointer-events-none select-none"
       style={{
         animation: 'floatOrbit5 21s ease-in-out infinite',
         willChange: 'transform',
@@ -587,7 +595,8 @@ function GoldenPearlPlanet() {
         viewBox="0 0 50 50"
         className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9"
         style={{
-          filter: 'drop-shadow(0 0 14px rgba(245, 158, 11, 0.45)) drop-shadow(0 0 4px rgba(253, 230, 138, 0.6))',
+          filter: 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.4))',
+          transform: 'translateZ(0)',
         }}
       >
         <defs>
@@ -645,7 +654,8 @@ function PixelStarField({ count = 130 }) {
           glow: i % 4 === 0,
         })
       } else {
-        // Single and dual pixel dots
+        // Single and dual pixel dots - selectively animate to save SVG repaint overhead
+        const shouldTwinkle = i % 3 === 0
         dots.push({
           id: `pd-${i}`,
           x, y,
@@ -653,6 +663,7 @@ function PixelStarField({ count = 130 }) {
           color: i % 3 === 0 ? '#38BDF8' : i % 5 === 0 ? '#7DD3FC' : '#FFFFFF',
           dur: 1.6 + rand() * 2.8,
           delay: rand() * 3.5,
+          twinkle: shouldTwinkle,
         })
       }
     }
@@ -722,10 +733,14 @@ function PixelStarField({ count = 130 }) {
             cy={`${d.y}%`}
             r={d.r}
             fill={d.color}
-            style={{
-              animation: `twinkleSoft ${d.dur}s ease-in-out ${d.delay}s infinite`,
-              transformOrigin: `${d.x}% ${d.y}%`,
-            }}
+            style={
+              d.twinkle
+                ? {
+                    animation: `twinkleSoft ${d.dur}s ease-in-out ${d.delay}s infinite`,
+                    transformOrigin: `${d.x}% ${d.y}%`,
+                  }
+                : undefined
+            }
           />
         ))}
       </svg>
@@ -759,52 +774,45 @@ function PixelStarField({ count = 130 }) {
 export default function SpaceBackground() {
   const reduced = useReducedMotion()
 
-  /* ── Scroll-Linked Parallax System (GPU-accelerated with Spring Physics) ── */
+  /* ── Scroll-Linked Parallax System (GPU-accelerated via Lenis smooth scroll) ── */
   const { scrollY } = useScroll()
 
-  // Spring physics for buttery-smooth momentum and elastic response
-  const smoothY = useSpring(scrollY, {
-    stiffness: 85,
-    damping: 24,
-    restDelta: 0.001,
-  })
-
   // 1. Top-Right Moon: drifts upward and slightly outwards, with subtle counter-clockwise tilt
-  const moonY = useTransform(smoothY, [0, 1000], [0, -160])
-  const moonX = useTransform(smoothY, [0, 1000], [0, -35])
-  const moonRotate = useTransform(smoothY, [0, 1000], [0, -7])
+  const moonY = useTransform(scrollY, [0, 1000], [0, -160])
+  const moonX = useTransform(scrollY, [0, 1000], [0, -35])
+  const moonRotate = useTransform(scrollY, [0, 1000], [0, -7])
 
   // 2. Bottom-Left Ocean World: rises into view with clockwise spin as you scroll down
-  const oceanPlanetY = useTransform(smoothY, [0, 1000], [0, -130])
-  const oceanPlanetX = useTransform(smoothY, [0, 1000], [0, 40])
-  const oceanPlanetRotate = useTransform(smoothY, [0, 1000], [0, 6])
+  const oceanPlanetY = useTransform(scrollY, [0, 1000], [0, -130])
+  const oceanPlanetX = useTransform(scrollY, [0, 1000], [0, 40])
+  const oceanPlanetRotate = useTransform(scrollY, [0, 1000], [0, 6])
 
   // 3. Ringed Titan: tilts rings and drifts
-  const ringedY = useTransform(smoothY, [0, 1000], [0, -90])
-  const ringedRotate = useTransform(smoothY, [0, 1000], [0, -12])
+  const ringedY = useTransform(scrollY, [0, 1000], [0, -90])
+  const ringedRotate = useTransform(scrollY, [0, 1000], [0, -12])
 
   // 4. Purple Dwarf (Upper Left): swift nearby flyby parallax
-  const purpleY = useTransform(smoothY, [0, 1000], [0, -220])
-  const purpleX = useTransform(smoothY, [0, 1000], [0, -30])
+  const purpleY = useTransform(scrollY, [0, 1000], [0, -220])
+  const purpleX = useTransform(scrollY, [0, 1000], [0, -30])
 
   // 5. Teal Mini-Giant (Mid Left): mid-depth drift
-  const tealY = useTransform(smoothY, [0, 1000], [0, -150])
-  const tealX = useTransform(smoothY, [0, 1000], [0, 25])
-  const tealRotate = useTransform(smoothY, [0, 1000], [0, 10])
+  const tealY = useTransform(scrollY, [0, 1000], [0, -150])
+  const tealX = useTransform(scrollY, [0, 1000], [0, 25])
+  const tealRotate = useTransform(scrollY, [0, 1000], [0, 10])
 
   // 6. Ruby Lava Core (Upper Mid Space): rapid upward celestial pass
-  const rubyY = useTransform(smoothY, [0, 1000], [0, -250])
-  const rubyScale = useTransform(smoothY, [0, 1000], [1, 0.88])
+  const rubyY = useTransform(scrollY, [0, 1000], [0, -250])
+  const rubyScale = useTransform(scrollY, [0, 1000], [1, 0.88])
 
   // 7. Cyan Ice Moon (Lower Right): inward drift
-  const iceMoonY = useTransform(smoothY, [0, 1000], [0, -170])
-  const iceMoonX = useTransform(smoothY, [0, 1000], [0, -30])
+  const iceMoonY = useTransform(scrollY, [0, 1000], [0, -170])
+  const iceMoonX = useTransform(scrollY, [0, 1000], [0, -30])
 
   // 8. Golden Pearl (Upper Right): distant subtle deep space parallax
-  const goldY = useTransform(smoothY, [0, 1000], [0, -75])
+  const goldY = useTransform(scrollY, [0, 1000], [0, -75])
 
   // Starfield subtle deep celestial parallax
-  const starsY = useTransform(smoothY, [0, 1000], [0, -45])
+  const starsY = useTransform(scrollY, [0, 1000], [0, -45])
 
   return (
     <div
