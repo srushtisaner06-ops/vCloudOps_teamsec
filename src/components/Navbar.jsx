@@ -10,7 +10,6 @@ const NAV_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
   { label: 'Team', href: '#team' },
-  { label: 'Join', href: '#join' },
   { label: 'Community', href: '#contact' },
 ]
 
@@ -152,8 +151,8 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex pl-2 pr-1">
             <a
-              href="#/join"
-              onClick={() => setMenuOpen(false)}
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
               className="group flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-xs sm:text-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] hover:scale-[1.02] active:scale-[0.98]"
             >
               Join Us
@@ -168,8 +167,8 @@ export default function Navbar() {
             {/* Tablet-only quick Join button; hidden on narrow mobile (<640px) to prevent overlap */}
             {!menuOpen && (
               <a
-                href="#/join"
-                onClick={() => setMenuOpen(false)}
+                href="#contact"
+                onClick={(e) => handleNavClick(e, '#contact')}
                 className="hidden sm:inline-flex px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-300 text-slate-950 font-bold text-xs items-center gap-1 active:scale-95 transition-all shadow-[0_0_12px_rgba(56,189,248,0.3)] shrink-0 whitespace-nowrap"
               >
                 <span>Join</span>
@@ -221,11 +220,11 @@ export default function Navbar() {
 
           <div className="mobile-nav-item pt-4">
             <a
-              href="#/join"
-              onClick={() => setMenuOpen(false)}
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
               className="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-base shadow-[0_0_25px_rgba(56,189,248,0.35)] active:scale-98 transition-transform"
             >
-              <span>Apply to Join</span>
+              <span>Join Community</span>
               <ArrowUpRight weight="bold" className="w-4 h-4" />
             </a>
           </div>

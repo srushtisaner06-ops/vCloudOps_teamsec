@@ -55,17 +55,6 @@ export function getLenis() {
 }
 
 /**
- * Tear down the active Lenis instance (e.g. when leaving the home page) so
- * nothing can restart it on pages that use native scrolling.
- */
-export function destroySmoothScroll() {
-  if (lenisInstance) {
-    lenisInstance.destroy()
-    lenisInstance = null
-  }
-}
-
-/**
  * Smoothly scroll to a specific target (selector or DOM element)
  * Automatically accounts for sticky/fixed navigation offset
  */
