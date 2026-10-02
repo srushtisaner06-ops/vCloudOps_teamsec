@@ -84,6 +84,14 @@ a, button, input, select, textarea {
   touch-action: manipulation;
 }
 
+/* Hide scrollbar on horizontally scrolling rails */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── Planetary Floating & Orbital Keyframes ─── */
 @keyframes planetFloat {
   0%, 100% {

@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
-import { initSmoothScroll } from '../utils/smoothScroll'
+import { destroySmoothScroll, initSmoothScroll, scrollToTarget } from '../utils/smoothScroll'
 import SpaceBackground from '../components/SpaceBackground'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import AboutTeaser from '../components/AboutTeaser'
 import EventsSection from '../components/EventsSection'
 import TeamSection from '../components/TeamSection'
+import JoinSection from '../components/join/JoinSection'
 import CommunitySection from '../components/CommunitySection'
 import Footer from '../components/Footer'
 
@@ -13,8 +14,17 @@ export default function Home() {
   // Initialize Lenis buttery-smooth scrolling with GSAP ScrollTrigger synchronization
   useEffect(() => {
     const lenis = initSmoothScroll()
+
+    // Arriving from the application portal with a section anchor (e.g. #join).
+    const hash = window.location.hash
+    let timer
+    if (hash.length > 1 && !hash.startsWith('#/') && hash !== '#home') {
+      timer = setTimeout(() => scrollToTarget(hash, -85), 120)
+    }
+
     return () => {
-      if (lenis) lenis.destroy()
+      clearTimeout(timer)
+      if (lenis) destroySmoothScroll()
     }
   }, [])
 
@@ -32,6 +42,7 @@ export default function Home() {
         <AboutTeaser />
         <EventsSection />
         <TeamSection />
+        <JoinSection />
         <CommunitySection />
       </main>
 
