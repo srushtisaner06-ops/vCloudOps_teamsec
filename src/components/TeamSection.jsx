@@ -14,20 +14,39 @@ const MEMBERS = [
 
 const TEAMS = [
   { id: 'core', label: 'Core leadership', color: '#4aa9db', members: MEMBERS },
-  { id: 'cloud', label: 'Cloud architecture', color: '#57c7ff', members: [MEMBERS[0]] },
-  { id: 'delivery', label: 'Delivery systems', color: '#a98bff', members: [MEMBERS[1]] },
-  { id: 'platform', label: 'Platform engineering', color: '#6b9cff', members: [MEMBERS[0], MEMBERS[2]] },
-  { id: 'security', label: 'Security engineering', color: '#36d9c4', members: [MEMBERS[2]] },
-  { id: 'containers', label: 'Containers & Kubernetes', color: '#58d8e8', members: [MEMBERS[0], MEMBERS[2]] },
-  { id: 'automation', label: 'Infrastructure automation', color: '#f6b75d', members: [MEMBERS[0], MEMBERS[1]] },
-  { id: 'labs', label: 'Cloud labs', color: '#ff8fbd', members: [MEMBERS[1], MEMBERS[3]] },
-  { id: 'opensource', label: 'Open source', color: '#b3a0ff', members: [MEMBERS[3]] },
-  { id: 'community', label: 'Community & DevRel', color: '#7ce4a5', members: [MEMBERS[3]] },
+  { id: 'cloud', label: 'Cloud', color: '#57c7ff', logo: '/team-logos/cloud.png', members: [MEMBERS[0]] },
+  { id: 'delivery', label: 'finance & sponsorship', color: '#a98bff', logo: '/team-logos/finance.png', members: [MEMBERS[1]] },
+  { id: 'platform', label: 'Web Development', color: '#6b9cff', logo: '/team-logos/web-development.png', members: [MEMBERS[0], MEMBERS[2]] },
+  { id: 'security', label: 'Multimedia', color: '#36d9c4', logo: '/team-logos/multimedia.png', members: [MEMBERS[2]] },
+  { id: 'containers', label: 'Competitive Programming', color: '#58d8e8', logo: '/team-logos/competitive-programming.png', members: [MEMBERS[0], MEMBERS[2]] },
+  { id: 'automation', label: 'Operations', color: '#f6b75d', logo: '/team-logos/operations.png', members: [MEMBERS[0], MEMBERS[1]] },
+  { id: 'labs', label: 'App Development', color: '#ff8fbd', logo: '/team-logos/app-development.png', members: [MEMBERS[1], MEMBERS[3]] },
+  { id: 'opensource', label: 'AI/ML', color: '#b3a0ff', logo: '/team-logos/ai-ml.png', members: [MEMBERS[3]] },
+  { id: 'community', label: 'Publicity and outreach', color: '#7ce4a5', logo: '/team-logos/publicity.png', members: [MEMBERS[3]] },
 ]
 
-function PlanetFace({ color, label }) {
+function PlanetFace({ color, label, variant = 'default' }) {
   const rawId = useId()
   const id = rawId.replace(/:/g, '')
+  if (variant === 'core') {
+    return (
+      <svg className="team-planet-image team-planet-image--core" viewBox="0 0 123 85" role="img" aria-label={`${label} planet`}>
+        <defs>
+          <radialGradient id={`core-glow-${id}`} cx="50%" cy="50%" r="50%"><stop stopColor="#83eaff" stopOpacity=".55" /><stop offset="1" stopColor="#1b7cff" stopOpacity="0" /></radialGradient>
+          <linearGradient id={`core-orbit-${id}`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#20206c" /><stop offset=".52" stopColor="#61e5ff" /><stop offset="1" stopColor="#17145e" /></linearGradient>
+        </defs>
+        <circle cx="61.5" cy="42.5" r="34" fill={`url(#core-glow-${id})`} />
+        <ellipse cx="61.5" cy="42.5" rx="24" ry="12" fill="none" stroke={`url(#core-orbit-${id})`} strokeWidth="2.2" transform="rotate(39 61.5 42.5)" />
+        <ellipse cx="61.5" cy="42.5" rx="24" ry="12" fill="none" stroke="#2c237c" strokeWidth="2.1" transform="rotate(-39 61.5 42.5)" />
+        <circle cx="61.5" cy="42.5" r="18" fill="#172267" stroke="#6bdfff" strokeWidth="1.1" />
+        <path d="M61.5 25.5 66 37.8l12.2 4.7L66 47l-4.5 12.5L57 47l-12.2-4.5L57 37.8z" fill="#b7f8ff" stroke="#6bdaff" strokeWidth=".8" />
+        <circle cx="43" cy="29" r="3.4" fill="#1bbcff" stroke="#122d80" strokeWidth="1.4" />
+        <circle cx="81" cy="25" r="3.4" fill="#b8f5ff" stroke="#122d80" strokeWidth="1.4" />
+        <circle cx="44" cy="56" r="3.4" fill="#5fe0ff" stroke="#122d80" strokeWidth="1.4" />
+        <circle cx="70" cy="59" r="3.4" fill="#19bfff" stroke="#122d80" strokeWidth="1.4" />
+      </svg>
+    )
+  }
   return (
     <svg className="team-planet-image" viewBox="0 0 123 85" role="img" aria-label={`${label} planet`} style={{ '--planet-accent': color }}>
       <defs>
@@ -53,7 +72,7 @@ function PlanetFace({ color, label }) {
 function DomainBox({ team, onOpen, isCore = false }) {
   return (
     <button type="button" className={`team-domain-box ${isCore ? 'is-core' : ''}`} style={{ '--box-accent': team.color }} onClick={(event) => onOpen(team, event.currentTarget)} aria-label={`Open ${team.label}`}>
-      <span className="team-domain-box__face"><PlanetFace color={team.color} label={team.label} /></span>
+      <span className="team-domain-box__face">{team.logo ? <img className="team-domain-logo" src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={isCore ? 'core' : 'default'} />}</span>
       <span className="team-domain-box__label">{team.label}</span>
     </button>
   )
@@ -182,7 +201,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   return (
     <div ref={viewRef} className="team-member-view" style={{ '--box-accent': team.color, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
       <div className="team-member-view__topline"><span>{team.label}</span><button type="button" onClick={close} aria-label="Close team members"><X /></button></div>
-      <div className="team-member-view__planet"><PlanetFace color={team.color} label={team.label} /></div>
+      <div className="team-member-view__planet">{team.logo ? <img className="team-domain-logo" src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={team.id === 'core' ? 'core' : 'default'} />}</div>
       <div className="team-carousel" aria-label={`${team.label} member profiles`}>
         {team.members.map((member, index) => <MemberCard key={`${team.id}-${member.id}`} member={member} index={index} active={activeIndex} reduced={reduced} />)}
       </div>
