@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useReducedMotion } from '../hooks/useReducedMotion'
+import Particles from './Particles'
 
 /* ══════════════════════════════════════════════════════════════════════════════
    SpaceBackground — vCloudOps Official Cosmic Theme
@@ -622,131 +622,17 @@ function GoldenPearlPlanet() {
   )
 }
 
-/* ── Deterministic PRNG for pure celestial star generation ────────────── */
-function createPRNG(initialSeed = 1337) {
-  let s = initialSeed
-  return () => {
-    s = (s * 16807) % 2147483647
-    return (s - 1) / 2147483646
-  }
-}
-
-/* ── Pixel Star Field & Cross Stars (Matching Club Theme Poster) ──────────── */
-function PixelStarField({ count = 130 }) {
-  const { pixelCrossStars, dotStars, shootingStars } = useMemo(() => {
-    const rand = createPRNG(2026)
-    const crosses = []
-    const dots = []
-
-    for (let i = 0; i < count; i++) {
-      const x = rand() * 100
-      const y = rand() * 95
-
-      if (i < 30) {
-        // Distinct pixel '+' cross stars as seen in the theme image
-        crosses.push({
-          id: `pc-${i}`,
-          x, y,
-          size: i % 3 === 0 ? 8 : 6,
-          color: i % 2 === 0 ? '#BAE6FD' : '#38BDF8',
-          dur: 2 + rand() * 2.5,
-          delay: rand() * 4,
-          glow: i % 4 === 0,
-        })
-      } else {
-        // Single and dual pixel dots - selectively animate to save SVG repaint overhead
-        const shouldTwinkle = i % 3 === 0
-        dots.push({
-          id: `pd-${i}`,
-          x, y,
-          r: i % 4 === 0 ? 1.4 : 0.8,
-          color: i % 3 === 0 ? '#38BDF8' : i % 5 === 0 ? '#7DD3FC' : '#FFFFFF',
-          dur: 1.6 + rand() * 2.8,
-          delay: rand() * 3.5,
-          twinkle: shouldTwinkle,
-        })
-      }
-    }
-
-    const shooting = [
-      { id: 'ss-1', left: '16%', top: '10%', dur: 7, delay: 1.5 },
-      { id: 'ss-2', left: '55%', top: '16%', dur: 9, delay: 5.5 },
-      { id: 'ss-3', left: '72%', top: '8%',  dur: 8, delay: 9.5 },
-    ]
-
-    return { pixelCrossStars: crosses, dotStars: dots, shootingStars: shooting }
-  }, [count])
+/* ── Meteors / Shooting Stars (Dynamic Cosmic Motion Accents) ────────────── */
+function ShootingStars() {
+  const shooting = [
+    { id: 'ss-1', left: '16%', top: '10%', dur: 7, delay: 1.5 },
+    { id: 'ss-2', left: '55%', top: '16%', dur: 9, delay: 5.5 },
+    { id: 'ss-3', left: '72%', top: '8%',  dur: 8, delay: 9.5 },
+  ];
 
   return (
     <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-      {/* SVG Canvas for Pixel Stars */}
-      <svg className="absolute inset-0 w-full h-full">
-        {/* Pixel Cross '+' Stars */}
-        {pixelCrossStars.map(s => {
-          const half = s.size / 2
-          return (
-            <g
-              key={s.id}
-              style={{
-                animation: s.glow
-                  ? `twinkleGlow ${s.dur}s ease-in-out ${s.delay}s infinite`
-                  : `twinkleSparkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
-                transformOrigin: `${s.x}% ${s.y}%`,
-              }}
-            >
-              {/* '+' Cross shape composed of pixel bars */}
-              {/* Vertical arm */}
-              <rect
-                x={`calc(${s.x}% - 1px)`}
-                y={`calc(${s.y}% - ${half}px)`}
-                width="2"
-                height={s.size}
-                fill={s.color}
-                rx="0.5"
-              />
-              {/* Horizontal arm */}
-              <rect
-                x={`calc(${s.x}% - ${half}px)`}
-                y={`calc(${s.y}% - 1px)`}
-                width={s.size}
-                height="2"
-                fill={s.color}
-                rx="0.5"
-              />
-              {/* Center highlight pixel */}
-              <rect
-                x={`calc(${s.x}% - 1px)`}
-                y={`calc(${s.y}% - 1px)`}
-                width="2"
-                height="2"
-                fill="#FFFFFF"
-              />
-            </g>
-          )
-        })}
-
-        {/* Regular Celestial Dots */}
-        {dotStars.map(d => (
-          <circle
-            key={d.id}
-            cx={`${d.x}%`}
-            cy={`${d.y}%`}
-            r={d.r}
-            fill={d.color}
-            style={
-              d.twinkle
-                ? {
-                    animation: `twinkleSoft ${d.dur}s ease-in-out ${d.delay}s infinite`,
-                    transformOrigin: `${d.x}% ${d.y}%`,
-                  }
-                : undefined
-            }
-          />
-        ))}
-      </svg>
-
-      {/* Meteors / Shooting Stars */}
-      {shootingStars.map(ss => (
+      {shooting.map(ss => (
         <div
           key={ss.id}
           style={{
@@ -756,7 +642,8 @@ function PixelStarField({ count = 130 }) {
             width: 130,
             height: 2,
             background: 'linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.6) 40%, #FFFFFF 100%)',
-            borderRadius: 999, opacity: 0,
+            borderRadius: 999,
+            opacity: 0,
             filter: 'drop-shadow(0 0 6px rgba(56, 189, 248, 0.8))',
             animation: `shootingStar ${ss.dur}s linear ${ss.delay}s infinite`,
             transformOrigin: 'left center',
@@ -764,7 +651,7 @@ function PixelStarField({ count = 130 }) {
         />
       ))}
     </div>
-  )
+  );
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -850,12 +737,27 @@ export default function SpaceBackground() {
         }}
       />
 
-      {/* ── Twinkling Pixel Stars & Shooting Stars with Deep Parallax ── */}
+      {/* ── WebGL 3D Interactive Cosmic Starfield (OGL Shader Particles) ── */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+        <Particles
+          particleColors={['#7DD3FC', '#38BDF8', '#BAE6FD', '#67E8F9', '#93C5FD']}
+          particleCount={140}
+          speed={0.07}
+          particleBaseSize={130}
+          moveParticlesOnHover
+          particleHoverFactor={0.5}
+          alphaParticles={false}
+          disableRotation={false}
+          pixelRatio={1}
+        />
+      </div>
+
+      {/* ── Twinkling Pixel Cross Stars & Meteors with Parallax ── */}
       <motion.div
         style={reduced ? {} : { y: starsY }}
         className="absolute inset-0 pointer-events-none"
       >
-        <PixelStarField count={130} />
+        <ShootingStars />
       </motion.div>
 
       {/* ── Primary Major Planets (Scroll-linked Parallax) ── */}
