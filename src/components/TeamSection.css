@@ -99,6 +99,36 @@
   place-items: center;
   width: 100%;
   height: 108px;
+  transform: perspective(900px) rotateY(var(--lens-tilt, 0deg));
+}
+
+.team-domain-lens {
+  position: absolute;
+  inset: 1px 1px 30px;
+  overflow: hidden;
+  border-radius: 13px 13px 0 0;
+  pointer-events: none;
+  opacity: var(--lens-strength, 0);
+  transform: perspective(900px) rotateY(var(--lens-tilt, 0deg));
+  background: repeating-linear-gradient(90deg, transparent 0, rgba(0, 0, 0, .15) 1px, rgba(174, 225, 255, .12) 2px, transparent calc(100% / 56));
+  mask-image: linear-gradient(to bottom, #000 75%, transparent);
+}
+
+.team-domain-lens::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 15%, rgba(87, 199, 255, .28) 35%, rgba(179, 160, 255, .32) 48%, rgba(255, 143, 189, .2) 57%, rgba(124, 228, 165, .24) 65%, transparent 85%);
+  transform: translateX(var(--lens-sweep, -40%));
+  mix-blend-mode: screen;
+}
+
+.team-section.has-open-member .team-domain-lens {
+  opacity: 0;
+}
+
+.team-section.has-open-member .team-domain-box__face {
+  transform: none;
 }
 
 .team-domain-box__label {
@@ -163,6 +193,9 @@
 }
 
 .team-member-view {
+  --dock-bottom: max(24px, env(safe-area-inset-bottom));
+  --dock-height: 74px;
+  --dock-logo-center: 28px;
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -220,12 +253,11 @@
 }
 
 .team-orbit-dock {
-  --dock-logo-center: 49px;
   position: absolute;
-  bottom: max(24px, env(safe-area-inset-bottom));
+  bottom: var(--dock-bottom);
   left: 50%;
   width: 220px;
-  height: 74px;
+  height: var(--dock-height);
   transform: translateX(-50%);
   pointer-events: none;
   animation: team-dock-in 360ms ease-out both;
@@ -242,7 +274,8 @@
 }
 
 .team-orbit-dock__rings {
-  top: 9px;
+  top: var(--dock-logo-center);
+  transform: translate(-50%, -50%) rotate(-4deg);
   width: 100%;
   height: 38px;
 }
@@ -285,7 +318,7 @@
   width: 64px;
   height: 64px;
   filter: drop-shadow(0 5px 9px rgba(0, 0, 0, .38));
-  transform: translate(calc(-50% + var(--origin-x) - 50vw), calc(-50% + var(--origin-y) - (100dvh - var(--dock-logo-center)))) scale(1.08);
+  transform: translate(-50%, -50%);
   animation: team-logo-to-dock 650ms cubic-bezier(.22, 1, .36, 1) both;
 }
 
@@ -322,7 +355,7 @@
 @keyframes team-logo-to-dock {
   from {
     opacity: .8;
-    transform: translate(calc(-50% + var(--origin-x) - 50vw), calc(-50% + var(--origin-y) - (100dvh - var(--dock-logo-center)))) scale(1.08);
+    transform: translate(calc(-50% + var(--origin-x) - 50vw), calc(-50% + var(--origin-y) - (100dvh - var(--dock-bottom) - var(--dock-height) + var(--dock-logo-center)))) scale(1.08);
   }
 
   to {
@@ -531,7 +564,7 @@
 
 .team-member-view__hint {
   position: absolute;
-  bottom: 5vh;
+  bottom: calc(var(--dock-bottom) + var(--dock-height) + 18px);
   margin: 0;
   color: #8190a7;
   font: .62rem/1 var(--font-mono);
@@ -567,11 +600,13 @@
     margin-bottom: 1.5rem;
   }
 
+  .team-member-view {
+    --dock-bottom: max(16px, env(safe-area-inset-bottom));
+    --dock-height: 70px;
+  }
+
   .team-orbit-dock {
-    --dock-logo-center: 45px;
-    bottom: max(16px, env(safe-area-inset-bottom));
     width: min(220px, calc(100vw - 2rem));
-    height: 70px;
   }
 
   .team-orbit-dock__logo {
@@ -617,6 +652,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
+  .team-domain-lens {
+    display: none;
+  }
+
+  .team-domain-box__face {
+    transform: none;
+  }
 
   .team-member-card,
   .team-member-card__content,

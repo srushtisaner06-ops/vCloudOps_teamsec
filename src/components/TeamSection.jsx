@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { GithubLogo, LinkedinLogo, X } from '@phosphor-icons/react'
 import { createPortal } from 'react-dom'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 import { getLenis } from '../utils/smoothScroll'
 import './TeamSection.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const MEMBERS = [
   { id: 'satyajit', name: 'Satyajit', role: 'Club President & Architect', bio: 'Designs high-availability multi-cloud environments with Kubernetes control planes and Terraform automation.', tags: ['AWS', 'K8s', 'Terraform', 'Go'], github: 'https://github.com', linkedin: 'https://linkedin.com', accent: '#57c7ff' },
@@ -71,8 +76,9 @@ function PlanetFace({ color, label, variant = 'default' }) {
 
 function DomainBox({ team, onOpen, isCore = false, isOpen = false }) {
   return (
-    <button type="button" className={`team-domain-box ${isCore ? 'is-core' : ''} ${isOpen ? 'is-open' : ''}`} style={{ '--box-accent': team.color }} onClick={(event) => onOpen(team, event.currentTarget, event.currentTarget.querySelector('.team-domain-box__face > *'))} aria-label={`Open ${team.label}`}>
+    <button type="button" data-team-id={team.id} className={`team-domain-box ${isCore ? 'is-core' : ''} ${isOpen ? 'is-open' : ''}`} style={{ '--box-accent': team.color }} onClick={(event) => onOpen(team, event.currentTarget, event.currentTarget.querySelector('.team-domain-box__face > *'))} aria-label={`Open ${team.label}`}>
       <span className="team-domain-box__face">{team.logo ? <img className="team-domain-logo" src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={isCore ? 'core' : 'default'} />}</span>
+      <span className="team-domain-lens" aria-hidden="true" />
       <span className="team-domain-box__label">{team.label}</span>
     </button>
   )
@@ -82,7 +88,7 @@ function MemberCard({ member, index, active, reduced }) {
   const distance = index - active
   const isRear = distance !== 0
   const style = reduced ? {} : {
-    '--card-x': `${distance * 74}px`,
+    '--card-x': `${distance * 300}px`,
     '--card-z': `${-Math.abs(distance) * 180}px`,
     '--card-rotate': `${distance > 0 ? Math.min(distance, 1) * 19 : 0}deg`,
     '--card-scale': `${1 - Math.min(Math.abs(distance) * .045, .18)}`,
@@ -120,16 +126,16 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   const [closing, setClosing] = useState(false)
   useEffect(() => { activeIndexRef.current = activeIndex }, [activeIndex])
 
-  const close = useCallback(() => {
+  const close = useCallback((reason = 'completed') => {
     if (closingRef.current) return
     gestureLock.current = false
     if (reduced) {
-      onClose()
+      onClose(reason)
       return
     }
     closingRef.current = true
     setClosing(true)
-    closeTimer.current = window.setTimeout(onClose, 650)
+    closeTimer.current = window.setTimeout(() => onClose(reason), 650)
   }, [onClose, reduced])
 
   const move = useCallback((direction) => {
@@ -144,7 +150,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       // Consume the gesture at the first card. Closing here would allow the
       // same trackpad/touch momentum to leak into the page behind the view.
     } else {
-      close()
+      close('completed')
       return
     }
     unlockTimer.current = window.setTimeout(() => { gestureLock.current = false }, reduced ? 40 : 950)
@@ -184,7 +190,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       touchStartY.current = null
     }
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') { event.preventDefault(); close(); return }
+      if (event.key === 'Escape') { event.preventDefault(); close('dismissed'); return }
       if (event.repeat) return
       const down = ['ArrowDown', 'PageDown'].includes(event.key) || (event.key === ' ' && !event.shiftKey)
       const up = ['ArrowUp', 'PageUp'].includes(event.key) || (event.key === ' ' && event.shiftKey)
@@ -214,7 +220,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
 
   return (
     <div ref={viewRef} className={`team-member-view ${closing ? 'is-closing' : ''}`} style={{ '--box-accent': team.color, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
-      <div className="team-member-view__topline"><span>{team.label}</span><button type="button" onClick={close} aria-label="Close team members"><X /></button></div>
+      <div className="team-member-view__topline"><span>{team.label}</span><button type="button" onClick={() => close('button')} aria-label="Close team members"><X /></button></div>
       <div className="team-carousel" aria-label={`${team.label} member profiles`}>
         {team.members.map((member, index) => <MemberCard key={`${team.id}-${member.id}`} member={member} index={index} active={activeIndex} reduced={reduced} />)}
       </div>
@@ -231,20 +237,91 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
 export default function TeamSection() {
   const reduced = useReducedMotion()
   const [selectedTeam, setSelectedTeam] = useState(null)
+  const [autoOpenDisabled, setAutoOpenDisabled] = useState(false)
   const [originRect, setOriginRect] = useState(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const openerRef = useRef(null)
+  const sectionRef = useRef(null)
+  const selectedTeamRef = useRef(null)
+  const autoOpenDisabledRef = useRef(false)
+  const nextExpectedTeamIdRef = useRef(TEAMS[0].id)
+  const autoOpenInFlightRef = useRef(false)
+  const automaticallyOpenedTeamRef = useRef(null)
 
-  const openTeam = useCallback((team, opener, logo) => {
+  useEffect(() => {
+    selectedTeamRef.current = selectedTeam
+  }, [selectedTeam])
+
+  const openTeam = useCallback((team, opener, logo, source = 'manual') => {
+    if (source === 'auto') {
+      if (
+        autoOpenDisabledRef.current ||
+        selectedTeamRef.current ||
+        autoOpenInFlightRef.current ||
+        nextExpectedTeamIdRef.current !== team.id
+      ) return
+      autoOpenInFlightRef.current = true
+      automaticallyOpenedTeamRef.current = team.id
+    } else {
+      automaticallyOpenedTeamRef.current = null
+    }
+
+    // Remove the lens transform before measuring the original logo for the dock.
+    sectionRef.current.classList.add('has-open-member')
+    selectedTeamRef.current = team
     setActiveIndex(0)
     openerRef.current = opener
-    setOriginRect((logo ?? opener).getBoundingClientRect())
+    const rect = (logo ?? opener).getBoundingClientRect()
+    setOriginRect({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 })
     setSelectedTeam(team)
   }, [])
-  const closeTeam = useCallback(() => setSelectedTeam(null), [])
+
+  const closeTeam = useCallback((reason = 'completed') => {
+    const automaticallyOpenedTeamId = automaticallyOpenedTeamRef.current
+
+    if (reason === 'button') {
+      autoOpenDisabledRef.current = true
+      setAutoOpenDisabled(true)
+    } else if (automaticallyOpenedTeamId) {
+      const currentIndex = TEAMS.findIndex((team) => team.id === automaticallyOpenedTeamId)
+      const nextTeam = TEAMS[currentIndex + 1]
+      nextExpectedTeamIdRef.current = nextTeam?.id ?? null
+    }
+
+    automaticallyOpenedTeamRef.current = null
+    autoOpenInFlightRef.current = false
+    selectedTeamRef.current = null
+    setSelectedTeam(null)
+  }, [])
+
+  useGSAP(() => {
+    const media = gsap.matchMedia()
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      sectionRef.current.querySelectorAll('.team-domain-box').forEach((box) => {
+        gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: box,
+            start: 'top 85%',
+            end: 'bottom 25%',
+            scrub: true,
+            onEnter: (self) => {
+              if (self.direction < 1) return
+              const team = TEAMS.find((candidate) => candidate.id === box.dataset.teamId)
+              if (team) openTeam(team, box, box.querySelector('.team-domain-box__face > *'), 'auto')
+            },
+          },
+        })
+          .fromTo(box, { '--lens-sweep': '-40%' }, { '--lens-sweep': '140%', duration: 1 }, 0)
+          .fromTo(box, { '--lens-strength': 0, '--lens-tilt': '0deg' }, { '--lens-strength': 1, '--lens-tilt': '6deg', duration: .5 }, 0)
+          .to(box, { '--lens-strength': 0, '--lens-tilt': '0deg', duration: .5 }, .5)
+      })
+    })
+    return () => media.revert()
+  }, { scope: sectionRef })
 
   return (
-    <section id="team" className="team-section" aria-labelledby="team-heading">
+    <section ref={sectionRef} id="team" className={`team-section${selectedTeam ? ' has-open-member' : ''}`} data-auto-open-disabled={autoOpenDisabled ? 'true' : undefined} aria-labelledby="team-heading">
       <div className="team-header">
         <span className="team-kicker"><img src="/Logo/logo-icon.png" alt="vCloudOps" /> Core above the constellation</span>
         <h2 id="team-heading">Built by students, for students</h2>
