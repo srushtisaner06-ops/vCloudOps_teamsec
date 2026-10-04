@@ -69,9 +69,9 @@ function PlanetFace({ color, label, variant = 'default' }) {
   )
 }
 
-function DomainBox({ team, onOpen, isCore = false }) {
+function DomainBox({ team, onOpen, isCore = false, isOpen = false }) {
   return (
-    <button type="button" className={`team-domain-box ${isCore ? 'is-core' : ''}`} style={{ '--box-accent': team.color }} onClick={(event) => onOpen(team, event.currentTarget)} aria-label={`Open ${team.label}`}>
+    <button type="button" className={`team-domain-box ${isCore ? 'is-core' : ''} ${isOpen ? 'is-open' : ''}`} style={{ '--box-accent': team.color }} onClick={(event) => onOpen(team, event.currentTarget, event.currentTarget.querySelector('.team-domain-box__face > *'))} aria-label={`Open ${team.label}`}>
       <span className="team-domain-box__face">{team.logo ? <img className="team-domain-logo" src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={isCore ? 'core' : 'default'} />}</span>
       <span className="team-domain-box__label">{team.label}</span>
     </button>
@@ -113,11 +113,24 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   const viewRef = useRef(null)
   const gestureLock = useRef(false)
   const unlockTimer = useRef(null)
+  const closeTimer = useRef(null)
   const touchStartY = useRef(null)
   const activeIndexRef = useRef(activeIndex)
+  const closingRef = useRef(false)
+  const [closing, setClosing] = useState(false)
   useEffect(() => { activeIndexRef.current = activeIndex }, [activeIndex])
 
-  const close = useCallback(() => { gestureLock.current = false; onClose() }, [onClose])
+  const close = useCallback(() => {
+    if (closingRef.current) return
+    gestureLock.current = false
+    if (reduced) {
+      onClose()
+      return
+    }
+    closingRef.current = true
+    setClosing(true)
+    closeTimer.current = window.setTimeout(onClose, 650)
+  }, [onClose, reduced])
 
   const move = useCallback((direction) => {
     if (gestureLock.current) return
@@ -185,6 +198,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
     view?.addEventListener('keydown', onKeyDown)
     return () => {
       if (unlockTimer.current) window.clearTimeout(unlockTimer.current)
+      if (closeTimer.current) window.clearTimeout(closeTimer.current)
       view?.removeEventListener('wheel', onWheel, true)
       view?.removeEventListener('touchstart', onTouchStart)
       view?.removeEventListener('touchmove', onTouchMove)
@@ -199,11 +213,15 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   }, [close, move, openerRef])
 
   return (
-    <div ref={viewRef} className="team-member-view" style={{ '--box-accent': team.color, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
+    <div ref={viewRef} className={`team-member-view ${closing ? 'is-closing' : ''}`} style={{ '--box-accent': team.color, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
       <div className="team-member-view__topline"><span>{team.label}</span><button type="button" onClick={close} aria-label="Close team members"><X /></button></div>
-      <div className="team-member-view__planet">{team.logo ? <img className="team-domain-logo" src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={team.id === 'core' ? 'core' : 'default'} />}</div>
       <div className="team-carousel" aria-label={`${team.label} member profiles`}>
         {team.members.map((member, index) => <MemberCard key={`${team.id}-${member.id}`} member={member} index={index} active={activeIndex} reduced={reduced} />)}
+      </div>
+      <div className={`team-orbit-dock ${closing ? 'is-closing' : ''}`} aria-hidden="true">
+        <div className="team-orbit-dock__rings"><span className="team-orbit-dock__slot" /></div>
+        <span className="team-orbit-dock__logo">{team.logo ? <img src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={team.id === 'core' ? 'core' : 'default'} />}</span>
+        <span className="team-orbit-dock__label">{team.label}</span>
       </div>
       <p className="team-member-view__hint">{team.members.length > 1 ? 'Scroll or swipe to move through the team' : 'Scroll or swipe down to return to the overview'}</p>
     </div>
@@ -217,10 +235,10 @@ export default function TeamSection() {
   const [activeIndex, setActiveIndex] = useState(0)
   const openerRef = useRef(null)
 
-  const openTeam = useCallback((team, opener) => {
+  const openTeam = useCallback((team, opener, logo) => {
     setActiveIndex(0)
     openerRef.current = opener
-    setOriginRect(opener.getBoundingClientRect())
+    setOriginRect((logo ?? opener).getBoundingClientRect())
     setSelectedTeam(team)
   }, [])
   const closeTeam = useCallback(() => setSelectedTeam(null), [])
@@ -233,9 +251,9 @@ export default function TeamSection() {
         <p>The team running workshops, mentoring lab sessions, and maintaining community infrastructure.</p>
       </div>
       <div className="team-overview" aria-label="Team domains">
-        <DomainBox team={TEAMS[0]} onOpen={openTeam} isCore />
+        <DomainBox team={TEAMS[0]} onOpen={openTeam} isCore isOpen={selectedTeam?.id === TEAMS[0].id} />
         <div className="team-domain-grid">
-          {TEAMS.slice(1).map((team) => <DomainBox key={team.id} team={team} onOpen={openTeam} />)}
+          {TEAMS.slice(1).map((team) => <DomainBox key={team.id} team={team} onOpen={openTeam} isOpen={selectedTeam?.id === team.id} />)}
         </div>
       </div>
       {selectedTeam && createPortal(<MemberView team={selectedTeam} activeIndex={activeIndex} setActiveIndex={setActiveIndex} onClose={closeTeam} reduced={reduced} openerRef={openerRef} originRect={originRect} />, document.body)}
