@@ -202,7 +202,9 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: transparent;
+  background: rgba(2, 8, 18, .58);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   pointer-events: auto;
   touch-action: none;
   --member-card-width: 340px;
@@ -233,23 +235,36 @@
 .team-member-view__topline button {
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  color: #d9e6f5;
-  border: 1px solid rgba(255, 255, 255, .25);
+  width: 48px;
+  height: 48px;
+  color: #bff4ff;
+  border: 1px solid rgba(58, 193, 243, .9);
   border-radius: 50%;
-  background: rgba(8, 16, 35, .96);
+  background: rgba(4, 16, 32, .98);
+  box-shadow: 0 0 0 3px rgba(58, 193, 243, .12), 0 0 18px rgba(58, 193, 243, .42), inset 0 1px rgba(255, 255, 255, .2);
   cursor: pointer;
   pointer-events: auto;
+  transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
-.team-member-view__topline button:hover {
-  background: rgba(255, 255, 255, .13);
+.team-member-view__topline button:hover,
+.team-member-view__topline button:focus-visible {
+  color: #fff;
+  border-color: #8beaff;
+  background: rgba(7, 35, 58, .98);
+  box-shadow: 0 0 0 4px rgba(58, 193, 243, .2), 0 0 24px rgba(58, 193, 243, .7), inset 0 1px rgba(255, 255, 255, .28);
+  transform: scale(1.06);
+}
+
+.team-member-view__topline button:focus-visible {
+  outline: 2px solid #d5f9ff;
+  outline-offset: 4px;
 }
 
 .team-member-view__topline svg {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 2.4;
 }
 
 .team-orbit-dock {
@@ -605,6 +620,11 @@
     --dock-height: 70px;
   }
 
+  .team-member-view__topline button {
+    width: 44px;
+    height: 44px;
+  }
+
   .team-orbit-dock {
     width: min(220px, calc(100vw - 2rem));
   }
@@ -665,6 +685,15 @@
   .team-member-card__content,
   .team-domain-box {
     transition-duration: 1ms;
+  }
+
+  .team-member-view__topline button {
+    transition: none;
+  }
+
+  .team-member-view__topline button:hover,
+  .team-member-view__topline button:focus-visible {
+    transform: none;
   }
 
   .team-orbit-dock,

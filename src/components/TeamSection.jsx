@@ -19,16 +19,18 @@ const MEMBERS = [
 
 const TEAMS = [
   { id: 'core', label: 'Core leadership', color: '#4aa9db', members: MEMBERS },
-  { id: 'cloud', label: 'Cloud', color: '#57c7ff', logo: '/team-logos/cloud.png', members: [MEMBERS[0]] },
-  { id: 'delivery', label: 'finance & sponsorship', color: '#a98bff', logo: '/team-logos/finance.png', members: [MEMBERS[1]] },
-  { id: 'platform', label: 'Web Development', color: '#6b9cff', logo: '/team-logos/web-development.png', members: [MEMBERS[0], MEMBERS[2]] },
-  { id: 'security', label: 'Multimedia', color: '#36d9c4', logo: '/team-logos/multimedia.png', members: [MEMBERS[2]] },
-  { id: 'containers', label: 'Competitive Programming', color: '#58d8e8', logo: '/team-logos/competitive-programming.png', members: [MEMBERS[0], MEMBERS[2]] },
-  { id: 'automation', label: 'Operations', color: '#f6b75d', logo: '/team-logos/operations.png', members: [MEMBERS[0], MEMBERS[1]] },
-  { id: 'labs', label: 'App Development', color: '#ff8fbd', logo: '/team-logos/app-development.png', members: [MEMBERS[1], MEMBERS[3]] },
-  { id: 'opensource', label: 'AI/ML', color: '#b3a0ff', logo: '/team-logos/ai-ml.png', members: [MEMBERS[3]] },
-  { id: 'community', label: 'Publicity and outreach', color: '#7ce4a5', logo: '/team-logos/publicity.png', members: [MEMBERS[3]] },
+  { id: 'cloud', label: 'Cloud', color: '#57c7ff', logo: '/team-logos/cloud.png', members: MEMBERS },
+  { id: 'delivery', label: 'finance & sponsorship', color: '#a98bff', logo: '/team-logos/finance.png', members: MEMBERS },
+  { id: 'platform', label: 'Web Development', color: '#6b9cff', logo: '/team-logos/web-development.png', members: MEMBERS },
+  { id: 'security', label: 'Multimedia', color: '#36d9c4', logo: '/team-logos/multimedia.png', members: MEMBERS },
+  { id: 'containers', label: 'Competitive Programming', color: '#58d8e8', logo: '/team-logos/competitive-programming.png', members: MEMBERS },
+  { id: 'automation', label: 'Operations', color: '#f6b75d', logo: '/team-logos/operations.png', members: MEMBERS },
+  { id: 'labs', label: 'App Development', color: '#ff8fbd', logo: '/team-logos/app-development.png', members: MEMBERS },
+  { id: 'opensource', label: 'AI/ML', color: '#b3a0ff', logo: '/team-logos/ai-ml.png', members: MEMBERS },
+  { id: 'community', label: 'Publicity and outreach', color: '#7ce4a5', logo: '/team-logos/publicity.png', members: MEMBERS },
 ]
+
+const AUTO_OPEN_DELAY = 900
 
 function PlanetFace({ color, label, variant = 'default' }) {
   const rawId = useId()
@@ -147,8 +149,8 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
     } else if (direction < 0 && current > 0) {
       setActiveIndex((index) => index - 1)
     } else if (direction < 0 && current === 0) {
-      // Consume the gesture at the first card. Closing here would allow the
-      // same trackpad/touch momentum to leak into the page behind the view.
+      close('completed')
+      return
     } else {
       close('completed')
       return
@@ -247,6 +249,10 @@ export default function TeamSection() {
   const nextExpectedTeamIdRef = useRef(TEAMS[0].id)
   const autoOpenInFlightRef = useRef(false)
   const automaticallyOpenedTeamRef = useRef(null)
+  const sequenceDirectionRef = useRef(1)
+  const automaticDirectionRef = useRef(1)
+  const autoOpenReadyRef = useRef(true)
+  const autoOpenDelayTimerRef = useRef(null)
 
   useEffect(() => {
     selectedTeamRef.current = selectedTeam
@@ -258,10 +264,13 @@ export default function TeamSection() {
         autoOpenDisabledRef.current ||
         selectedTeamRef.current ||
         autoOpenInFlightRef.current ||
+        !autoOpenReadyRef.current ||
         nextExpectedTeamIdRef.current !== team.id
       ) return
       autoOpenInFlightRef.current = true
+      autoOpenReadyRef.current = false
       automaticallyOpenedTeamRef.current = team.id
+      automaticDirectionRef.current = sequenceDirectionRef.current
     } else {
       automaticallyOpenedTeamRef.current = null
     }
@@ -269,34 +278,94 @@ export default function TeamSection() {
     // Remove the lens transform before measuring the original logo for the dock.
     sectionRef.current.classList.add('has-open-member')
     selectedTeamRef.current = team
-    setActiveIndex(0)
+    const initialIndex = source === 'auto' && automaticDirectionRef.current < 0
+      ? team.members.length - 1
+      : 0
+    setActiveIndex(initialIndex)
     openerRef.current = opener
     const rect = (logo ?? opener).getBoundingClientRect()
     setOriginRect({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 })
     setSelectedTeam(team)
   }, [])
 
+  const tryOpenExpectedTeam = useCallback((box = null, direction = sequenceDirectionRef.current) => {
+    if (
+      autoOpenDisabledRef.current ||
+      selectedTeamRef.current ||
+      autoOpenInFlightRef.current ||
+      !autoOpenReadyRef.current ||
+      sequenceDirectionRef.current !== direction
+    ) return
+
+    const expectedTeam = TEAMS.find((team) => team.id === nextExpectedTeamIdRef.current)
+    const expectedBox = box?.dataset.teamId === expectedTeam?.id
+      ? box
+      : sectionRef.current?.querySelector(`[data-team-id="${expectedTeam?.id}"]`)
+    if (!expectedTeam || !expectedBox) return
+
+    const rect = expectedBox.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    if (rect.top <= viewportHeight * .85 && rect.bottom >= viewportHeight * .25) {
+      openTeam(expectedTeam, expectedBox, expectedBox.querySelector('.team-domain-box__face > *'), 'auto')
+    }
+  }, [openTeam])
+
   const closeTeam = useCallback((reason = 'completed') => {
     const automaticallyOpenedTeamId = automaticallyOpenedTeamRef.current
+
+    if (autoOpenDelayTimerRef.current) {
+      window.clearTimeout(autoOpenDelayTimerRef.current)
+      autoOpenDelayTimerRef.current = null
+    }
 
     if (reason === 'button') {
       autoOpenDisabledRef.current = true
       setAutoOpenDisabled(true)
     } else if (automaticallyOpenedTeamId) {
       const currentIndex = TEAMS.findIndex((team) => team.id === automaticallyOpenedTeamId)
-      const nextTeam = TEAMS[currentIndex + 1]
+      const nextTeam = TEAMS[currentIndex + automaticDirectionRef.current]
       nextExpectedTeamIdRef.current = nextTeam?.id ?? null
+      if (nextTeam && !autoOpenDisabledRef.current) {
+        autoOpenReadyRef.current = false
+        autoOpenDelayTimerRef.current = window.setTimeout(() => {
+          autoOpenDelayTimerRef.current = null
+          autoOpenReadyRef.current = true
+          tryOpenExpectedTeam(null, automaticDirectionRef.current)
+        }, AUTO_OPEN_DELAY)
+      }
     }
 
     automaticallyOpenedTeamRef.current = null
     autoOpenInFlightRef.current = false
     selectedTeamRef.current = null
     setSelectedTeam(null)
+  }, [tryOpenExpectedTeam])
+
+  useEffect(() => () => {
+    if (autoOpenDelayTimerRef.current) window.clearTimeout(autoOpenDelayTimerRef.current)
   }, [])
 
   useGSAP(() => {
     const media = gsap.matchMedia()
     media.add('(prefers-reduced-motion: no-preference)', () => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top 85%',
+        end: 'bottom 25%',
+        onEnter: () => {
+          if (autoOpenDisabledRef.current) return
+          sequenceDirectionRef.current = 1
+          nextExpectedTeamIdRef.current = TEAMS[0].id
+          autoOpenReadyRef.current = true
+        },
+        onEnterBack: () => {
+          if (autoOpenDisabledRef.current) return
+          sequenceDirectionRef.current = -1
+          nextExpectedTeamIdRef.current = TEAMS[TEAMS.length - 1].id
+          autoOpenReadyRef.current = true
+        },
+      })
+
       sectionRef.current.querySelectorAll('.team-domain-box').forEach((box) => {
         gsap.timeline({
           defaults: { ease: 'none' },
@@ -307,8 +376,11 @@ export default function TeamSection() {
             scrub: true,
             onEnter: (self) => {
               if (self.direction < 1) return
-              const team = TEAMS.find((candidate) => candidate.id === box.dataset.teamId)
-              if (team) openTeam(team, box, box.querySelector('.team-domain-box__face > *'), 'auto')
+              tryOpenExpectedTeam(box, 1)
+            },
+            onEnterBack: (self) => {
+              if (self.direction > -1) return
+              tryOpenExpectedTeam(box, -1)
             },
           },
         })
