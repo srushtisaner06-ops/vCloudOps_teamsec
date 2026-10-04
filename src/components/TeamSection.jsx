@@ -104,13 +104,13 @@ function MemberCard({ member, index, active, reduced }) {
         <span className="team-member-index">0{index + 1}</span>
       </div>
       <div className="team-member-card__content">
+        <h3>{member.name}</h3>
+        <p className="team-member-role">{member.role}</p>
+        <p className="team-member-bio">{member.bio}</p>
         <div className="team-member-links">
           <a href={member.github} target="_blank" rel="noreferrer" aria-label={`${member.name} GitHub`}><GithubLogo weight="fill" /></a>
           <a href={member.linkedin} target="_blank" rel="noreferrer" aria-label={`${member.name} LinkedIn`}><LinkedinLogo weight="fill" /></a>
         </div>
-        <h3>{member.name}</h3>
-        <p className="team-member-role">{member.role}</p>
-        <p className="team-member-bio">{member.bio}</p>
         <div className="team-member-tags">{member.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
       </div>
     </article>
