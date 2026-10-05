@@ -22,7 +22,7 @@ const INITIAL_ACTIVE_EVENTS = [
     venue: 'VIT Bibwewadi College, Pune',
     mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Vishwakarma+Institute+of+Technology+Bibwewadi+Pune',
     desc: 'Hands-on code-along workshop on campus. Get direct CLI and console experience, master core Git workflows, branch lifecycle strategies, conflict resolution, collaborative pull requests, and automated repository actions with live in-person mentor debugging.',
-    src: '/images/events/github-basics.jpg',
+    src: '/images/events/github-basics.webp',
     fallbackSrc: 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2076&auto=format&fit=crop',
     tags: ['Git CLI', 'Branching & Merge', 'PR Review', 'Campus Offline'],
     category: 'Hands-on Lab',
@@ -39,7 +39,7 @@ const INITIAL_ACTIVE_EVENTS = [
     venue: 'Discord Voice & AWS Console',
     mapsUrl: null,
     desc: 'Interactive live builds from scratch. Deploy live static websites on Amazon S3, architect serverless APIs with AWS Lambda & API Gateway, spin up cloud databases, and explore Generative AI deployments with Amazon Bedrock — every project is pushed directly to your GitHub portfolio.',
-    src: '/images/events/aws-builder.jpg',
+    src: '/images/events/aws-builder.webp',
     fallbackSrc: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop',
     tags: ['AWS Lambda', 'Amazon S3', 'Bedrock GenAI', 'Serverless'],
     category: 'Weekly Sprint',
@@ -65,7 +65,7 @@ const STAY_TUNED_CARD = {
   venue: 'Hybrid · Campus & Global',
   mapsUrl: null,
   desc: 'Collaborate in teams to design and deploy innovative, practical, and scalable cloud solutions solving real-world challenges, earn AWS credits, win badges and swag, and walk away with working demos that elevate your engineering resume.',
-  src: '/images/events/upcoming-event.jpg',
+  src: '/images/events/upcoming-event.webp',
   fallbackSrc: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
   tags: ['Agentic AI', 'Cloud Hackathon', 'AWS Credits', 'Swag & Badges'],
   category: 'Upcoming Events',
@@ -137,19 +137,26 @@ export default function EventsSection({ customEvents }) {
         stRef.current = null
       }
 
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+
       // Vertical distance dynamically scaled to the number of cards
-      const getPinDistance = () =>
-        Math.max(1400, window.innerHeight * Math.max(1.6, totalCards * 0.65))
+      const getPinDistance = () => {
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+          // On mobile: balanced pin scroll so swiping advances through cards smoothly without excessive dragging
+          return Math.max(750, window.innerHeight * Math.max(1.2, totalCards * 0.55))
+        }
+        return Math.max(1400, window.innerHeight * Math.max(1.6, totalCards * 0.65))
+      }
 
       const step = 1 / totalCards
-      const deadband = Math.min(0.025, step * 0.12)
+      const deadband = Math.min(0.02, step * 0.1)
 
       const trigger = ScrollTrigger.create({
         trigger: section,
         pin: pinWrapper,
         start: 'top top',
         end: () => `+=${getPinDistance()}`,
-        scrub: 0.8,
+        scrub: isMobile ? 0.35 : 0.8,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
@@ -234,10 +241,10 @@ export default function EventsSection({ customEvents }) {
       <div
         ref={pinWrapperRef}
         onWheel={handleWheel}
-        className="w-full h-screen min-h-[620px] max-h-[1080px] flex flex-col justify-between overflow-hidden relative select-none"
+        className="w-full h-screen min-h-[560px] sm:min-h-[620px] max-h-[1080px] flex flex-col justify-between overflow-hidden relative select-none"
         style={{
-          paddingTop: 'clamp(5.25rem, 6.5vh + 1.25rem, 6rem)',
-          paddingBottom: 'clamp(1rem, 2.5vh, 2rem)',
+          paddingTop: 'clamp(4.5rem, 5.5vh + 1.25rem, 6rem)',
+          paddingBottom: 'clamp(0.75rem, 2vh, 2rem)',
         }}
       >
         {/* Ambient atmospheric glows */}
