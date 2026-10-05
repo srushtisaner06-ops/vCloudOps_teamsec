@@ -7,6 +7,10 @@
   --member-card-height: 450px;
 }
 
+.team-section.has-domain-carousel {
+  overflow: visible;
+}
+
 .team-header {
   width: min(100% - 2rem, 760px);
   margin: 0 auto;
