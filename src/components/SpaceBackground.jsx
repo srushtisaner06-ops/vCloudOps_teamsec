@@ -1,6 +1,8 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 import Particles from './Particles'
+import NebulaDustClouds from './space/NebulaDustClouds'
+import SpaceJourneyCanvas from './space/SpaceJourneyCanvas'
 
 /* ══════════════════════════════════════════════════════════════════════════════
    SpaceBackground — vCloudOps Official Cosmic Theme
@@ -535,11 +537,11 @@ function RubyLavaPlanet() {
   )
 }
 
-/* ── 4. Crystalline Cyan Ice Moon (Lower Right Space) ────────────────────── */
+/* ── 4. Crystalline Cyan Ice Moon (Companion Satellite Orb) ────────────── */
 function CyanIceMoon() {
   return (
     <div
-      className="absolute top-[75%] right-[9%] sm:right-[15%] pointer-events-none select-none"
+      className="absolute top-[28%] right-[16%] sm:right-[22%] md:right-[26%] pointer-events-none select-none"
       style={{
         animation: 'floatOrbit4 14s ease-in-out infinite',
         willChange: 'transform',
@@ -547,33 +549,67 @@ function CyanIceMoon() {
       aria-hidden="true"
     >
       <svg
-        viewBox="0 0 70 70"
-        className="w-9 h-9 sm:w-11 sm:h-11 md:w-13 md:h-13"
+        viewBox="0 0 80 80"
+        className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16"
         style={{
-          filter: 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.45))',
+          filter: 'drop-shadow(0 0 16px rgba(56, 189, 248, 0.45))',
           transform: 'translateZ(0)',
         }}
       >
         <defs>
           <clipPath id="iceMoonClip">
-            <circle cx="35" cy="35" r="30" />
+            <circle cx="40" cy="40" r="36" />
           </clipPath>
-          <radialGradient id="iceMoonGrad" cx="30%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="#F0F9FF" />
-            <stop offset="40%" stopColor="#7DD3FC" />
-            <stop offset="80%" stopColor="#0284C7" />
+          {/* Volumetric Spherical Shading */}
+          <radialGradient id="iceMoonBase" cx="32%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#BAE6FD" />
+            <stop offset="35%" stopColor="#7DD3FC" />
+            <stop offset="65%" stopColor="#38BDF8" />
+            <stop offset="85%" stopColor="#0284C7" />
             <stop offset="100%" stopColor="#082F59" />
           </radialGradient>
+          {/* Smooth Day/Night Terminator Shadow */}
+          <linearGradient id="iceMoonShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="38%" stopColor="transparent" />
+            <stop offset="78%" stopColor="#03152E" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#020B1A" stopOpacity="0.95" />
+          </linearGradient>
         </defs>
-        <circle cx="35" cy="35" r="31.5" fill="none" stroke="rgba(125, 211, 252, 0.4)" strokeWidth="1.5" />
+
+        {/* Ambient Atmospheric Halo */}
+        <circle cx="40" cy="40" r="37.5" fill="none" stroke="rgba(186, 230, 253, 0.45)" strokeWidth="1.5" />
+        <circle cx="40" cy="40" r="39.5" fill="none" stroke="rgba(56, 189, 248, 0.20)" strokeWidth="2.5" />
+
         <g clipPath="url(#iceMoonClip)">
-          <circle cx="35" cy="35" r="30" fill="url(#iceMoonGrad)" />
-          {/* Icy polygonal facet patterns */}
-          <polygon points="20,18 28,14 36,22 26,25" fill="#BAE6FD" opacity="0.4" />
-          <polygon points="32,30 44,26 48,38 36,42" fill="#0369A1" opacity="0.5" />
-          <polygon points="16,36 28,32 26,46 14,44" fill="#075985" opacity="0.45" />
-          <circle cx="42" cy="20" r="3.5" fill="#0C4A6E" />
-          <path d="M 6 35 A 30 30 0 0 1 35 6 A 30 30 0 0 0 10 30 Z" fill="#FFFFFF" opacity="0.5" />
+          {/* Ice Globe Body */}
+          <circle cx="40" cy="40" r="36" fill="url(#iceMoonBase)" />
+
+          {/* Stepped Pixel Atmospheric Band */}
+          <path d="M 0 32 Q 40 22 80 34" fill="none" stroke="#BAE6FD" strokeWidth="2.5" opacity="0.25" />
+
+          {/* Smooth Volumetric Crater Basins */}
+          <g transform="translate(28, 24)">
+            <ellipse cx="0" cy="0" rx="6" ry="5" fill="#082F59" opacity="0.55" />
+            <path d="M -5 2 A 5.5 4.5 0 0 0 5 0" fill="none" stroke="#BAE6FD" strokeWidth="1.2" opacity="0.8" />
+          </g>
+          <g transform="translate(52, 42)">
+            <ellipse cx="0" cy="0" rx="8" ry="6.5" fill="#082F59" opacity="0.55" />
+            <path d="M -7 2.5 A 7.5 6 0 0 0 7 0" fill="none" stroke="#BAE6FD" strokeWidth="1.5" opacity="0.8" />
+          </g>
+          <g transform="translate(36, 56)">
+            <ellipse cx="0" cy="0" rx="5" ry="4" fill="#031B3A" opacity="0.45" />
+            <path d="M -4 1.5 A 4.5 3.5 0 0 0 4 0" fill="none" stroke="#7DD3FC" strokeWidth="1" opacity="0.75" />
+          </g>
+
+          {/* Spherical Terminator Shadow */}
+          <circle cx="40" cy="40" r="36" fill="url(#iceMoonShadow)" />
+
+          {/* Specular Starlight Rim Crescent */}
+          <path
+            d="M 6 40 A 36 36 0 0 1 40 6 A 36 36 0 0 0 14 34 Z"
+            fill="#FFFFFF"
+            opacity="0.45"
+          />
         </g>
       </svg>
     </div>
@@ -662,76 +698,73 @@ export default function SpaceBackground() {
   const reduced = useReducedMotion()
 
   /* ── Scroll-Linked Parallax System (GPU-accelerated via Lenis smooth scroll) ── */
-  const { scrollY } = useScroll()
+  const { scrollYProgress } = useScroll()
 
-  // 1. Top-Right Moon: drifts upward and slightly outwards, with subtle counter-clockwise tilt
-  const moonY = useTransform(scrollY, [0, 1000], [0, -160])
-  const moonX = useTransform(scrollY, [0, 1000], [0, -35])
-  const moonRotate = useTransform(scrollY, [0, 1000], [0, -7])
+  // 1. Top-Right Moon: drifts upward and slightly outwards, exiting top-right into upper orbit (0% -> 16%)
+  const moonY = useTransform(scrollYProgress, [0, 0.16], [0, -360])
+  const moonX = useTransform(scrollYProgress, [0, 0.16], [0, 45])
+  const moonRotate = useTransform(scrollYProgress, [0, 0.16], [0, -8])
+  const moonOpacity = useTransform(scrollYProgress, [0, 0.12, 0.16], [1, 0.85, 0])
 
-  // 2. Bottom-Left Ocean World: rises into view with clockwise spin as you scroll down
-  const oceanPlanetY = useTransform(scrollY, [0, 1000], [0, -130])
-  const oceanPlanetX = useTransform(scrollY, [0, 1000], [0, 40])
-  const oceanPlanetRotate = useTransform(scrollY, [0, 1000], [0, 6])
+  // 2. Bottom-Left Ocean World: drifts downwards-left, exiting into space (0% -> 18%)
+  const oceanPlanetY = useTransform(scrollYProgress, [0, 0.18], [0, -300])
+  const oceanPlanetX = useTransform(scrollYProgress, [0, 0.18], [0, -45])
+  const oceanPlanetRotate = useTransform(scrollYProgress, [0, 0.18], [0, 8])
+  const oceanPlanetOpacity = useTransform(scrollYProgress, [0, 0.13, 0.18], [1, 0.85, 0])
 
-  // 3. Ringed Titan: tilts rings and drifts
-  const ringedY = useTransform(scrollY, [0, 1000], [0, -90])
-  const ringedRotate = useTransform(scrollY, [0, 1000], [0, -12])
+  // 3. Ringed Titan: tilts rings and drifts up (0% -> 17%)
+  const ringedY = useTransform(scrollYProgress, [0, 0.17], [0, -220])
+  const ringedRotate = useTransform(scrollYProgress, [0, 0.17], [0, -14])
+  const ringedOpacity = useTransform(scrollYProgress, [0, 0.12, 0.17], [1, 0.8, 0])
 
-  // 4. Purple Dwarf (Upper Left): swift nearby flyby parallax
-  const purpleY = useTransform(scrollY, [0, 1000], [0, -220])
-  const purpleX = useTransform(scrollY, [0, 1000], [0, -30])
+  // 4. Purple Dwarf (Upper Left): swift nearby flyby parallax exit (0% -> 15%)
+  const purpleY = useTransform(scrollYProgress, [0, 0.15], [0, -320])
+  const purpleX = useTransform(scrollYProgress, [0, 0.15], [0, -40])
+  const purpleOpacity = useTransform(scrollYProgress, [0, 0.10, 0.15], [1, 0.7, 0])
 
-  // 5. Teal Mini-Giant (Mid Left): mid-depth drift
-  const tealY = useTransform(scrollY, [0, 1000], [0, -150])
-  const tealX = useTransform(scrollY, [0, 1000], [0, 25])
-  const tealRotate = useTransform(scrollY, [0, 1000], [0, 10])
+  // 5. Teal Mini-Giant (Mid Left): mid-depth drift exit (0% -> 18%)
+  const tealY = useTransform(scrollYProgress, [0, 0.18], [0, -250])
+  const tealX = useTransform(scrollYProgress, [0, 0.18], [0, 30])
+  const tealRotate = useTransform(scrollYProgress, [0, 0.18], [0, 12])
+  const tealOpacity = useTransform(scrollYProgress, [0, 0.13, 0.18], [1, 0.8, 0])
 
-  // 6. Ruby Lava Core (Upper Mid Space): rapid upward celestial pass
-  const rubyY = useTransform(scrollY, [0, 1000], [0, -250])
-  const rubyScale = useTransform(scrollY, [0, 1000], [1, 0.88])
+  // 6. Ruby Lava Core (Upper Mid Space): rapid upward celestial pass exit (0% -> 14%)
+  const rubyY = useTransform(scrollYProgress, [0, 0.14], [0, -320])
+  const rubyScale = useTransform(scrollYProgress, [0, 0.14], [1, 0.85])
+  const rubyOpacity = useTransform(scrollYProgress, [0, 0.09, 0.14], [1, 0.7, 0])
 
-  // 7. Cyan Ice Moon (Lower Right): inward drift
-  const iceMoonY = useTransform(scrollY, [0, 1000], [0, -170])
-  const iceMoonX = useTransform(scrollY, [0, 1000], [0, -30])
+  // 7. Cyan Ice Moon (Lower Right): inward drift exit (0% -> 17%)
+  const iceMoonY = useTransform(scrollYProgress, [0, 0.17], [0, -260])
+  const iceMoonX = useTransform(scrollYProgress, [0, 0.17], [0, -35])
+  const iceMoonOpacity = useTransform(scrollYProgress, [0, 0.12, 0.17], [1, 0.8, 0])
 
-  // 8. Golden Pearl (Upper Right): distant subtle deep space parallax
-  const goldY = useTransform(scrollY, [0, 1000], [0, -75])
+  // 8. Golden Pearl (Upper Right): distant subtle deep space parallax exit (0% -> 16%)
+  const goldY = useTransform(scrollYProgress, [0, 0.16], [0, -180])
+  const goldOpacity = useTransform(scrollYProgress, [0, 0.11, 0.16], [1, 0.75, 0])
 
-  // Starfield subtle deep celestial parallax
-  const starsY = useTransform(scrollY, [0, 1000], [0, -45])
+  // Starfield subtle deep celestial parallax across whole page (Speed: ~0.025x)
+  const starsY = useTransform(scrollYProgress, [0, 1], [0, -110])
 
   return (
     <div
       aria-hidden="true"
       style={{
-        position: 'fixed', inset: 0, zIndex: 0,
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
         overflow: 'hidden',
         /* Midnight void with deep cosmic navy */
         background: 'linear-gradient(180deg, #020612 0%, #04091A 35%, #06112C 70%, #020612 100%)',
         pointerEvents: 'none',
+        contain: 'paint',
       }}
     >
-      {/* ── Nebula Glows / Cosmic Dust ── */}
-      {/* Top-Right cyan lunar atmospheric aura */}
-      <div
-        className="absolute -top-16 -right-16 w-[70vw] h-[60vh] max-w-[700px] max-h-[600px]"
-        style={{
-          background: 'radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.16) 0%, rgba(14, 165, 233, 0.08) 35%, transparent 70%)',
-        }}
-      />
-
-      {/* Bottom-Left azure exoplanet aura */}
-      <div
-        className="absolute -bottom-16 -left-16 w-[65vw] h-[60vh] max-w-[650px] max-h-[600px]"
-        style={{
-          background: 'radial-gradient(circle at 20% 80%, rgba(14, 165, 233, 0.18) 0%, rgba(2, 132, 199, 0.09) 40%, transparent 70%)',
-        }}
-      />
+      {/* ── Layer 1: Nebula Dust Clouds (Multi-Phase Cosmic Wash) ── */}
+      <NebulaDustClouds progress={scrollYProgress} reduced={reduced} />
 
       {/* Center deep celestial blue ambient wash */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[70vh]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[70vh] pointer-events-none"
         style={{
           background: 'radial-gradient(ellipse at 50% 50%, rgba(11, 35, 71, 0.22) 0%, transparent 70%)',
         }}
@@ -760,10 +793,13 @@ export default function SpaceBackground() {
         <ShootingStars />
       </motion.div>
 
-      {/* ── Primary Major Planets (Scroll-linked Parallax) ── */}
+      {/* ── Deep-Space Parallax Journey Layers (Midground & Foreground) ── */}
+      <SpaceJourneyCanvas scrollYProgress={scrollYProgress} reduced={reduced} />
+
+      {/* ── Hero Celestial Bodies (0% -> 15% Exit Choreography) ── */}
       {/* 1. Top-Right Icy Moon / Lunar Cratered Planet */}
       <motion.div
-        style={reduced ? {} : { y: moonY, x: moonX, rotate: moonRotate }}
+        style={reduced ? { opacity: moonOpacity } : { y: moonY, x: moonX, rotate: moonRotate, opacity: moonOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <TopRightMoon />
@@ -771,7 +807,7 @@ export default function SpaceBackground() {
 
       {/* 2. Bottom-Left Continental Ocean World + Orbiting Mini Moon */}
       <motion.div
-        style={reduced ? {} : { y: oceanPlanetY, x: oceanPlanetX, rotate: oceanPlanetRotate }}
+        style={reduced ? { opacity: oceanPlanetOpacity } : { y: oceanPlanetY, x: oceanPlanetX, rotate: oceanPlanetRotate, opacity: oceanPlanetOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <BottomLeftPlanet />
@@ -779,7 +815,7 @@ export default function SpaceBackground() {
 
       {/* 3. Mid-Distance Ringed Planet */}
       <motion.div
-        style={reduced ? {} : { y: ringedY, rotate: ringedRotate }}
+        style={reduced ? { opacity: ringedOpacity } : { y: ringedY, rotate: ringedRotate, opacity: ringedOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <RingedPlanet />
@@ -788,7 +824,7 @@ export default function SpaceBackground() {
       {/* ── Small Moving Planets & Orbs (Scroll-Linked Parallax) ── */}
       {/* 4. Amethyst Dwarf Planet (Upper Left) */}
       <motion.div
-        style={reduced ? {} : { y: purpleY, x: purpleX }}
+        style={reduced ? { opacity: purpleOpacity } : { y: purpleY, x: purpleX, opacity: purpleOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <PurpleDwarfPlanet />
@@ -796,7 +832,7 @@ export default function SpaceBackground() {
 
       {/* 5. Emerald Gas Mini-Giant with Tilted Rings (Mid Left) */}
       <motion.div
-        style={reduced ? {} : { y: tealY, x: tealX, rotate: tealRotate }}
+        style={reduced ? { opacity: tealOpacity } : { y: tealY, x: tealX, rotate: tealRotate, opacity: tealOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <TealRingedPlanet />
@@ -804,7 +840,7 @@ export default function SpaceBackground() {
 
       {/* 6. Ruby Lava Molten Dwarf Planet (Upper Mid Space) */}
       <motion.div
-        style={reduced ? {} : { y: rubyY, scale: rubyScale }}
+        style={reduced ? { opacity: rubyOpacity } : { y: rubyY, scale: rubyScale, opacity: rubyOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <RubyLavaPlanet />
@@ -812,7 +848,7 @@ export default function SpaceBackground() {
 
       {/* 7. Crystalline Cyan Ice Moon (Lower Right) */}
       <motion.div
-        style={reduced ? {} : { y: iceMoonY, x: iceMoonX }}
+        style={reduced ? { opacity: iceMoonOpacity } : { y: iceMoonY, x: iceMoonX, opacity: iceMoonOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <CyanIceMoon />
@@ -820,7 +856,7 @@ export default function SpaceBackground() {
 
       {/* 8. Golden Pearl Solar Orb (Upper Right Mid Space) */}
       <motion.div
-        style={reduced ? {} : { y: goldY }}
+        style={reduced ? { opacity: goldOpacity } : { y: goldY, opacity: goldOpacity }}
         className="absolute inset-0 pointer-events-none"
       >
         <GoldenPearlPlanet />
@@ -828,13 +864,13 @@ export default function SpaceBackground() {
 
       {/* ── Top & Bottom Atmospheric Vignettes ── */}
       <div
-        className="absolute top-0 left-0 right-0 h-28"
+        className="absolute top-0 left-0 right-0 h-28 pointer-events-none"
         style={{
           background: 'linear-gradient(to bottom, #020612 0%, transparent 100%)',
         }}
       />
       <div
-        className="absolute bottom-0 left-0 right-0 h-36"
+        className="absolute bottom-0 left-0 right-0 h-36 pointer-events-none"
         style={{
           background: 'linear-gradient(to top, #020612 0%, transparent 100%)',
         }}

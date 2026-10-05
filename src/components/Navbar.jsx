@@ -100,12 +100,12 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="main-nav-header fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6">
+      <header className="main-nav-header fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6 pointer-events-none">
         <nav
-          className={`mx-auto w-full md:w-max rounded-full px-3 sm:px-4 py-2 border transition-all duration-500 flex items-center justify-between md:justify-center gap-2 sm:gap-4 flex-nowrap ${
+          className={`pointer-events-auto mx-auto w-full md:w-max rounded-full px-3 sm:px-4 py-2 border transition-all duration-500 flex items-center justify-between md:justify-center gap-2 sm:gap-4 flex-nowrap nav-blur-island ${
             isScrolled
-              ? 'bg-[#050B18]/85 border-sky-500/25 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)]'
-              : 'bg-[#050505]/65 border-white/10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.1)]'
+              ? 'bg-[#050B18]/70 border-sky-500/30 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.7),0_0_24px_rgba(56,189,248,0.15),inset_0_1px_1px_rgba(255,255,255,0.18)]'
+              : 'bg-[#050B18]/50 border-white/12 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)]'
           }`}
           aria-label="Main Navigation"
         >
@@ -192,7 +192,7 @@ export default function Navbar() {
       {/* Modern Accessible Mobile Drawer */}
       <div
         ref={menuRef}
-        className="fixed inset-0 z-40 bg-[#050B18]/96 backdrop-blur-2xl pt-28 pb-8 px-6 opacity-0 pointer-events-none flex flex-col justify-between overflow-y-auto"
+        className="fixed inset-0 z-40 bg-[#050B18]/85 backdrop-blur-2xl nav-blur-island pt-28 pb-8 px-6 opacity-0 pointer-events-none flex flex-col justify-between overflow-y-auto"
         onClick={(e) => {
           if (e.target === menuRef.current) setMenuOpen(false)
         }}
