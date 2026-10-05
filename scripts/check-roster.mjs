@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 
 const source = fs.readFileSync(new URL('../src/components/TeamSection.jsx', import.meta.url), 'utf8')
-const memberBlock = source.match(/const MEMBERS = \[(.*?)\n\]\n\nconst TEAMS/s)?.[1] ?? ''
+const memberBlock = source.match(/const MEMBERS = \[(.*?)\r?\n\]\r?\n\r?\nconst TEAMS/s)?.[1] ?? ''
 const members = [...memberBlock.matchAll(/\{ id: '([^']+)', name: '([^']+)', role: '([^']+)', domain: '([^']+)'(.*?), accent:/g)]
   .map(([, id, name, role, domain, fields]) => ({ id, name, role, domain, fields }))
 
