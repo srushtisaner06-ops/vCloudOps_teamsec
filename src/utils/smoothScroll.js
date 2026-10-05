@@ -61,9 +61,66 @@ export function getLenis() {
 export function scrollToTarget(target, customOffset = -80) {
   if (!target) return
 
+  const isHome = target === '#home' || (typeof target === 'object' && target?.id === 'home')
+
+  if (isHome) {
+    if (lenisInstance) {
+      lenisInstance.scrollTo(0, {
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    return
+  }
+
+  const isAbout = target === '#about' || (typeof target === 'object' && target?.id === 'about')
+  if (isAbout) {
+    const el = typeof target === 'string' ? document.querySelector(target) : target
+    if (el) {
+      const targetY = el.getBoundingClientRect().top + window.scrollY
+      if (lenisInstance) {
+        lenisInstance.scrollTo(targetY, {
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        })
+      } else {
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth',
+        })
+      }
+      return
+    }
+  }
+
+  const isEvents = target === '#events' || (typeof target === 'object' && target?.id === 'events')
+  if (isEvents) {
+    const el = typeof target === 'string' ? document.querySelector(target) : target
+    if (el) {
+      const targetY = el.getBoundingClientRect().top + window.scrollY
+      if (lenisInstance) {
+        lenisInstance.scrollTo(targetY, {
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        })
+      } else {
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth',
+        })
+      }
+      return
+    }
+  }
+
+  // Uniform offset across standard sections: aligns header directly under the floating navbar
+  const effectiveOffset = (customOffset === -80 || customOffset === -85) ? 15 : customOffset
+
   if (lenisInstance) {
     lenisInstance.scrollTo(target, {
-      offset: customOffset,
+      offset: effectiveOffset,
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     })
@@ -71,7 +128,7 @@ export function scrollToTarget(target, customOffset = -80) {
     // Fallback if Lenis is disabled or reduced motion
     const el = typeof target === 'string' ? document.querySelector(target) : target
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY + customOffset
+      const top = el.getBoundingClientRect().top + window.scrollY - 75
       window.scrollTo({
         top: Math.max(0, top),
         behavior: 'smooth',

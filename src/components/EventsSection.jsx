@@ -1,301 +1,272 @@
-import { useState, useRef } from 'react'
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import {
-  CalendarBlank,
-  MapPin,
-  ArrowUpRight,
-  Sparkle,
-  CheckCircle,
-  X,
-} from '@phosphor-icons/react'
+import AccordionGallery from './AccordionGallery'
+import { getLenis } from '../utils/smoothScroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const EVENTS = [
+/* ────────────────────────────────────────────────────────
+   Active Events (can be freely added, removed, or fetched)
+──────────────────────────────────────────────────────── */
+const INITIAL_ACTIVE_EVENTS = [
   {
-    id: 'k8s-lab',
-    title: 'Kubernetes Multi-Node Cluster Lab',
-    badge: 'Hands-On Lab',
-    status: 'Registration Open',
-    date: 'Oct 18, 2026 • 2:00 PM - 5:00 PM',
-    venue: 'Engineering Hall 302 & Discord Sync',
-    desc: 'Build a production-grade 3-node Kubernetes cluster from scratch, configure Helm ingress controllers, and deploy a self-healing microservice.',
-    tags: ['Kubernetes', 'Docker', 'Helm', 'MetalLB'],
-    featured: true,
+    id: 'github-basics',
+    title: 'GitHub Basics',
+    collapsedTitle: 'GitHub Basics',
+    collapsedMeta: 'Offline Workshop',
+    tagline: 'Version Control, Branching & GitOps Foundations',
+    mode: 'Offline Workshop',
+    date: '13th Oct, 2026',
+    venue: 'VIT Bibwewadi College, Pune',
+    mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Vishwakarma+Institute+of+Technology+Bibwewadi+Pune',
+    desc: 'Hands-on code-along workshop on campus. Get direct CLI and console experience, master core Git workflows, branch lifecycle strategies, conflict resolution, collaborative pull requests, and automated repository actions with live in-person mentor debugging.',
+    src: '/images/events/github-basics.jpg',
+    fallbackSrc: 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2076&auto=format&fit=crop',
+    tags: ['Git CLI', 'Branching & Merge', 'PR Review', 'Campus Offline'],
+    category: 'Hands-on Lab',
+    actionLabel: 'Open Venue Map',
   },
   {
-    id: 'cicd-gitops',
-    title: 'GitOps & CI/CD with GitHub Actions & ArgoCD',
-    badge: 'Technical Workshop',
-    status: 'Upcoming',
-    date: 'Nov 02, 2026 • 3:30 PM - 6:00 PM',
-    venue: 'Virtual Workshop • Discord Live Stage',
-    desc: 'Master the GitOps philosophy: configure automated test pipelines, container vulnerability scanning, and zero-downtime blue/green rollouts.',
-    tags: ['GitHub Actions', 'ArgoCD', 'AWS EKS', 'Docker'],
-    featured: false,
-  },
-  {
-    id: 'devsecops-audit',
-    title: 'DevSecOps & Zero-Trust Infrastructure',
-    badge: 'Security Clinic',
-    status: 'Upcoming',
-    date: 'Nov 21, 2026 • 4:00 PM - 6:30 PM',
-    venue: 'Lab 405 & Online Sync',
-    desc: 'Audit infrastructure security, write least-privilege IAM policies, and eliminate plaintext credentials using automated HashiCorp Vault secrets.',
-    tags: ['HashiCorp Vault', 'Trivy', 'IAM', 'Terraform'],
-    featured: false,
-  },
-  {
-    id: 'cloud-hacksprint',
-    title: 'vCloudOps HackSprint 2026',
-    badge: '48H Hackathon',
-    status: 'RSVP Open',
-    date: 'Dec 05 - 07, 2026 • 48 Hours',
-    venue: 'Main Innovation Center & Global Discord',
-    desc: '48-hour student hackathon creating resilient distributed cloud architectures evaluated on high availability, cost efficiency, and automation.',
-    tags: ['Terraform', 'Prometheus', 'Serverless', 'Go'],
-    featured: true,
+    id: 'weekly-aws-workshops',
+    title: 'Weekly AWS Builder Workshops',
+    collapsedTitle: 'AWS Builder Workshops',
+    collapsedMeta: 'Every Sunday',
+    tagline: '100% Interactive Cloud Architecture Builds',
+    mode: 'Online Live',
+    date: 'Every Sunday',
+    venue: 'Discord Voice & AWS Console',
+    mapsUrl: null,
+    desc: 'Interactive live builds from scratch. Deploy live static websites on Amazon S3, architect serverless APIs with AWS Lambda & API Gateway, spin up cloud databases, and explore Generative AI deployments with Amazon Bedrock — every project is pushed directly to your GitHub portfolio.',
+    src: '/images/events/aws-builder.jpg',
+    fallbackSrc: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop',
+    tags: ['AWS Lambda', 'Amazon S3', 'Bedrock GenAI', 'Serverless'],
+    category: 'Weekly Sprint',
+    actionLabel: 'Join Discord Lab',
+    actionUrl: 'https://discord.gg',
   },
 ]
 
-export default function EventsSection() {
-  const containerRef = useRef(null)
-  const [modalEvent, setModalEvent] = useState(null)
-  const [registered, setRegistered] = useState({})
-  const [userEmail, setUserEmail] = useState('')
+/* ────────────────────────────────────────────────────────
+   STAY TUNED FOR UPCOMING EVENTS (Terminal Card)
+   Guaranteed to ALWAYS reside at the very end of the stack,
+   regardless of how many cards precede it.
+──────────────────────────────────────────────────────── */
+const STAY_TUNED_CARD = {
+  id: 'stay-tuned-upcoming-events',
+  isTerminalCard: true,
+  title: 'Stay Tuned for Upcoming Events',
+  collapsedTitle: 'Stay Tuned',
+  collapsedMeta: 'Upcoming Events',
+  tagline: 'Hackathons, Deep Dives & Cloud Sprints',
+  mode: 'Upcoming Events',
+  date: 'Semester Roadmap · 2026–27',
+  venue: 'Hybrid · Campus & Global',
+  mapsUrl: null,
+  desc: 'Collaborate in teams to design and deploy innovative, practical, and scalable cloud solutions solving real-world challenges, earn AWS credits, win badges and swag, and walk away with working demos that elevate your engineering resume.',
+  src: '/images/events/upcoming-event.jpg',
+  fallbackSrc: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
+  tags: ['Agentic AI', 'Cloud Hackathon', 'AWS Credits', 'Swag & Badges'],
+  category: 'Upcoming Events',
+  actionLabel: 'Stay Tuned for Updates',
+  actionUrl: '/join',
+}
 
-  useGSAP(() => {
-    gsap.from('.events-header', {
-      y: 25,
-      opacity: 0,
-      duration: 0.85,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.events-header', start: 'top 85%' },
-    })
+/**
+ * Ensures STAY_TUNED_CARD is guaranteed to be the final card in the stack,
+ * deduplicating any legacy entries and seamlessly appending it.
+ */
+function ensureStayTunedAtEnd(eventsList = []) {
+  const filtered = eventsList.filter(
+    (item) => item.id !== STAY_TUNED_CARD.id && item.id !== 'upcoming-flagship-event'
+  )
+  return [...filtered, STAY_TUNED_CARD]
+}
 
-    gsap.from('.event-card', {
-      y: 35,
-      opacity: 0,
-      duration: 0.75,
-      stagger: 0.1,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '.events-grid', start: 'top 85%' },
-    })
-  }, { scope: containerRef })
+export default function EventsSection({ customEvents }) {
+  const sectionRef = useRef(null)
+  const pinWrapperRef = useRef(null)
+  const stRef = useRef(null)
 
-  const handleRegister = (e, ev) => {
-    e.preventDefault()
-    setModalEvent(ev)
-  }
+  // Assembles events guaranteed to have STAY_TUNED_CARD as the terminal card
+  const events = useMemo(() => {
+    return ensureStayTunedAtEnd(customEvents || INITIAL_ACTIVE_EVENTS)
+  }, [customEvents])
 
-  const handleConfirmRegister = (e) => {
-    e.preventDefault()
-    if (!userEmail) return
-    setRegistered((prev) => ({ ...prev, [modalEvent.id]: true }))
-    setTimeout(() => {
-      setModalEvent(null)
-      setUserEmail('')
-    }, 1200)
+  const totalCards = events.length
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  // Scroll to a specific card smoothly via Lenis
+  const scrollToCard = useCallback((index) => {
+    const st = stRef.current
+    if (!st || totalCards <= 1) return
+
+    let targetProgress = 0
+    if (index === 0) {
+      targetProgress = 0.0
+    } else if (index === totalCards - 1) {
+      // Comfortably inside the terminal card zone
+      targetProgress = 0.88
+    } else {
+      targetProgress = (index + 0.5) / totalCards
+    }
+
+    const targetY = st.start + targetProgress * (st.end - st.start)
+    const lenis = getLenis()
+    if (lenis) {
+      lenis.scrollTo(targetY, {
+        duration: 1.0,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      })
+    } else {
+      window.scrollTo({ top: targetY, behavior: 'smooth' })
+    }
+  }, [totalCards])
+
+  // GSAP ScrollTrigger Pinned Accordion Setup
+  useGSAP(
+    () => {
+      const section = sectionRef.current
+      const pinWrapper = pinWrapperRef.current
+      if (!section || !pinWrapper) return
+
+      // Clean up previous trigger if re-running
+      if (stRef.current) {
+        stRef.current.kill()
+        stRef.current = null
+      }
+
+      // Vertical distance dynamically scaled to the number of cards
+      const getPinDistance = () =>
+        Math.max(1400, window.innerHeight * Math.max(1.6, totalCards * 0.65))
+
+      const step = 1 / totalCards
+      const deadband = Math.min(0.025, step * 0.12)
+
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        pin: pinWrapper,
+        start: 'top top',
+        end: () => `+=${getPinDistance()}`,
+        scrub: 0.8,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const p = self.progress
+
+          // Dynamic hysteresis state machine supporting ANY number of cards:
+          setActiveIndex((currentIdx) => {
+            if (totalCards <= 1) return 0
+
+            // Forward transition: advancing to next card
+            if (currentIdx < totalCards - 1) {
+              const forwardBoundary = (currentIdx + 1) * step + deadband
+              if (p >= forwardBoundary) {
+                let target = currentIdx + 1
+                while (target < totalCards - 1 && p >= (target + 1) * step + deadband) {
+                  target++
+                }
+                return target
+              }
+            }
+
+            // Backward transition: retreating to previous card
+            if (currentIdx > 0) {
+              const backwardBoundary = currentIdx * step - deadband
+              if (p < backwardBoundary) {
+                let target = currentIdx - 1
+                while (target > 0 && p < target * step - deadband) {
+                  target--
+                }
+                return target
+              }
+            }
+
+            return currentIdx
+          })
+        },
+      })
+
+      stRef.current = trigger
+
+      const timeout = setTimeout(() => {
+        ScrollTrigger.refresh()
+      }, 250)
+
+      return () => {
+        clearTimeout(timeout)
+        trigger.kill()
+      }
+    },
+    { scope: sectionRef, dependencies: [totalCards] }
+  )
+
+  // Listen to window resize to keep ScrollTrigger measurements pristine
+  useEffect(() => {
+    const handleResize = () => {
+      ScrollTrigger.refresh()
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Handle horizontal trackpad scroll translation to vertical scroll
+  const handleWheel = (e) => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 8) {
+      const lenis = getLenis()
+      if (lenis) {
+        lenis.scrollTo(lenis.scroll + e.deltaX * 1.5, { immediate: false })
+      } else {
+        window.scrollBy({ top: e.deltaX * 1.5 })
+      }
+    }
   }
 
   return (
     <section
       id="events"
-      ref={containerRef}
-      className="relative py-20 sm:py-28 md:py-36 px-4 sm:px-6 md:px-8 flex flex-col items-center text-center scroll-mt-24 z-10"
+      ref={sectionRef}
+      className="relative w-full z-20"
+      aria-label="Events and Workshops Section"
     >
-      {/* Header */}
-      <div className="events-header flex flex-col items-center max-w-3xl mb-12 sm:mb-16">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-sky-400/20 backdrop-blur-xl mb-6">
-          <Sparkle weight="fill" className="w-3.5 h-3.5 text-sky-400" />
-          <span className="text-[10px] sm:text-xs tracking-[0.22em] uppercase font-bold text-sky-400">
-            Workshops & Sprints
-          </span>
-        </div>
+      {/* ── Pinned Full-Viewport Container ── */}
+      <div
+        ref={pinWrapperRef}
+        onWheel={handleWheel}
+        className="w-full h-screen min-h-[620px] max-h-[1080px] flex flex-col justify-between overflow-hidden relative select-none"
+        style={{
+          paddingTop: 'clamp(5.25rem, 6.5vh + 1.25rem, 6rem)',
+          paddingBottom: 'clamp(1rem, 2.5vh, 2rem)',
+        }}
+      >
+        {/* Ambient atmospheric glows */}
+        <div className="absolute top-1/4 left-1/4 w-[650px] h-[380px] bg-sky-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="absolute bottom-1/3 right-1/4 w-[550px] h-[340px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
-        <h2
-          className="font-extrabold text-white leading-tight tracking-tight mb-4"
-          style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
-        >
-          Level Up Your Cloud Craft
-        </h2>
-
-        <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-          From zero-cost AWS labs to continuous deployment sprints, our events focus on practical, industry-aligned engineering skills with peer collaboration.
-        </p>
-      </div>
-
-      {/* Events Grid */}
-      <div className="events-grid grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-6xl w-full text-left">
-        {EVENTS.map((ev) => {
-          const isDone = registered[ev.id]
-          return (
-            <div
-              key={ev.id}
-              className={`event-card relative p-1 rounded-3xl transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-between ${
-                ev.featured
-                  ? 'bg-gradient-to-b from-sky-500/25 via-white/5 to-white/5 border border-sky-400/30 shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_24px_rgba(56,189,248,0.15)]'
-                  : 'bg-white/5 border border-white/10 hover:border-sky-400/30 shadow-[0_12px_32px_rgba(0,0,0,0.5)]'
-              }`}
-            >
-              <div className="flex flex-col justify-between p-6 sm:p-8 rounded-[calc(1.5rem-2px)] bg-[#050505]/85 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] h-full">
-                <div>
-                  {/* Top Bar: Badge & Status */}
-                  <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
-                    <span className="text-[11px] font-mono font-semibold tracking-wider uppercase px-3 py-1 rounded-full bg-white/10 text-sky-300 border border-white/10">
-                      {ev.badge}
-                    </span>
-
-                    <span
-                      className={`text-[10px] font-mono font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full ${
-                        ev.status.includes('Open')
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                          : 'bg-sky-500/15 text-sky-300 border border-sky-500/20'
-                      }`}
-                    >
-                      {ev.status}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 tracking-tight">
-                    {ev.title}
-                  </h3>
-
-                  {/* Date & Venue */}
-                  <div className="flex flex-col gap-1.5 mb-4 text-xs font-mono text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <CalendarBlank weight="bold" className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                      <span>{ev.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin weight="bold" className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                      <span className="truncate">{ev.venue}</span>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-sm leading-relaxed text-slate-400 mb-6">
-                    {ev.desc}
-                  </p>
-                </div>
-
-                {/* Footer: Tags & Action */}
-                <div>
-                  <div className="flex flex-wrap gap-1.5 mb-6">
-                    {ev.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-slate-300 border border-white/5"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => handleRegister(e, ev)}
-                    className={`w-full py-3 px-5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-98 ${
-                      isDone
-                        ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
-                        : 'bg-white hover:bg-slate-200 text-slate-950 shadow-[0_4px_16px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_24px_rgba(56,189,248,0.3)]'
-                    }`}
-                  >
-                    {isDone ? (
-                      <>
-                        <CheckCircle weight="fill" className="w-4 h-4 text-emerald-400" />
-                        <span>Seat Confirmed!</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>RSVP / Register Seat</span>
-                        <ArrowUpRight weight="bold" className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* RSVP Modal */}
-      {modalEvent && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity"
-          onClick={() => setModalEvent(null)}
-        >
-          <div
-            className="relative w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[#081226] border border-sky-400/30 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(56,189,248,0.2)] text-left"
-            onClick={(e) => e.stopPropagation()}
+        {/* ── Section Header ── */}
+        <div className="events-header flex flex-col items-center text-center px-4 sm:px-6 shrink-0 mb-2 sm:mb-3">
+          <h2
+            className="font-extrabold text-white leading-tight tracking-tight mb-1 sm:mb-2"
+            style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)' }}
           >
-            <button
-              type="button"
-              aria-label="Close modal"
-              onClick={() => setModalEvent(null)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
-            >
-              <X weight="bold" className="w-4 h-4" />
-            </button>
+            Level Up Your Cloud Craft
+          </h2>
 
-            <div className="flex items-center gap-2 mb-2">
-              <img src="/Logo/logo-icon.png" alt="vCloudOps" className="w-5 h-5 object-contain" />
-              <span className="text-[10px] font-mono tracking-widest text-sky-400 uppercase font-semibold">
-                Event Registration • vCloudOps
-              </span>
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-bold text-white mt-1 mb-2">
-              {modalEvent.title}
-            </h3>
-
-            <p className="text-xs text-slate-300 mb-6 flex items-center gap-2">
-              <CalendarBlank className="text-sky-400 w-4 h-4" /> {modalEvent.date}
-            </p>
-
-            {registered[modalEvent.id] ? (
-              <div className="py-6 flex flex-col items-center justify-center gap-2 text-center text-emerald-400">
-                <CheckCircle weight="fill" className="w-12 h-12" />
-                <h4 className="text-lg font-bold">You are in!</h4>
-                <p className="text-xs text-slate-300">
-                  Confirmation sent. See you in the session!
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleConfirmRegister} className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1">
-                    Student Email Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="student@university.edu"
-                    value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/15 text-white text-sm focus:outline-none focus:border-sky-400 transition-colors"
-                  />
-                </div>
-
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Free admission. Attendees will receive cluster credentials and Discord access keys prior to start.
-                </p>
-
-                <button
-                  type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-400 to-sky-300 text-slate-950 font-bold text-sm shadow-[0_0_20px_rgba(56,189,248,0.4)] active:scale-98 transition-transform"
-                >
-                  Confirm Free Registration
-                </button>
-              </form>
-            )}
-          </div>
+          <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed max-w-2xl px-2">
+            Don&apos;t just learn the cloud — code it live. From hands-on Git essentials at VIT campus to weekly cloud builds and hackathon sprints.
+          </p>
         </div>
-      )}
+
+        {/* ── Controlled Accordion Gallery Container ── */}
+        <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 my-auto flex-1 flex flex-col justify-center">
+          <AccordionGallery
+            items={events}
+            activeIndex={activeIndex}
+            onSelect={scrollToCard}
+          />
+        </div>
+      </div>
     </section>
   )
 }

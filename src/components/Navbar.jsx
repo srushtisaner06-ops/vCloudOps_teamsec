@@ -1,26 +1,36 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { List, X, ArrowUpRight, DiscordLogo, GithubLogo, LinkedinLogo } from '@phosphor-icons/react'
 import { scrollToTarget } from '../utils/smoothScroll'
 import { useScrolled } from '../hooks/useScrolled'
+import { usePageTransition } from '../hooks/usePageTransition'
 
 const NAV_LINKS = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
   { label: 'Team', href: '#team' },
-  { label: 'Community', href: '#contact' },
+  { label: 'Gallery', href: '#gallery' },
 ]
 
 export default function Navbar() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { transitionTo } = usePageTransition()
+  const isHomePage = location.pathname === '/'
+  const isJoinPage = location.pathname === '/join'
+
   const [active, setActive] = useState('#home')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [btnPulsing, setBtnPulsing] = useState(false)
   const menuRef = useRef(null)
   const isScrolled = useScrolled(25)
 
-  // Scroll active detection throttled with requestAnimationFrame
+  // Scroll active detection throttled with requestAnimationFrame (only on homepage)
   useEffect(() => {
+    if (!isHomePage) return
     let ticking = false
     const handleScroll = () => {
       if (!ticking) {
@@ -46,7 +56,7 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isHomePage])
 
   // Lock body scroll and handle Escape key when mobile menu is open
   useEffect(() => {
@@ -95,7 +105,34 @@ export default function Navbar() {
     e.preventDefault()
     setActive(href)
     setMenuOpen(false)
-    scrollToTarget(href, -85)
+    if (isHomePage) {
+      scrollToTarget(href, -85)
+    } else {
+      navigate(`/${href}`)
+    }
+  }
+
+  const handleLogoClick = (e) => {
+    e.preventDefault()
+    setActive('#home')
+    setMenuOpen(false)
+    if (isHomePage) {
+      scrollToTarget('#home', -85)
+    } else {
+      transitionTo('/')
+    }
+  }
+
+  const handleJoinClick = (e) => {
+    e.preventDefault()
+    setBtnPulsing(true)
+    setTimeout(() => setBtnPulsing(false), 500)
+    setMenuOpen(false)
+    if (!isJoinPage) {
+      transitionTo('/join')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   return (
@@ -111,24 +148,24 @@ export default function Navbar() {
         >
           {/* Logo brand */}
           <a
-            href="#home"
-            onClick={(e) => handleNavClick(e, '#home')}
-            className="flex items-center gap-2.5 pl-1.5 sm:pl-2.5 pr-2 py-1 select-none group shrink-0 whitespace-nowrap min-w-0"
+            href={isHomePage ? '#home' : '/'}
+            onClick={handleLogoClick}
+            className="flex items-center gap-2 pl-1.5 sm:pl-2.5 pr-2 py-1 select-none group shrink-0 whitespace-nowrap min-w-0"
           >
             <img
-              src="/Logo/logo-icon.png"
-              alt="vCloudOps Logo"
-              className="h-6 sm:h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(56,189,248,0.5)] shrink-0"
+              src="/Logo/aws-logo-white.png"
+              alt="AWS SBG x VIT Logo"
+              className="h-6 sm:h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_12px_rgba(255,153,0,0.5)] shrink-0"
             />
             <span className="font-extrabold text-white text-base sm:text-lg tracking-tight whitespace-nowrap">
-              vCloud<span className="text-sky-400">Ops</span>
+              AWS <span className="text-amber-400">SBG</span> <span className="text-white/50 text-xs sm:text-sm font-semibold mx-0.5">x</span> <span className="text-sky-400">VIT</span>
             </span>
           </a>
 
           {/* Desktop Navigation Links */}
           <ul className="hidden md:flex items-center gap-1 px-3 border-l border-white/10 list-none m-0">
             {NAV_LINKS.map(({ label, href }) => {
-              const isActive = active === href
+              const isActive = isHomePage && active === href
               return (
                 <li key={label}>
                   <a
@@ -150,30 +187,42 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex pl-2 pr-1">
-            <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
-              className="group flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-xs sm:text-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+            <button
+              type="button"
+              onClick={handleJoinClick}
+              className={`group relative overflow-hidden flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
+                isJoinPage
+                  ? 'bg-sky-400 text-slate-950 shadow-[0_0_20px_rgba(56,189,248,0.6)] ring-2 ring-sky-300/60'
+                  : 'bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 hover:shadow-[0_0_24px_rgba(56,189,248,0.5)] hover:scale-[1.03] active:scale-[0.95]'
+              } ${btnPulsing ? 'scale-105 ring-4 ring-sky-300/80 shadow-[0_0_30px_rgba(56,189,248,0.9)]' : ''}`}
             >
-              Join Us
-              <div className="w-6 h-6 rounded-full bg-slate-950/15 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+              {btnPulsing && (
+                <span className="absolute inset-0 rounded-full bg-white/50 animate-ping pointer-events-none" />
+              )}
+              <span className="relative z-10">Join Us</span>
+              <div className="relative z-10 w-6 h-6 rounded-full bg-slate-950/15 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
                 <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
               </div>
-            </a>
+            </button>
           </div>
 
           {/* Mobile Right Controls: Hamburger Toggle (+ optional tablet Join) */}
           <div className="flex md:hidden items-center gap-2 shrink-0">
             {/* Tablet-only quick Join button; hidden on narrow mobile (<640px) to prevent overlap */}
             {!menuOpen && (
-              <a
-                href="#contact"
-                onClick={(e) => handleNavClick(e, '#contact')}
-                className="hidden sm:inline-flex px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-300 text-slate-950 font-bold text-xs items-center gap-1 active:scale-95 transition-all shadow-[0_0_12px_rgba(56,189,248,0.3)] shrink-0 whitespace-nowrap"
+              <button
+                type="button"
+                onClick={handleJoinClick}
+                className={`relative overflow-hidden hidden sm:inline-flex px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-300 text-slate-950 font-bold text-xs items-center gap-1 active:scale-95 transition-all shadow-[0_0_12px_rgba(56,189,248,0.3)] shrink-0 whitespace-nowrap cursor-pointer ${
+                  btnPulsing ? 'ring-2 ring-sky-300 shadow-[0_0_24px_rgba(56,189,248,0.8)]' : ''
+                }`}
               >
-                <span>Join</span>
-                <ArrowUpRight weight="bold" className="w-3.5 h-3.5" />
-              </a>
+                {btnPulsing && (
+                  <span className="absolute inset-0 rounded-full bg-white/50 animate-ping pointer-events-none" />
+                )}
+                <span className="relative z-10">Join Us</span>
+                <ArrowUpRight weight="bold" className="w-3.5 h-3.5 relative z-10" />
+              </button>
             )}
 
             <button
@@ -200,7 +249,7 @@ export default function Navbar() {
         <div className="flex flex-col gap-2 max-w-sm mx-auto w-full pt-2">
           <p className="text-[11px] font-mono tracking-widest text-sky-400 uppercase mb-2 px-2">Navigation</p>
           {NAV_LINKS.map(({ label, href }) => {
-            const isActive = active === href
+            const isActive = isHomePage && active === href
             return (
               <a
                 key={label}
@@ -219,14 +268,14 @@ export default function Navbar() {
           })}
 
           <div className="mobile-nav-item pt-4">
-            <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
-              className="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-base shadow-[0_0_25px_rgba(56,189,248,0.35)] active:scale-98 transition-transform"
+            <button
+              type="button"
+              onClick={handleJoinClick}
+              className="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-base shadow-[0_0_25px_rgba(56,189,248,0.35)] active:scale-98 transition-transform cursor-pointer"
             >
-              <span>Join Community</span>
+              <span>Join Us</span>
               <ArrowUpRight weight="bold" className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
 
@@ -261,7 +310,7 @@ export default function Navbar() {
               <LinkedinLogo weight="fill" className="w-6 h-6" />
             </a>
           </div>
-          <span className="text-xs font-mono text-slate-500">vCloudOps • Official Student Chapter</span>
+          <span className="text-xs font-mono text-slate-500">AWS SBG x VIT • Official Student Chapter</span>
         </div>
       </div>
     </>

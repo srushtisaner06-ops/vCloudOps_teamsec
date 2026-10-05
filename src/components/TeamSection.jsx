@@ -422,7 +422,7 @@ export default function TeamSection() {
   return (
     <section ref={sectionRef} id="team" className={`team-section${selectedTeam ? ' has-open-member' : ''}`} data-auto-open-disabled={autoOpenDisabled ? 'true' : undefined} aria-labelledby="team-heading">
       <div className="team-header">
-        <span className="team-kicker"><img src="/Logo/logo-icon.png" alt="vCloudOps" /> Core above the constellation</span>
+        <span className="team-kicker"><img src="/Logo/aws-logo-white.png" alt="AWS SBG" className="w-4 h-4 object-contain inline-block mr-1.5" /> Core above the constellation</span>
         <h2 id="team-heading">Built by students, for students</h2>
         <p>The team running workshops, mentoring lab sessions, and maintaining community infrastructure.</p>
       </div>
@@ -436,3 +436,4 @@ export default function TeamSection() {
     </section>
   )
 }
+
