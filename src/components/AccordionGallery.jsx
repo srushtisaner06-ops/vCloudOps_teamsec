@@ -105,6 +105,7 @@ export default function AccordionGallery({
                 alt={item.title}
                 className="accordion-bg-img"
                 loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   if (item.fallbackSrc && e.currentTarget.src !== item.fallbackSrc) {
                     e.currentTarget.src = item.fallbackSrc
