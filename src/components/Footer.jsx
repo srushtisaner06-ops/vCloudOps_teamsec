@@ -65,7 +65,7 @@ export default function Footer() {
         )
         .fromTo(
           '.watermark-vit',
-          { x: -80, opacity: 0 },
+          { x: 80, opacity: 0 },
           { x: 0, opacity: 1, duration: 1.1, ease: 'power3.out' },
           0.15
         )
