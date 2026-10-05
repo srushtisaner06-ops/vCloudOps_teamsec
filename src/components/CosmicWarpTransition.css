@@ -1,0 +1,41 @@
+@keyframes cosmicRingExpand {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 0.95;
+    transform: scale(0.2);
+  }
+  100% {
+    width: 140vmax;
+    height: 140vmax;
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@keyframes warpStreak {
+  0% {
+    transform: scaleX(0.1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scaleX(1.4);
+    opacity: 0;
+  }
+}
+
+.cosmic-ring-expand {
+  animation: cosmicRingExpand 0.52s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cosmic-ring-expand-delayed {
+  animation: cosmicRingExpand 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
+}
+
+.warp-streak-active {
+  animation: warpStreak 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

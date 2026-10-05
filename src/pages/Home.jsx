@@ -1,18 +1,24 @@
 import { useEffect } from 'react'
-import { initSmoothScroll } from '../utils/smoothScroll'
+import { initSmoothScroll, scrollToTarget } from '../utils/smoothScroll'
 import SpaceBackground from '../components/SpaceBackground'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import AboutTeaser from '../components/AboutTeaser'
 import EventsSection from '../components/EventsSection'
 import TeamSection from '../components/TeamSection'
-import CommunitySection from '../components/CommunitySection'
+import GallerySection from '../components/GallerySection'
 import Footer from '../components/Footer'
 
 export default function Home() {
   // Initialize Lenis buttery-smooth scrolling with GSAP ScrollTrigger synchronization
   useEffect(() => {
     const lenis = initSmoothScroll()
+    if (window.location.hash) {
+      const hash = window.location.hash
+      setTimeout(() => {
+        scrollToTarget(hash)
+      }, 150)
+    }
     return () => {
       if (lenis) lenis.destroy()
     }
@@ -32,7 +38,7 @@ export default function Home() {
         <AboutTeaser />
         <EventsSection />
         <TeamSection />
-        <CommunitySection />
+        <GallerySection />
       </main>
 
       {/* ── Polished Community Footer ── */}

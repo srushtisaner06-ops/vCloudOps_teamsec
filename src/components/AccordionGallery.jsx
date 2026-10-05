@@ -1,91 +1,27 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Calendar,
   MapPin,
   ArrowSquareOut,
-  CaretLeft,
   CaretRight,
-  Clock,
   Broadcast,
   CheckCircle,
+  Sparkle,
   CaretDown,
+  ArrowRight,
 } from '@phosphor-icons/react'
+import { usePageTransition } from '../hooks/usePageTransition'
 import './AccordionGallery.css'
 
 export default function AccordionGallery({
   items = [],
-  defaultIndex = 0,
-  enableWheelScroll = true,
-  autoPlay = false,
-  autoPlayInterval = 6000,
+  activeIndex = 0,
+  onSelect = () => {},
   className = '',
 }) {
-  const [activeIndex, setActiveIndex] = useState(defaultIndex)
-  const [isHovered, setIsHovered] = useState(false)
+  const { transitionTo } = usePageTransition()
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const galleryRef = useRef(null)
-  const lastScrollTime = useRef(0)
-  const touchStartX = useRef(0)
-
-  // Navigate to previous or next panel
-  const handlePrev = useCallback(() => {
-    setActiveIndex((prev) => (prev > 0 ? prev - 1 : items.length - 1))
-  }, [items.length])
-
-  const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : 0))
-  }, [items.length])
-
-  // Mouse wheel scroll to cycle accordion like a carousel
-  const handleWheel = useCallback(
-    (e) => {
-      if (!enableWheelScroll || items.length <= 1) return
-
-      const now = Date.now()
-      // Throttle wheel navigation to avoid runaway skips (450ms debounce)
-      if (now - lastScrollTime.current < 450) return
-
-      if (Math.abs(e.deltaY) > 25 || Math.abs(e.deltaX) > 25) {
-        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
-        if (delta > 0) {
-          // Scrolled down/right -> next
-          handleNext()
-          lastScrollTime.current = now
-        } else if (delta < 0) {
-          // Scrolled up/left -> prev
-          handlePrev()
-          lastScrollTime.current = now
-        }
-      }
-    },
-    [enableWheelScroll, handleNext, handlePrev, items.length]
-  )
-
-  // Touch swipe support for mobile
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX
-  }
-
-  const handleTouchEnd = (e) => {
-    const touchEndX = e.changedTouches[0].clientX
-    const diff = touchStartX.current - touchEndX
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) {
-        handleNext()
-      } else {
-        handlePrev()
-      }
-    }
-  }
-
-  // Auto-play timer (pauses on hover)
-  useEffect(() => {
-    if (!autoPlay || isHovered || items.length <= 1) return
-    const timer = setInterval(() => {
-      handleNext()
-    }, autoPlayInterval)
-    return () => clearInterval(timer)
-  }, [autoPlay, isHovered, autoPlayInterval, handleNext, items.length])
 
   // Subtle 3D tilt tracking for expanded card on desktop
   const handleMouseMove = (e, index) => {
@@ -99,7 +35,6 @@ export default function AccordionGallery({
 
   const handleMouseLeave = () => {
     setTilt({ x: 0, y: 0 })
-    setIsHovered(false)
   }
 
   // Keyboard navigation support
@@ -108,16 +43,16 @@ export default function AccordionGallery({
       if (galleryRef.current && galleryRef.current.contains(document.activeElement)) {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
           e.preventDefault()
-          handleNext()
+          onSelect(Math.min(items.length - 1, activeIndex + 1))
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
           e.preventDefault()
-          handlePrev()
+          onSelect(Math.max(0, activeIndex - 1))
         }
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [handleNext, handlePrev])
+  }, [activeIndex, items.length, onSelect])
 
   if (!items || items.length === 0) return null
 
@@ -125,10 +60,6 @@ export default function AccordionGallery({
     <div
       ref={galleryRef}
       className={`accordion-gallery-container ${className}`}
-      onWheel={handleWheel}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       tabIndex={0}
       role="region"
@@ -146,10 +77,10 @@ export default function AccordionGallery({
             <div
               key={item.id || index}
               className={`accordion-panel ${isExpanded ? 'is-expanded' : 'is-collapsed'}`}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => onSelect(index)}
               onMouseMove={(e) => handleMouseMove(e, index)}
               style={
-                isExpanded && window.innerWidth >= 768
+                isExpanded && typeof window !== 'undefined' && window.innerWidth >= 768
                   ? {
                       transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
                     }
@@ -161,7 +92,7 @@ export default function AccordionGallery({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
-                  setActiveIndex(index)
+                  onSelect(index)
                 }
               }}
             >
@@ -184,50 +115,53 @@ export default function AccordionGallery({
               {/* Dark Gradient Glass Overlay */}
               <div className="accordion-overlay" />
 
-              {/* ── Collapsed State Display ── */}
-              {!isExpanded && (
-                <div className="accordion-collapsed-content">
-                  {/* Left / Top: Item Index */}
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-sky-400/90 bg-sky-950/70 border border-sky-400/25 px-2.5 py-1 rounded-full backdrop-blur-md">
-                      {itemNumber}
-                    </span>
-                  </div>
+              {/* ── Collapsed Content Layer (Permanently in DOM for smooth GPU cross-fade) ── */}
+              <div className="accordion-collapsed-content">
+                {/* Top: Item Index Circle */}
+                <div className="flex items-center justify-center pt-0.5">
+                  <span className="font-mono text-xs font-bold text-sky-300 bg-sky-950/80 border border-sky-400/30 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm">
+                    {itemNumber}
+                  </span>
+                </div>
 
-                  {/* Desktop Vertical Rotated Title / Mobile Horizontal Title */}
-                  <div className="accordion-vertical-title flex items-center gap-2 sm:gap-3">
-                    <span className="font-bold text-white tracking-wide">{item.title}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400/70 shrink-0" />
-                    <span className="text-xs font-mono font-normal text-slate-400 truncate max-w-[140px] sm:max-w-none">
-                      {item.date}
+                {/* Center: Vertical Rotated Title in pure white */}
+                <div className="accordion-vertical-title-wrap">
+                  <div className="accordion-vertical-title">
+                    <span className="font-bold text-white text-sm sm:text-[0.95rem] tracking-wide whitespace-nowrap">
+                      {item.collapsedTitle || item.title}
                     </span>
-                  </div>
-
-                  {/* Desktop Bottom Pulse Dot / Mobile Caret Icon */}
-                  <div className="flex items-center text-slate-400">
-                    <div className="hidden md:flex flex-col items-center gap-1">
-                      <div className="w-1.5 h-8 rounded-full bg-slate-700/60 overflow-hidden">
-                        <div className="w-full h-2 bg-sky-400 rounded-full animate-pulse" />
-                      </div>
-                    </div>
-                    <div className="md:hidden flex items-center gap-1 text-xs text-sky-400/80 font-mono">
-                      <span>Tap to view</span>
-                      <CaretDown className="w-4 h-4" />
-                    </div>
                   </div>
                 </div>
-              )}
 
-              {/* ── Expanded State Display ── */}
-              {isExpanded && (
-                <div className="accordion-expanded-content">
-                  {/* Top Bar: Index (Left) + Mode without brackets (Right) */}
+                {/* Bottom: Micro expand indicator */}
+                <div className="flex items-center justify-center pb-0.5 text-slate-400">
+                  <div className="hidden md:flex w-7 h-7 rounded-full bg-white/5 border border-white/10 items-center justify-center text-sky-400/70 hover:border-sky-400/40 hover:bg-sky-500/10 transition-all">
+                    <CaretRight weight="bold" className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="md:hidden flex items-center gap-1 text-xs text-sky-400/80 font-mono">
+                    <span>Tap to view</span>
+                    <CaretDown className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Expanded Content Layer (Permanently in DOM with stable inner width) ── */}
+              <div className="accordion-expanded-content">
+                <div className="accordion-expanded-inner">
+                  {/* Top Bar: Index (Left) + Mode badge (Right) */}
                   <div className="flex items-center justify-between gap-3">
-                    <span className="font-mono text-xs sm:text-sm font-extrabold text-sky-300 bg-sky-950/80 border border-sky-400/30 px-3 py-1 rounded-full backdrop-blur-md shadow-sm">
-                      {itemNumber} / {String(items.length).padStart(2, '0')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs sm:text-sm font-extrabold text-sky-300 bg-sky-950/80 border border-sky-400/30 px-3 py-1 rounded-full backdrop-blur-md shadow-sm">
+                        {itemNumber} / {String(items.length).padStart(2, '0')}
+                      </span>
+                      {item.category && (
+                        <span className="hidden sm:inline-block font-mono text-[11px] font-semibold text-slate-300 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full backdrop-blur-md">
+                          {item.category}
+                        </span>
+                      )}
+                    </div>
 
-                    {/* Clean Mode Pill without brackets */}
+                    {/* Mode Pill */}
                     {item.mode && (
                       <span
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-md border ${
@@ -240,6 +174,8 @@ export default function AccordionGallery({
                       >
                         {isOnline ? (
                           <Broadcast className="w-3.5 h-3.5 animate-pulse" />
+                        ) : isUpcoming ? (
+                          <Sparkle className="w-3.5 h-3.5" />
                         ) : (
                           <CheckCircle className="w-3.5 h-3.5" />
                         )}
@@ -249,27 +185,27 @@ export default function AccordionGallery({
                   </div>
 
                   {/* Content Area */}
-                  <div className="mt-auto pt-5 sm:pt-6 flex flex-col gap-3.5 sm:gap-4">
+                  <div className="mt-auto pt-3 sm:pt-4 flex flex-col gap-2 sm:gap-2.5">
                     {/* Event Title */}
                     <div>
-                      <h3 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
                         {item.title}
                       </h3>
                       {item.tagline && (
-                        <p className="text-xs sm:text-sm font-mono text-sky-400/90 mt-1 uppercase tracking-wider">
+                        <p className="text-xs sm:text-sm font-mono text-sky-400/90 mt-1 uppercase tracking-wider font-semibold">
                           {item.tagline}
                         </p>
                       )}
                     </div>
 
-                    {/* Event Meta: Date & Venue (if venue exists) */}
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3 border-y border-white/10 text-xs sm:text-sm text-slate-300 font-medium">
+                    {/* Event Meta: Date & Venue */}
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 py-2 border-y border-white/10 text-xs sm:text-sm text-slate-300 font-medium">
                       <div className="flex items-center gap-2">
                         <Calendar weight="duotone" className="w-4 h-4 text-sky-400 shrink-0" />
                         <span>{item.date}</span>
                       </div>
 
-                      {/* Location Tag only rendered when venue is defined */}
+                      {/* Location Tag */}
                       {item.venue && (
                         <div className="flex items-center gap-2">
                           <MapPin weight="duotone" className="w-4 h-4 text-rose-400 shrink-0" />
@@ -293,63 +229,63 @@ export default function AccordionGallery({
                     </div>
 
                     {/* Description */}
-                    <p className="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl">
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-3xl line-clamp-3 sm:line-clamp-4">
                       {item.desc}
                     </p>
+
+                    {/* Bottom strip: Tags and CTA button */}
+                    <div className="flex items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                        {item.tags?.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] sm:text-xs font-mono px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-white/5 text-slate-300 border border-white/10"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {item.mapsUrl ? (
+                        <a
+                          href={item.mapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-400 text-slate-950 hover:bg-sky-300 transition-all shadow-md shadow-sky-400/25 shrink-0"
+                        >
+                          <span>{item.actionLabel || 'View Map'}</span>
+                          <ArrowSquareOut className="w-3.5 h-3.5" />
+                        </a>
+                      ) : item.actionUrl ? (
+                        <a
+                          href={item.actionUrl}
+                          target={item.actionUrl.startsWith('http') ? '_blank' : '_self'}
+                          rel={item.actionUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (!item.actionUrl.startsWith('http')) {
+                              e.preventDefault()
+                              transitionTo(item.actionUrl)
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-400 text-slate-950 hover:bg-sky-300 transition-all shadow-md shadow-sky-400/25 shrink-0"
+                        >
+                          <span>{item.actionLabel || 'Join Lab'}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </a>
+                      ) : (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold text-slate-400 bg-white/5 border border-white/10 shrink-0">
+                          <span>{item.actionLabel || 'Details Coming Soon'}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           )
         })}
-      </div>
-
-      {/* ── Carousel Bottom Navigation & Indicators ── */}
-      <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
-        {/* Helper Hint */}
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-400 tracking-wider">
-          <Clock className="w-4 h-4 text-sky-400" />
-          <span>Scroll over cards or tap to expand event details</span>
-        </div>
-
-        {/* Navigation Controls: Indicator Dots + Prev/Next Buttons */}
-        <div className="flex items-center gap-4">
-          {/* Dot Indicators */}
-          <div className="flex items-center gap-2" role="tablist">
-            {items.map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveIndex(idx)}
-                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === activeIndex
-                    ? 'w-8 bg-gradient-to-r from-sky-400 to-indigo-400 shadow-md shadow-sky-400/40'
-                    : 'w-2.5 bg-slate-700 hover:bg-slate-500'
-                }`}
-                aria-label={`Go to event ${idx + 1}: ${item.title}`}
-              />
-            ))}
-          </div>
-
-          {/* Prev / Next Buttons */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrev}
-              className="accordion-nav-btn"
-              aria-label="Previous event"
-              title="Previous event"
-            >
-              <CaretLeft weight="bold" className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleNext}
-              className="accordion-nav-btn"
-              aria-label="Next event"
-              title="Next event"
-            >
-              <CaretRight weight="bold" className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   )
