@@ -8,7 +8,7 @@ async function generateFavicons() {
 `
 
   const resizedLogo = await sharp('public/Logo/aws-logo-white.png')
-    .resize(48, 48, { fit: 'inside' })
+    .resize(44, 44, { fit: 'inside' })
     .toBuffer()
 
   await sharp(Buffer.from(svgBadge))
