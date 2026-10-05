@@ -10,7 +10,6 @@ const NAV_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Events', href: '#events' },
   { label: 'Team', href: '#team' },
-  { label: 'Join', href: '#join' },
   { label: 'Community', href: '#contact' },
 ]
 
@@ -101,12 +100,12 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="main-nav-header fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6">
+      <header className="main-nav-header fixed top-0 left-0 w-full z-50 pt-3 sm:pt-5 px-3 sm:px-6 pointer-events-none">
         <nav
-          className={`mx-auto w-full md:w-max rounded-full px-3 sm:px-4 py-2 border transition-all duration-500 flex items-center justify-between md:justify-center gap-2 sm:gap-4 flex-nowrap ${
+          className={`pointer-events-auto mx-auto w-full md:w-max rounded-full px-3 sm:px-4 py-2 border transition-all duration-500 flex items-center justify-between md:justify-center gap-2 sm:gap-4 flex-nowrap nav-blur-island ${
             isScrolled
-              ? 'bg-[#050B18]/85 border-sky-500/25 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)]'
-              : 'bg-[#050505]/65 border-white/10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.1)]'
+              ? 'bg-[#050B18]/70 border-sky-500/30 backdrop-blur-2xl shadow-[0_12px_36px_rgba(0,0,0,0.7),0_0_24px_rgba(56,189,248,0.15),inset_0_1px_1px_rgba(255,255,255,0.18)]'
+              : 'bg-[#050B18]/50 border-white/12 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)]'
           }`}
           aria-label="Main Navigation"
         >
@@ -152,8 +151,8 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex pl-2 pr-1">
             <a
-              href="#/join"
-              onClick={() => setMenuOpen(false)}
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
               className="group flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-xs sm:text-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] hover:scale-[1.02] active:scale-[0.98]"
             >
               Join Us
@@ -168,8 +167,8 @@ export default function Navbar() {
             {/* Tablet-only quick Join button; hidden on narrow mobile (<640px) to prevent overlap */}
             {!menuOpen && (
               <a
-                href="#/join"
-                onClick={() => setMenuOpen(false)}
+                href="#contact"
+                onClick={(e) => handleNavClick(e, '#contact')}
                 className="hidden sm:inline-flex px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-400 to-sky-300 text-slate-950 font-bold text-xs items-center gap-1 active:scale-95 transition-all shadow-[0_0_12px_rgba(56,189,248,0.3)] shrink-0 whitespace-nowrap"
               >
                 <span>Join</span>
@@ -193,7 +192,7 @@ export default function Navbar() {
       {/* Modern Accessible Mobile Drawer */}
       <div
         ref={menuRef}
-        className="fixed inset-0 z-40 bg-[#050B18]/96 backdrop-blur-2xl pt-28 pb-8 px-6 opacity-0 pointer-events-none flex flex-col justify-between overflow-y-auto"
+        className="fixed inset-0 z-40 bg-[#050B18]/85 backdrop-blur-2xl nav-blur-island pt-28 pb-8 px-6 opacity-0 pointer-events-none flex flex-col justify-between overflow-y-auto"
         onClick={(e) => {
           if (e.target === menuRef.current) setMenuOpen(false)
         }}
@@ -221,11 +220,11 @@ export default function Navbar() {
 
           <div className="mobile-nav-item pt-4">
             <a
-              href="#/join"
-              onClick={() => setMenuOpen(false)}
+              href="#contact"
+              onClick={(e) => handleNavClick(e, '#contact')}
               className="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-400 to-sky-200 text-slate-950 font-bold text-base shadow-[0_0_25px_rgba(56,189,248,0.35)] active:scale-98 transition-transform"
             >
-              <span>Apply to Join</span>
+              <span>Join Community</span>
               <ArrowUpRight weight="bold" className="w-4 h-4" />
             </a>
           </div>
