@@ -216,6 +216,67 @@ a, button, input, select, textarea {
   50% { opacity: 0.4; transform: scale(0.85); }
 }
 
+/* ─── Deep Space Parallax Journey Keyframes ─── */
+@keyframes asteroidTumble1 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes asteroidTumble2 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes telemetryPulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes enginePlasmaPulse {
+  0%, 100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scaleY(1.2) scaleX(0.9);
+    opacity: 1;
+  }
+}
+
+@keyframes galaxyShimmer {
+  0%, 100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes axialRotateSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* ─── Ultra-Glass Frosted Navbar Blur ─── */
 .nav-blur-island {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
