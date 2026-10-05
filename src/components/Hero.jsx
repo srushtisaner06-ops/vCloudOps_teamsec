@@ -19,7 +19,7 @@ export default function Hero() {
 
   useGSAP(() => {
     // ─── Initial States with Optical Blur & Subtle Physical Offsets ───
-    gsap.set('.main-nav-header', { y: -24, opacity: 0, filter: 'blur(8px)' })
+    gsap.set('.main-nav-header', { y: -24, opacity: 0 })
     gsap.set('.hero-desc', { y: 18, opacity: 0, filter: 'blur(8px)' })
     gsap.set('.hero-cta', {
       y: 26,
@@ -42,9 +42,9 @@ export default function Hero() {
     tl.to('.main-nav-header', {
       y: 0,
       opacity: 1,
-      filter: 'blur(0px)',
       duration: 0.7,
       delay: 1.75,
+      clearProps: 'transform,opacity',
     })
       // Step 3: Tagline fades and clears blur
       .to(

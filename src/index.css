@@ -216,6 +216,12 @@ a, button, input, select, textarea {
   50% { opacity: 0.4; transform: scale(0.85); }
 }
 
+/* ─── Ultra-Glass Frosted Navbar Blur ─── */
+.nav-blur-island {
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
 /* ─── prefers-reduced-motion: pause all heavy animations ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -225,3 +231,4 @@ a, button, input, select, textarea {
     scroll-behavior: auto !important;
   }
 }
+
