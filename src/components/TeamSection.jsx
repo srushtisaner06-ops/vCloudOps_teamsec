@@ -61,7 +61,10 @@ const ENTRY_SETTLE_MS = 900
 const CARD_TRANSITION_MS = 620
 const CLOSE_TRANSITION_MS = 520
 const DOMAIN_TRANSITION_MS = 620
+const PIN_EDGE_INSET = 32
 const DOMAIN_GESTURE_QUIET_MS = 180
+const DOMAIN_BOX_WIDTH = 260
+const DOMAIN_GAP = 52
 
 function PlanetFace({ color, label, variant = 'default' }) {
   const rawId = useId()
@@ -159,9 +162,9 @@ function DomainCarousel({ index, onNavigate, onOpen, locked, selectedTeam }) {
   }
 
   return (
-    <div className="team-domain-carousel">
+    <div className="team-domain-carousel" style={{ '--domain-box-width': `${DOMAIN_BOX_WIDTH}px`, '--domain-gap': `${DOMAIN_GAP}px` }}>
       <div ref={viewportRef} className="team-domain-carousel__viewport" onTouchStart={onTouchStart} onTouchCancel={() => { touchRef.current = null }} onTouchEnd={onTouchEnd} onKeyDown={onKeyDown} aria-label="Team domains carousel">
-        <div className="team-domain-carousel__track" style={{ transform: `translate3d(${width / 2 - 100 - index * 252}px, 0, 0)` }}>
+        <div className="team-domain-carousel__track" style={{ transform: `translate3d(${width / 2 - DOMAIN_BOX_WIDTH / 2 - index * (DOMAIN_BOX_WIDTH + DOMAIN_GAP)}px, 0, 0)` }}>
           {TEAMS.map((team, teamIndex) => {
             const distance = teamIndex - index
             const bend = Math.min(Math.abs(distance), 3)
@@ -346,7 +349,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       <div className="team-carousel" aria-label={`${team.label} member profiles`}>
         {team.members.map((member, index) => <MemberCard key={`${team.id}-${member.id}`} member={member} index={index} active={activeIndex} reduced={reduced} />)}
       </div>
-      <div className={`team-orbit-dock ${closing ? 'is-closing' : ''}`} aria-hidden="true">
+      <div className={`team-orbit-dock ${closing ? 'is-closing' : ''}`} data-team-id={team.id} aria-hidden="true">
         <div className="team-orbit-dock__rings"><span className="team-orbit-dock__slot" /></div>
         <span className="team-orbit-dock__logo">{team.logo ? <img src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={team.id === 'core' ? 'core' : 'default'} />}</span>
         <span className="team-orbit-dock__label">{team.label}</span>
@@ -379,6 +382,7 @@ export default function TeamSection() {
   const automaticDirectionRef = useRef(1)
   const autoOpenReadyRef = useRef(true)
   const autoOpenDelayTimerRef = useRef(null)
+  const pendingAdjacentTeamIdRef = useRef(null)
   const entrySettleTimerRef = useRef(null)
   const pinTriggerRef = useRef(null)
   const pinActiveRef = useRef(false)
@@ -389,7 +393,7 @@ export default function TeamSection() {
     const pin = pinTriggerRef.current
     if (!pin?.isActive) return
     const progress = index / (TEAMS.length - 1)
-    const target = Math.min(pin.end - 2, Math.max(pin.start + 2, pin.start + (pin.end - pin.start) * progress))
+    const target = Math.min(pin.end - PIN_EDGE_INSET, Math.max(pin.start + PIN_EDGE_INSET, pin.start + (pin.end - pin.start) * progress))
     const lenis = getLenis()
     if (lenis) lenis.scrollTo(target, { immediate: true, force: true })
     else window.scrollTo({ top: target, behavior: 'instant' })
@@ -407,6 +411,7 @@ export default function TeamSection() {
     if (entrySettleTimerRef.current) window.clearTimeout(entrySettleTimerRef.current)
     autoOpenDelayTimerRef.current = null
     entrySettleTimerRef.current = null
+    pendingAdjacentTeamIdRef.current = null
     autoOpenReadyRef.current = true
   }, [])
 
@@ -440,6 +445,7 @@ export default function TeamSection() {
       ) return
       autoOpenInFlightRef.current = true
       autoOpenReadyRef.current = false
+      pendingAdjacentTeamIdRef.current = null
       automaticallyOpenedTeamRef.current = team.id
       automaticDirectionRef.current = sequenceDirectionRef.current
     } else {
@@ -505,6 +511,11 @@ export default function TeamSection() {
   useEffect(() => {
     if (!carouselEnabled) return
     let touchStart = null
+    const holdQueuedBoundary = (direction) => {
+      const index = domainIndexRef.current
+      return (index + direction < 0 || index + direction >= TEAMS.length) &&
+        pendingAdjacentTeamIdRef.current === TEAMS[index].id
+    }
     const step = (direction) => {
       const index = domainIndexRef.current
       if (selectedTeamRef.current || performance.now() < bypassPinUntilRef.current || index + direction < 0 || index + direction >= TEAMS.length) return false
@@ -524,7 +535,12 @@ export default function TeamSection() {
       const dy = event.deltaY * unit
       if (!dy || Math.abs(dx) >= Math.abs(dy)) return
       const direction = Math.sign(dy)
-      if (domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) return
+      if (domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) {
+        if (!holdQueuedBoundary(direction)) return
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        return
+      }
       event.preventDefault()
       event.stopImmediatePropagation()
       step(direction)
@@ -538,7 +554,9 @@ export default function TeamSection() {
       if (!touchStart || event.touches.length !== 1) { touchStart = null; return }
       const dx = touchStart.x - event.touches[0].clientX
       const dy = touchStart.y - event.touches[0].clientY
-      if (Math.abs(dy) <= Math.abs(dx) || domainIndexRef.current + Math.sign(dy) < 0 || domainIndexRef.current + Math.sign(dy) >= TEAMS.length) return
+      if (Math.abs(dy) <= Math.abs(dx)) return
+      const direction = Math.sign(dy)
+      if ((domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) && !holdQueuedBoundary(direction)) return
       event.preventDefault()
       event.stopImmediatePropagation()
     }
@@ -553,7 +571,13 @@ export default function TeamSection() {
       if (!pinActiveRef.current || selectedTeamRef.current || event.repeat || performance.now() < bypassPinUntilRef.current) return
       if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [contenteditable="true"]')) return
       const direction = ['ArrowDown', 'PageDown'].includes(event.key) ? 1 : ['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 0
-      if (!direction || domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) return
+      if (!direction) return
+      if (domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) {
+        if (!holdQueuedBoundary(direction)) return
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        return
+      }
       event.preventDefault()
       event.stopImmediatePropagation()
       step(direction)
@@ -583,6 +607,7 @@ export default function TeamSection() {
       window.clearTimeout(autoOpenDelayTimerRef.current)
       autoOpenDelayTimerRef.current = null
     }
+    pendingAdjacentTeamIdRef.current = null
 
     if (reason === 'button') {
       autoOpenDisabledRef.current = true
@@ -600,6 +625,7 @@ export default function TeamSection() {
       const currentIndex = TEAMS.findIndex((team) => team.id === automaticallyOpenedTeamId)
       const nextTeam = TEAMS[currentIndex + completionDirection]
       nextExpectedTeamIdRef.current = nextTeam?.id ?? null
+      if (carouselEnabled && nextTeam && !autoOpenDisabledRef.current) pendingAdjacentTeamIdRef.current = nextTeam.id
       if (carouselEnabled && nextTeam) selectDomain(currentIndex + completionDirection)
       if (nextTeam && !autoOpenDisabledRef.current) {
         autoOpenReadyRef.current = false
@@ -607,6 +633,7 @@ export default function TeamSection() {
           autoOpenDelayTimerRef.current = null
           autoOpenReadyRef.current = true
           tryOpenExpectedTeam(null, completionDirection)
+          pendingAdjacentTeamIdRef.current = null
         }, AUTO_OPEN_DELAY)
       }
     } else if (carouselEnabled && closingTeamId) {
@@ -672,7 +699,9 @@ export default function TeamSection() {
               }
             })
           }
-          if (self.isActive && selectedTeamRef.current) requestAnimationFrame(() => syncPinPosition(domainIndexRef.current))
+          if (self.isActive) requestAnimationFrame(() => {
+            if (pinTriggerRef.current === self && self.isActive) syncPinPosition(domainIndexRef.current)
+          })
         },
       } : {
         trigger: sectionRef.current,

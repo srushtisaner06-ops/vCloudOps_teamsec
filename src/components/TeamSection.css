@@ -4,7 +4,7 @@
   color: #f8fafc;
   overflow: clip;
   --member-card-width: 340px;
-  --member-card-height: 450px;
+  --member-card-height: 415px;
 }
 
 .team-section.has-domain-carousel {
@@ -61,12 +61,12 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 200px;
-  height: 180px;
+  width: 260px;
+  height: 234px;
   padding: 0;
   color: #f8fafc;
   border: 1px solid color-mix(in srgb, var(--box-accent), white 22%);
-  border-radius: 14px;
+  border-radius: 18px;
   background: transparent;
   box-shadow: inset 0 1px rgba(255, 255, 255, .18), 0 0 12px color-mix(in srgb, var(--box-accent), transparent 82%);
   cursor: pointer;
@@ -104,15 +104,15 @@
   display: grid;
   place-items: center;
   width: 100%;
-  height: 108px;
+  height: 140px;
   transform: perspective(900px) rotateY(var(--lens-tilt, 0deg));
 }
 
 .team-domain-lens {
   position: absolute;
-  inset: 1px 1px 30px;
+  inset: 1px 1px 39px;
   overflow: hidden;
-  border-radius: 13px 13px 0 0;
+  border-radius: 17px 17px 0 0;
   pointer-events: none;
   opacity: var(--lens-strength, 0);
   transform: perspective(900px) rotateY(var(--lens-tilt, 0deg));
@@ -139,12 +139,12 @@
 
 .team-domain-box__label {
   position: absolute;
-  right: .5rem;
-  bottom: .6rem;
-  left: .5rem;
+  right: .65rem;
+  bottom: .78rem;
+  left: .65rem;
   overflow: hidden;
   color: rgba(255, 255, 255, .88);
-  font: 600 .67rem/1.2 var(--font-mono);
+  font: 600 .87rem/1.2 var(--font-mono);
   letter-spacing: .04em;
   text-align: center;
   text-overflow: ellipsis;
@@ -154,7 +154,7 @@
 
 .team-planet-image {
   display: block;
-  width: min(98px, 64%);
+  width: min(127px, 64%);
   height: auto;
   overflow: visible;
   filter: drop-shadow(0 5px 9px rgba(0, 0, 0, .35));
@@ -162,8 +162,8 @@
 
 .team-domain-logo {
   display: block;
-  width: 154px;
-  height: 132px;
+  width: 200px;
+  height: 172px;
   object-fit: contain;
   filter: drop-shadow(0 5px 10px rgba(0, 0, 0, .38));
   transition: transform .25s ease, opacity 200ms ease;
@@ -182,7 +182,7 @@
 }
 
 .team-domain-box.is-core .team-domain-box__face .team-planet-image--core {
-  width: 124px;
+  width: 161px;
   transform: translateY(-3px);
 }
 
@@ -192,7 +192,7 @@
 
 .team-domain-grid {
   display: grid;
-  grid-template-columns: repeat(3, 200px);
+  grid-template-columns: repeat(3, 260px);
   justify-content: center;
   column-gap: clamp(3rem, 5vw, 4.5rem);
   row-gap: 2.25rem;
@@ -210,7 +210,7 @@
 
 .team-domain-carousel__viewport {
   width: 100%;
-  height: 294px;
+  height: 370px;
   overflow: hidden;
   perspective: 950px;
   touch-action: pan-y pinch-zoom;
@@ -221,15 +221,15 @@
   display: flex;
   align-items: flex-start;
   width: max-content;
-  gap: 52px;
+  gap: var(--domain-gap);
   padding-top: 24px;
   transition: transform 620ms cubic-bezier(.22, 1, .36, 1);
   will-change: transform;
 }
 
 .team-domain-carousel__slide {
-  flex: 0 0 200px;
-  width: 200px;
+  flex: 0 0 var(--domain-box-width);
+  width: var(--domain-box-width);
   transform: translateY(var(--arch-y)) rotateZ(var(--arch-tilt)) rotateY(var(--arch-twist)) scale(var(--arch-scale));
   transform-style: preserve-3d;
   transition: transform 620ms cubic-bezier(.22, 1, .36, 1);
@@ -238,8 +238,8 @@
 
 .team-overview.is-carousel .team-domain-box,
 .team-overview.is-carousel .team-domain-box.is-core {
-  width: 200px;
-  height: 180px;
+  width: var(--domain-box-width);
+  height: 234px;
   margin: 0;
   transition: border-color .25s ease, box-shadow .25s ease;
 }
@@ -305,32 +305,35 @@
   pointer-events: auto;
   touch-action: none;
   --member-card-width: 340px;
-  --member-card-height: 450px;
+  --member-card-height: 415px;
+  --member-card-center-offset: 7.5px;
 }
 
 .team-member-view__topline {
   animation: team-overlay-in 450ms ease-out 100ms both;
   position: absolute;
-  top: max(5.5rem, 9vh);
-  left: 50%;
+  inset: 0;
   z-index: 6;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: min(100% - 2rem, 760px);
-  transform: translateX(-50%);
   color: #d9e6f5;
   font: 600 .7rem/1 var(--font-mono);
   letter-spacing: .14em;
   text-align: center;
   text-transform: uppercase;
+  pointer-events: none;
 }
 
 .team-member-view__topline span {
-  flex: 1;
+  position: absolute;
+  top: calc(50% - var(--member-card-center-offset) - var(--member-card-height) / 2 - 12px);
+  left: 50%;
+  width: var(--member-card-width);
+  transform: translate(-50%, -100%);
 }
 
 .team-member-view__topline button {
+  position: absolute;
+  top: max(5.5rem, 9vh);
+  right: max(1rem, calc((100% - 760px) / 2));
   display: grid;
   place-items: center;
   width: 48px;
@@ -435,12 +438,21 @@
   animation: team-logo-to-dock var(--card-transition, 620ms) cubic-bezier(.22, 1, .36, 1) both;
 }
 
-.team-orbit-dock__logo img,
+.team-orbit-dock__logo img {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.team-orbit-dock[data-team-id='delivery'] .team-orbit-dock__logo img {
+  transform: translateY(-6px);
+}
+
 .team-orbit-dock__logo svg {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 .team-orbit-dock__label {
@@ -509,7 +521,7 @@
 
 .team-member-card {
   position: absolute;
-  top: 50%;
+  top: calc(50% - var(--member-card-center-offset));
   left: 50%;
   display: grid;
   grid-template-columns: 1fr;
@@ -755,6 +767,12 @@
   to { opacity: 0; transform: translateY(20px) scale(.96); }
 }
 
+@media (max-width: 908px) {
+  .team-domain-grid {
+    grid-template-columns: repeat(2, 260px);
+  }
+}
+
 @media (max-width: 700px) {
   .team-section {
     --member-card-width: min(276px, calc(100vw - 2rem));
@@ -773,7 +791,7 @@
 
   .team-domain-box,
   .team-domain-box.is-core {
-    width: min(200px, calc(100vw - 2rem));
+    width: min(260px, calc(100vw - 2rem));
     margin-right: auto;
     margin-left: auto;
   }
@@ -784,7 +802,7 @@
 
   .team-member-view {
     --member-card-width: min(276px, calc(100vw - 2rem));
-    --member-card-height: 435px;
+    --member-card-height: 400px;
     --dock-bottom: max(16px, env(safe-area-inset-bottom));
     --dock-height: 70px;
   }
@@ -832,12 +850,17 @@
 @media (max-width: 390px) {
   .team-section {
     --member-card-width: calc(100vw - 1.25rem);
-    --member-card-height: 372px;
+    --member-card-height: 337px;
   }
 
   .team-member-view {
     --member-card-width: calc(100vw - 1.25rem);
-    --member-card-height: 372px;
+    --member-card-height: 337px;
+  }
+
+  .team-member-view__topline button {
+    top: 1rem;
+    right: 1rem;
   }
 
   .team-carousel {
