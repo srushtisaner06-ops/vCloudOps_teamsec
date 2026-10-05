@@ -75,6 +75,26 @@ export function scrollToTarget(target, customOffset = -80) {
     return
   }
 
+  const isAbout = target === '#about' || (typeof target === 'object' && target?.id === 'about')
+  if (isAbout) {
+    const el = typeof target === 'string' ? document.querySelector(target) : target
+    if (el) {
+      const targetY = el.getBoundingClientRect().top + window.scrollY
+      if (lenisInstance) {
+        lenisInstance.scrollTo(targetY, {
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        })
+      } else {
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth',
+        })
+      }
+      return
+    }
+  }
+
   const isEvents = target === '#events' || (typeof target === 'object' && target?.id === 'events')
   if (isEvents) {
     const el = typeof target === 'string' ? document.querySelector(target) : target
