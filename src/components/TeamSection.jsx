@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 import { getLenis } from '../utils/smoothScroll'
+import { wheelGestureDirection } from '../utils/wheelGesture'
 import './TeamSection.css'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -62,7 +63,6 @@ const CARD_TRANSITION_MS = 620
 const CLOSE_TRANSITION_MS = 520
 const DOMAIN_TRANSITION_MS = 620
 const PIN_EDGE_INSET = 32
-const DOMAIN_GESTURE_QUIET_MS = 180
 const DOMAIN_BOX_WIDTH = 260
 const DOMAIN_GAP = 52
 
@@ -212,7 +212,7 @@ function MemberCard({ member, index, active, reduced }) {
   )
 }
 
-function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, openerRef, originRect }) {
+function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, openerRef, originRect, wheelGestureRef }) {
   const viewRef = useRef(null)
   const gestureLock = useRef(!reduced)
   const unlockTimer = useRef(null)
@@ -220,17 +220,24 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   const touchStartY = useRef(null)
   const activeIndexRef = useRef(activeIndex)
   const closingRef = useRef(false)
+  const entranceDoneRef = useRef(reduced)
+  const pendingWheelRef = useRef(0)
   const [closing, setClosing] = useState(false)
   useEffect(() => { activeIndexRef.current = activeIndex }, [activeIndex])
   useEffect(() => {
     gestureLock.current = !reduced
-    if (!reduced) unlockTimer.current = window.setTimeout(() => { gestureLock.current = false }, CARD_TRANSITION_MS)
+    entranceDoneRef.current = reduced
+    if (!reduced) unlockTimer.current = window.setTimeout(() => {
+      gestureLock.current = false
+      entranceDoneRef.current = true
+    }, CARD_TRANSITION_MS)
     return () => { if (unlockTimer.current) window.clearTimeout(unlockTimer.current) }
   }, [reduced])
 
   const close = useCallback((reason = 'completed', direction) => {
     if (closingRef.current) return
     if (unlockTimer.current) window.clearTimeout(unlockTimer.current)
+    pendingWheelRef.current = 0
     closingRef.current = true
     if (reduced) {
       onClose(reason, direction)
@@ -248,7 +255,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
     closeTimer.current = window.setTimeout(() => onClose(reason, direction), CLOSE_TRANSITION_MS)
   }, [onClose, reduced])
 
-  const move = useCallback((direction) => {
+  const move = useCallback(function moveMember(direction) {
     if (closingRef.current || gestureLock.current) return
     gestureLock.current = true
     const current = activeIndexRef.current
@@ -263,7 +270,12 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       close('completed', direction)
       return
     }
-    unlockTimer.current = window.setTimeout(() => { gestureLock.current = false }, reduced ? 40 : CARD_TRANSITION_MS)
+    unlockTimer.current = window.setTimeout(() => {
+      gestureLock.current = false
+      const pending = pendingWheelRef.current
+      pendingWheelRef.current = 0
+      if (pending) moveMember(pending)
+    }, reduced ? 40 : CARD_TRANSITION_MS)
   }, [close, reduced, setActiveIndex, team.members.length])
 
   useEffect(() => {
@@ -284,8 +296,6 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
     body.style.overflow = 'hidden'
     viewRef.current?.focus({ preventScroll: true })
 
-    let lastWheelAt = -Infinity
-    let wheelNeedsQuiet = false
     const onWheel = (event) => {
       if (event.ctrlKey) return
       if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return
@@ -293,17 +303,17 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       const deltaY = event.deltaY * unit
       if (deltaY === 0) return
       event.preventDefault()
-      const now = performance.now()
-      const quiet = now - lastWheelAt >= 180
-      lastWheelAt = now
+      const gesture = wheelGestureRef.current
+      const previousDirection = gesture.direction
+      const direction = wheelGestureDirection(gesture, deltaY, performance.now())
+      if (previousDirection && gesture.direction !== previousDirection) pendingWheelRef.current = 0
       if (closingRef.current) return
-      if (gestureLock.current || (wheelNeedsQuiet && !quiet)) {
-        wheelNeedsQuiet = true
+      if (!direction) return
+      if (gestureLock.current) {
+        if (entranceDoneRef.current) pendingWheelRef.current = direction
         return
       }
-      // One intent per wheel burst, including momentum lasting past the lock.
-      wheelNeedsQuiet = true
-      move(deltaY > 0 ? 1 : -1)
+      move(direction)
     }
     const onTouchStart = (event) => { touchStartY.current = event.touches[0]?.clientY ?? null }
     const onTouchMove = (event) => { if (event.touches.length === 1) event.preventDefault() }
@@ -341,7 +351,7 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
       if (savedFocus instanceof HTMLElement) savedFocus.focus({ preventScroll: true })
       else focusTarget?.focus({ preventScroll: true })
     }
-  }, [close, move, openerRef])
+  }, [close, move, openerRef, wheelGestureRef])
 
   return (
     <div ref={viewRef} className={`team-member-view ${closing ? 'is-closing' : ''}`} style={{ '--box-accent': team.color, '--card-transition': `${CARD_TRANSITION_MS}ms`, '--close-transition': `${CLOSE_TRANSITION_MS}ms`, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
@@ -384,36 +394,57 @@ export default function TeamSection() {
   const autoOpenDelayTimerRef = useRef(null)
   const pendingAdjacentTeamIdRef = useRef(null)
   const entrySettleTimerRef = useRef(null)
+  const domainUnlockTimerRef = useRef(null)
+  const pendingPinIndexRef = useRef(null)
+  const pinAnimationActiveRef = useRef(false)
   const pinTriggerRef = useRef(null)
   const pinActiveRef = useRef(false)
-  const domainGestureRef = useRef({ last: -Infinity, lockedUntil: 0 })
+  const domainGestureRef = useRef({ lastAt: -Infinity, direction: 0, distance: 0, consumed: false, lockedUntil: 0, pending: 0 })
   const bypassPinUntilRef = useRef(0)
 
-  const syncPinPosition = useCallback((index) => {
+  const stopPinMovement = useCallback(() => {
+    if (!pinAnimationActiveRef.current) return
+    const lenis = getLenis()
+    if (lenis) lenis.scrollTo(lenis.scroll, { immediate: true, force: true })
+    pinAnimationActiveRef.current = false
+  }, [])
+
+  const syncPinPosition = useCallback((index, animated = false) => {
     const pin = pinTriggerRef.current
     if (!pin?.isActive) return
     const progress = index / (TEAMS.length - 1)
     const target = Math.min(pin.end - PIN_EDGE_INSET, Math.max(pin.start + PIN_EDGE_INSET, pin.start + (pin.end - pin.start) * progress))
     const lenis = getLenis()
-    if (lenis) lenis.scrollTo(target, { immediate: true, force: true })
+    pinAnimationActiveRef.current = Boolean(lenis && animated)
+    if (lenis) lenis.scrollTo(target, animated ? {
+      duration: DOMAIN_TRANSITION_MS / 1000,
+      easing: (t) => 1 - (1 - t) ** 3,
+      onComplete: () => { pinAnimationActiveRef.current = false },
+    } : { immediate: true, force: true })
     else window.scrollTo({ top: target, behavior: 'instant' })
-    ScrollTrigger.update()
+    if (!animated) ScrollTrigger.update()
   }, [])
 
-  const selectDomain = useCallback((index) => {
+  const selectDomain = useCallback((index, mode = 'immediate') => {
     domainIndexRef.current = index
     setDomainIndex(index)
-    syncPinPosition(index)
+    if (mode === 'after-close') pendingPinIndexRef.current = index
+    else syncPinPosition(index, mode === 'animated')
   }, [syncPinPosition])
 
   const cancelQueuedOpening = useCallback(() => {
+    stopPinMovement()
     if (autoOpenDelayTimerRef.current) window.clearTimeout(autoOpenDelayTimerRef.current)
     if (entrySettleTimerRef.current) window.clearTimeout(entrySettleTimerRef.current)
     autoOpenDelayTimerRef.current = null
     entrySettleTimerRef.current = null
     pendingAdjacentTeamIdRef.current = null
+    pendingPinIndexRef.current = null
+    domainGestureRef.current.pending = 0
+    if (domainUnlockTimerRef.current) window.clearTimeout(domainUnlockTimerRef.current)
+    domainUnlockTimerRef.current = null
     autoOpenReadyRef.current = true
-  }, [])
+  }, [stopPinMovement])
 
   useEffect(() => {
     if (!carouselEnabled) return
@@ -432,6 +463,14 @@ export default function TeamSection() {
   useEffect(() => {
     selectedTeamRef.current = selectedTeam
   }, [selectedTeam])
+
+  useEffect(() => {
+    if (selectedTeam || pendingPinIndexRef.current == null) return
+    const index = pendingPinIndexRef.current
+    pendingPinIndexRef.current = null
+    const frame = requestAnimationFrame(() => syncPinPosition(index, true))
+    return () => cancelAnimationFrame(frame)
+  }, [selectedTeam, syncPinPosition])
 
   const openTeam = useCallback((team, opener, logo, source = 'manual') => {
     if (selectedTeamRef.current) return
@@ -494,7 +533,7 @@ export default function TeamSection() {
   const navigateDomain = useCallback((index, direction) => {
     if (selectedTeamRef.current) return
     cancelQueuedOpening()
-    selectDomain(index)
+    selectDomain(index, 'animated')
     sequenceDirectionRef.current = direction
     automaticDirectionRef.current = direction
     nextExpectedTeamIdRef.current = TEAMS[index].id
@@ -511,21 +550,32 @@ export default function TeamSection() {
   useEffect(() => {
     if (!carouselEnabled) return
     let touchStart = null
+    const domainGesture = domainGestureRef.current
     const holdQueuedBoundary = (direction) => {
       const index = domainIndexRef.current
       return (index + direction < 0 || index + direction >= TEAMS.length) &&
         pendingAdjacentTeamIdRef.current === TEAMS[index].id
     }
-    const step = (direction) => {
+    const step = (direction, fromWheel = false) => {
       const index = domainIndexRef.current
       if (selectedTeamRef.current || performance.now() < bypassPinUntilRef.current || index + direction < 0 || index + direction >= TEAMS.length) return false
       const now = performance.now()
-      const gesture = domainGestureRef.current
-      const quiet = now - gesture.last >= DOMAIN_GESTURE_QUIET_MS
-      gesture.last = now
-      if (!autoOpenReadyRef.current || now < gesture.lockedUntil || !quiet) return true
+      const gesture = domainGesture
+      if (!autoOpenReadyRef.current) return true
+      if (now < gesture.lockedUntil) {
+        if (fromWheel && autoOpenDisabledRef.current) gesture.pending = direction
+        return true
+      }
       gesture.lockedUntil = now + DOMAIN_TRANSITION_MS
       navigateDomain(index + direction, direction)
+      if (autoOpenDisabledRef.current) {
+        domainUnlockTimerRef.current = window.setTimeout(() => {
+          domainUnlockTimerRef.current = null
+          const pending = gesture.pending
+          gesture.pending = 0
+          if (pending && pinActiveRef.current && !selectedTeamRef.current) step(pending)
+        }, DOMAIN_TRANSITION_MS)
+      }
       return true
     }
     const onWheel = (event) => {
@@ -543,7 +593,11 @@ export default function TeamSection() {
       }
       event.preventDefault()
       event.stopImmediatePropagation()
-      step(direction)
+      const gesture = domainGesture
+      const previousDirection = gesture.direction
+      const intent = wheelGestureDirection(gesture, dy, performance.now())
+      if (previousDirection && previousDirection !== gesture.direction) gesture.pending = 0
+      if (intent) step(intent, true)
     }
     const onTouchStart = (event) => {
       touchStart = pinActiveRef.current && !selectedTeamRef.current && performance.now() >= bypassPinUntilRef.current && event.touches.length === 1
@@ -590,6 +644,9 @@ export default function TeamSection() {
     window.addEventListener('touchcancel', onTouchCancel, { passive: true, capture: true })
     window.addEventListener('keydown', onKeyDown, true)
     return () => {
+      if (domainUnlockTimerRef.current) window.clearTimeout(domainUnlockTimerRef.current)
+      domainUnlockTimerRef.current = null
+      domainGesture.pending = 0
       window.removeEventListener('wheel', onWheel, true)
       window.removeEventListener('touchstart', onTouchStart, true)
       window.removeEventListener('touchmove', onTouchMove, true)
@@ -613,7 +670,7 @@ export default function TeamSection() {
       autoOpenDisabledRef.current = true
       setAutoOpenDisabled(true)
       cancelQueuedOpening()
-      if (carouselEnabled && closingTeamId) selectDomain(TEAMS.findIndex((team) => team.id === closingTeamId))
+      if (carouselEnabled && closingTeamId) selectDomain(TEAMS.findIndex((team) => team.id === closingTeamId), 'after-close')
     } else if (automaticallyOpenedTeamId) {
       // Dismissal retains its existing sequence behavior; only completed
       // traversal changes direction based on the final member gesture.
@@ -626,7 +683,7 @@ export default function TeamSection() {
       const nextTeam = TEAMS[currentIndex + completionDirection]
       nextExpectedTeamIdRef.current = nextTeam?.id ?? null
       if (carouselEnabled && nextTeam && !autoOpenDisabledRef.current) pendingAdjacentTeamIdRef.current = nextTeam.id
-      if (carouselEnabled && nextTeam) selectDomain(currentIndex + completionDirection)
+      if (carouselEnabled && nextTeam) selectDomain(currentIndex + completionDirection, 'after-close')
       if (nextTeam && !autoOpenDisabledRef.current) {
         autoOpenReadyRef.current = false
         autoOpenDelayTimerRef.current = window.setTimeout(() => {
@@ -637,7 +694,7 @@ export default function TeamSection() {
         }, AUTO_OPEN_DELAY)
       }
     } else if (carouselEnabled && closingTeamId) {
-      selectDomain(TEAMS.findIndex((team) => team.id === closingTeamId))
+      selectDomain(TEAMS.findIndex((team) => team.id === closingTeamId), 'after-close')
     }
 
     automaticallyOpenedTeamRef.current = null
@@ -760,7 +817,7 @@ export default function TeamSection() {
           </div>
         </>}
       </div>
-      {selectedTeam && createPortal(<MemberView team={selectedTeam} activeIndex={activeIndex} setActiveIndex={setActiveIndex} onClose={closeTeam} reduced={reduced} openerRef={openerRef} originRect={originRect} />, document.body)}
+      {selectedTeam && createPortal(<MemberView team={selectedTeam} activeIndex={activeIndex} setActiveIndex={setActiveIndex} onClose={closeTeam} reduced={reduced} openerRef={openerRef} originRect={originRect} wheelGestureRef={domainGestureRef} />, document.body)}
     </section>
   )
 }
