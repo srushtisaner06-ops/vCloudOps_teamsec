@@ -8,55 +8,63 @@ import { useReducedMotion } from '../hooks/useReducedMotion'
 import { getLenis } from '../utils/smoothScroll'
 import './TeamSection.css'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 const MEMBERS = [
-  { id: 'aditya-katare', name: 'Aditya Katare', role: 'President', domain: 'Core leadership', github: 'https://github.com/ADITYA-K-07', linkedin: 'https://www.linkedin.com/in/aditya-katare-873a56385', accent: '#4aa9db', portrait: '/team-members/roster/aditya-katare.webp' },
-  { id: 'aryan-khade', name: 'Aryan Khade', role: 'Vice President', domain: 'Core leadership', github: 'https://github.com/Aryan886', linkedin: 'https://www.linkedin.com/in/aryankhade005', accent: '#4aa9db', portrait: '/team-members/roster/aryan-khade.webp' },
-  { id: 'mrugesh-kulkarni', name: 'Mrugesh Kulkarni', role: 'Head', domain: 'Cloud', github: 'https://github.com/Pixel-Stock', linkedin: 'https://www.linkedin.com/in/mrugeshkulkarni/', accent: '#57c7ff', portrait: '/team-members/roster/mrugesh-kulkarni.webp' },
-  { id: 'anup-dubey', name: 'Anup Dubey', role: 'Co-Head', domain: 'Cloud', github: 'https://github.com/Anup1dubey', linkedin: 'https://www.linkedin.com/in/anup-dubey-646433328/', accent: '#57c7ff', portrait: '/team-members/roster/anup-dubey.webp' },
-  { id: 'pranav-amdekar', name: 'Pranav Amdekar', role: 'Co-Head', domain: 'Cloud', github: 'https://github.com/0xprxnav', linkedin: 'https://www.linkedin.com/in/pranav-amdekar-04b304386', accent: '#57c7ff', portrait: '/team-members/roster/pranav-amdekar.webp' },
-  { id: 'ishani-bharsakade', name: 'Ishani Bharsakade', role: 'Co-Head', domain: 'Finance & Sponsorship', github: 'https://github.com/RealSpidey69', linkedin: 'https://www.linkedin.com/in/ishani-bharsakade-3a1866229/', accent: '#a98bff', portrait: '/team-members/roster/ishani-bharsakade.webp' },
-  { id: 'govind-agrawal', name: 'Govind Agrawal', role: 'Co-Head', domain: 'Finance & Sponsorship', linkedin: 'https://www.linkedin.com/in/govind-agrawal-a85806384', accent: '#a98bff', portrait: '/team-members/roster/govind-agrawal.webp' },
-  { id: 'krishna-gangshettiwar', name: 'Krishna Gangshettiwar', role: 'Co-Head', domain: 'Finance & Sponsorship', github: 'https://github.com/Krishna5670', linkedin: 'https://www.linkedin.com/in/krishna-gangshettiwar-198a5a385', accent: '#a98bff', portrait: '/team-members/roster/krishna-gangshettiwar.webp' },
-  { id: 'satyajit-gaikwad', name: 'Satyajit Gaikwad', role: 'Head', domain: 'Web Development', github: 'https://github.com/CodeBySatyajit', linkedin: 'https://www.linkedin.com/in/satyajit-gaikwad-092381372/', accent: '#6b9cff', portrait: '/team-members/roster/satyajit-gaikwad.webp' },
-  { id: 'tanushka-patil', name: 'Tanushka Patil', role: 'Co-Head', domain: 'Web Development', github: 'https://github.com/Tanushka-sp2007', linkedin: 'https://www.linkedin.com/in/tanushka-sunil-patil-a87090389', accent: '#6b9cff', portrait: '/team-members/roster/tanushka-patil.webp' },
-  { id: 'aryan-durgude', name: 'Aryan Durgude', role: 'Head', domain: 'Multimedia', github: 'https://github.com/NotAl2', linkedin: 'https://www.linkedin.com/in/aryan-durgude-777816385', accent: '#36d9c4', portrait: '/team-members/roster/aryan-durgude.webp' },
-  { id: 'harsh-chendwankar', name: 'Harsh Chendwankar', role: 'Co-Head', domain: 'Multimedia', github: 'https://github.com/Harsh20-06', linkedin: 'https://www.linkedin.com/in/harsh-chendwankar', accent: '#36d9c4', portrait: '/team-members/roster/harsh-chendwankar.webp' },
-  { id: 'vaishnavi-bhagwat', name: 'Vaishnavi Bhagwat', role: 'Co-Head', domain: 'Multimedia', github: 'https://github.com/vaishnavibhagwat', linkedin: 'https://www.linkedin.com/in/vaishnavi-bhagwat-509a5037a', accent: '#36d9c4', portrait: '/team-members/roster/vaishnavi-bhagwat.webp' },
-  { id: 'naisha-sahni', name: 'Naisha Sahni', role: 'Co-Head', domain: 'Multimedia', github: 'https://github.com/naishasahni', accent: '#36d9c4', portrait: '/team-members/roster/naisha-sahni.webp' },
-  { id: 'sanskar-babar', name: 'Sanskar Babar', role: 'Video Editor', domain: 'Multimedia', github: 'https://github.com/sanskarbabar', linkedin: 'https://www.linkedin.com/in/sanskar-babar-1079021b9', accent: '#36d9c4', portrait: '/team-members/roster/sanskar-babar.webp' },
-  { id: 'jiteesh-ghodke', name: 'Jiteesh Ghodke', role: 'Co-Head', domain: 'Competitive Programming', github: 'https://github.com/jiteeshghodke456-del', linkedin: 'https://www.linkedin.com/in/jiteesh-ghodke-642832398', accent: '#58d8e8', portrait: '/team-members/roster/jiteesh-ghodke.webp' },
-  { id: 'jayesh-khandelwal', name: 'Jayesh Khandelwal', role: 'Co-Head', domain: 'Competitive Programming', github: 'https://github.com/itsjayeshk', linkedin: 'https://www.linkedin.com/in/jayesh-khandelwal-vit', accent: '#58d8e8', portrait: '/team-members/roster/jayesh-khandelwal.webp' },
-  { id: 'manthan-devi', name: 'Manthan Devi', role: 'Co-Head', domain: 'Competitive Programming', github: 'https://github.com/coder-manthan-007', linkedin: 'https://www.linkedin.com/in/manthan-devi-8764a3386/', accent: '#58d8e8', portrait: '/team-members/roster/manthan-devi.webp' },
-  { id: 'vipul-bangar', name: 'Vipul Bangar', role: 'Co-Head', domain: 'Operations', github: 'https://github.com/thevipulbangar', linkedin: 'https://www.linkedin.com/in/vipul-bangar-8a4a9937b/', accent: '#f6b75d', portrait: '/team-members/roster/vipul-bangar.webp' },
-  { id: 'aryaan-antarkar', name: 'Aryaan Antarkar', role: 'Co-Head', domain: 'Operations', github: 'https://github.com/aryaanantarkar-byte', linkedin: 'https://www.linkedin.com/in/aryaan-antarkar-74565b386/', accent: '#f6b75d', portrait: '/team-members/roster/aryaan-antarkar.webp' },
-  { id: 'sanskar-dhonde', name: 'Sanskar Dhonde', role: 'Head', domain: 'App Development', github: 'https://github.com/dhonde290-netizen', linkedin: 'https://www.linkedin.com/in/sanskardhonde/', accent: '#ff8fbd', portrait: '/team-members/roster/sanskar-dhonde.webp' },
-  { id: 'arnav-agarwal', name: 'Arnav Agarwal', role: 'Co-Head', domain: 'App Development', github: 'https://github.com/Arnav-Code-hub', linkedin: 'https://www.linkedin.com/in/arnav-agarwal-727323375', accent: '#ff8fbd', portrait: '/team-members/roster/arnav-agarwal.webp' },
-  { id: 'sara-tamboli', name: 'Sara Tamboli', role: 'Co-Head', domain: 'App Development', github: 'https://github.com/TamboliSara', linkedin: 'https://www.linkedin.com/in/sara-tamboli-bb0823385/', accent: '#ff8fbd', portrait: '/team-members/roster/sara-tamboli.webp' },
-  { id: 'srushti-saner', name: 'Srushti Saner', role: 'Co-Head', domain: 'App Development', github: 'https://github.com/srushtisaner06-ops', linkedin: 'https://www.linkedin.com/in/srushti-saner-b7b55422a', accent: '#ff8fbd', portrait: '/team-members/roster/srushti-saner.webp' },
-  { id: 'raghav-kumar', name: 'Raghav Kumar', role: 'Head', domain: 'AI/ML', github: 'https://github.com/Raghs3', linkedin: 'https://www.linkedin.com/in/raghav-kumar2803', accent: '#b3a0ff', portrait: '/team-members/roster/raghav-kumar.webp' },
-  { id: 'anand-nair', name: 'Anand Nair', role: 'Co-Head', domain: 'AI/ML', github: 'https://github.com/Dazzanova', linkedin: 'https://www.linkedin.com/in/heyy-anand-here', accent: '#b3a0ff', portrait: '/team-members/roster/anand-nair.webp' },
-  { id: 'varad-takale', name: 'Varad Takale', role: 'Head', domain: 'Publicity and Outreach', github: 'https://github.com/varadtakale45-sudo', linkedin: 'https://www.linkedin.com/in/varad-takale-189967378', accent: '#7ce4a5', portrait: '/team-members/roster/varad-takale.webp' },
-  { id: 'shubham-jadhav', name: 'Shubham Jadhav', role: 'Head', domain: 'Publicity and Outreach', github: 'https://github.com/Shoya0002', linkedin: 'https://www.linkedin.com/in/shubham-jadhav-2615093b6', accent: '#7ce4a5', portrait: '/team-members/roster/shubham-jadhav.webp' },
-  { id: 'harsh-kukade', name: 'Harsh Kukade', role: 'Co-Head', domain: 'Publicity and Outreach', github: 'https://github.com/Harsh150707', linkedin: 'https://www.linkedin.com/in/harsh-kukade-83b81a385', accent: '#7ce4a5', portrait: '/team-members/roster/harsh-kukade.webp' },
-  { id: 'parth-birari', name: 'Parth Birari', role: 'Co-Head', domain: 'Publicity and Outreach', github: 'https://github.com/birariparth-ui', linkedin: 'https://www.linkedin.com/in/parth-birari-07344b383', accent: '#7ce4a5', portrait: '/team-members/roster/parth-birari.webp' },
+  { id: 'aditya-katare', name: 'Aditya Katare', role: 'President', domain: 'Core leadership', github: 'https://github.com/ADITYA-K-07', linkedin: 'https://www.linkedin.com/in/aditya-katare-873a56385', accent: '#4aa9db', portrait: '/team-members/roster/aditya-katare.png' },
+  { id: 'aryan-khade', name: 'Aryan Khade', role: 'Vice President', domain: 'Core leadership', github: 'https://github.com/Aryan886', linkedin: 'https://www.linkedin.com/in/aryankhade005', accent: '#4aa9db', portrait: '/team-members/roster/aryan-khade.jpeg' },
+  { id: 'mrugesh-kulkarni', name: 'Mrugesh Kulkarni', role: 'Head', domain: 'Cloud', github: 'https://github.com/Pixel-Stock', linkedin: 'https://www.linkedin.com/in/mrugeshkulkarni/', accent: '#57c7ff', portrait: '/team-members/roster/mrugesh-kulkarni.png' },
+  { id: 'anup-dubey', name: 'Anup Dubey', role: 'Co-Head', domain: 'Cloud', github: 'https://github.com/Anup1dubey', linkedin: 'https://www.linkedin.com/in/anup-dubey-646433328/', accent: '#57c7ff', portrait: '/team-members/roster/anup-dubey.png' },
+  { id: 'pranav-amdekar', name: 'Pranav Amdekar', role: 'Co-Head', domain: 'Cloud', github: 'https://github.com/0xprxnav', linkedin: 'https://www.linkedin.com/in/pranav-amdekar-04b304386', accent: '#57c7ff', portrait: '/team-members/roster/pranav-amdekar.png' },
+  { id: 'ishani-bharsakade', name: 'Ishani Bharsakade', role: 'Co-Head', domain: 'Finance & Sponsorship', github: 'https://github.com/RealSpidey69', linkedin: 'https://www.linkedin.com/in/ishani-bharsakade-3a1866229/', accent: '#a98bff', portrait: '/team-members/roster/ishani-bharsakade.png' },
+  { id: 'govind-agrawal', name: 'Govind Agrawal', role: 'Co-Head', domain: 'Finance & Sponsorship', linkedin: 'https://www.linkedin.com/in/govind-agrawal-a85806384', accent: '#a98bff', portrait: '/team-members/roster/govind-agrawal.png' },
+  { id: 'krishna-gangshettiwar', name: 'Krishna Gangshettiwar', role: 'Co-Head', domain: 'Finance & Sponsorship', github: 'https://github.com/Krishna5670', linkedin: 'https://www.linkedin.com/in/krishna-gangshettiwar-198a5a385', accent: '#a98bff', portrait: '/team-members/roster/krishna-gangshettiwar.png' },
+  { id: 'satyajit-gaikwad', name: 'Satyajit Gaikwad', role: 'Head', domain: 'Web Development', github: 'https://github.com/CodeBySatyajit', linkedin: 'https://www.linkedin.com/in/satyajit-gaikwad-092381372/', accent: '#6b9cff', portrait: '/team-members/roster/satyajit-gaikwad.png' },
+  { id: 'tanushka-patil', name: 'Tanushka Patil', role: 'Co-Head', domain: 'Web Development', github: 'https://github.com/Tanushka-sp2007', linkedin: 'https://www.linkedin.com/in/tanushka-sunil-patil-a87090389', accent: '#6b9cff', portrait: '/team-members/roster/tanushka-patil.png' },
+  { id: 'aryan-durgude', name: 'Aryan Durgude', role: 'Head', domain: 'Multimedia', github: 'https://github.com/NotAl2', linkedin: 'https://www.linkedin.com/in/aryan-durgude-777816385', accent: '#36d9c4', portrait: '/team-members/roster/aryan-durgude.png' },
+  { id: 'harsh-chendwankar', name: 'Harsh Chendwankar', role: 'Co-Head', domain: 'Multimedia', github: 'https://github.com/Harsh20-06', linkedin: 'https://www.linkedin.com/in/harsh-chendwankar', accent: '#36d9c4', portrait: '/team-members/roster/harsh-chendwankar.png' },
+  { id: 'vaishnavi-bhagwat', name: 'Vaishnavi Bhagwat', role: 'Co-Head', domain: 'Multimedia', github: 'https://github.com/vaishnavibhagwat', linkedin: 'https://www.linkedin.com/in/vaishnavi-bhagwat-509a5037a', accent: '#36d9c4', portrait: '/team-members/roster/vaishnavi-bhagwat.png' },
+  { id: 'naisha-sahni', name: 'Naisha Sahni', role: 'Co-Head', domain: 'Multimedia', github: 'https://github.com/naishasahni', accent: '#36d9c4', portrait: '/team-members/roster/naisha-sahni.png' },
+  { id: 'sanskar-babar', name: 'Sanskar Babar', role: 'Video Editor', domain: 'Multimedia', github: 'https://github.com/sanskarbabar', linkedin: 'https://www.linkedin.com/in/sanskar-babar-1079021b9', accent: '#36d9c4', portrait: '/team-members/roster/sanskar-babar.jpeg' },
+  { id: 'jiteesh-ghodke', name: 'Jiteesh Ghodke', role: 'Co-Head', domain: 'Competitive Programming', github: 'https://github.com/jiteeshghodke456-del', linkedin: 'https://www.linkedin.com/in/jiteesh-ghodke-642832398', accent: '#58d8e8', portrait: '/team-members/roster/jiteesh-ghodke.png' },
+  { id: 'jayesh-khandelwal', name: 'Jayesh Khandelwal', role: 'Co-Head', domain: 'Competitive Programming', github: 'https://github.com/itsjayeshk', linkedin: 'https://www.linkedin.com/in/jayesh-khandelwal-vit', accent: '#58d8e8', portrait: '/team-members/roster/jayesh-khandelwal.png' },
+  { id: 'manthan-devi', name: 'Manthan Devi', role: 'Co-Head', domain: 'Competitive Programming', github: 'https://github.com/coder-manthan-007', linkedin: 'https://www.linkedin.com/in/manthan-devi-8764a3386/', accent: '#58d8e8', portrait: '/team-members/roster/manthan-devi.png' },
+  { id: 'vipul-bangar', name: 'Vipul Bangar', role: 'Co-Head', domain: 'Operations', github: 'https://github.com/thevipulbangar', linkedin: 'https://www.linkedin.com/in/vipul-bangar-8a4a9937b/', accent: '#f6b75d', portrait: '/team-members/roster/vipul-bangar.png' },
+  { id: 'aryaan-antarkar', name: 'Aryaan Antarkar', role: 'Co-Head', domain: 'Operations', github: 'https://github.com/aryaanantarkar-byte', linkedin: 'https://www.linkedin.com/in/aryaan-antarkar-74565b386/', accent: '#f6b75d', portrait: '/team-members/roster/aryaan-antarkar.png' },
+  { id: 'sanskar-dhonde', name: 'Sanskar Dhonde', role: 'Head', domain: 'App Development', github: 'https://github.com/dhonde290-netizen', linkedin: 'https://www.linkedin.com/in/sanskardhonde/', accent: '#ff8fbd', portrait: '/team-members/roster/sanskar-dhonde.png' },
+  { id: 'arnav-agarwal', name: 'Arnav Agarwal', role: 'Co-Head', domain: 'App Development', github: 'https://github.com/Arnav-Code-hub', linkedin: 'https://www.linkedin.com/in/arnav-agarwal-727323375', accent: '#ff8fbd', portrait: '/team-members/roster/arnav-agarwal.png' },
+  { id: 'sara-tamboli', name: 'Sara Tamboli', role: 'Co-Head', domain: 'App Development', github: 'https://github.com/TamboliSara', linkedin: 'https://www.linkedin.com/in/sara-tamboli-bb0823385/', accent: '#ff8fbd', portrait: '/team-members/roster/sara-tamboli.png' },
+  { id: 'srushti-saner', name: 'Srushti Saner', role: 'Co-Head', domain: 'App Development', github: 'https://github.com/srushtisaner06-ops', linkedin: 'https://www.linkedin.com/in/srushti-saner-b7b55422a', accent: '#ff8fbd', portrait: '/team-members/roster/srushti-saner.png' },
+  { id: 'raghav-kumar', name: 'Raghav Kumar', role: 'Head', domain: 'AI/ML', github: 'https://github.com/Raghs3', linkedin: 'https://www.linkedin.com/in/raghav-kumar2803', accent: '#b3a0ff', portrait: '/team-members/roster/raghav-kumar.png' },
+  { id: 'anand-nair', name: 'Anand Nair', role: 'Co-Head', domain: 'AI/ML', github: 'https://github.com/Dazzanova', linkedin: 'https://www.linkedin.com/in/heyy-anand-here', accent: '#b3a0ff', portrait: '/team-members/roster/anand-nair.png' },
+  { id: 'varad-takale', name: 'Varad Takale', role: 'Head', domain: 'Publicity and Outreach', github: 'https://github.com/varadtakale45-sudo', linkedin: 'https://www.linkedin.com/in/varad-takale-189967378', accent: '#7ce4a5', portrait: '/team-members/roster/varad-takale.png' },
+  { id: 'shubham-jadhav', name: 'Shubham Jadhav', role: 'Head', domain: 'Publicity and Outreach', github: 'https://github.com/Shoya0002', linkedin: 'https://www.linkedin.com/in/shubham-jadhav-2615093b6', accent: '#7ce4a5', portrait: '/team-members/roster/shubham-jadhav.png' },
+  { id: 'harsh-kukade', name: 'Harsh Kukade', role: 'Co-Head', domain: 'Publicity and Outreach', github: 'https://github.com/Harsh150707', linkedin: 'https://www.linkedin.com/in/harsh-kukade-83b81a385', accent: '#7ce4a5', portrait: '/team-members/roster/harsh-kukade.png' },
+  { id: 'parth-birari', name: 'Parth Birari', role: 'Co-Head', domain: 'Publicity and Outreach', github: 'https://github.com/birariparth-ui', linkedin: 'https://www.linkedin.com/in/parth-birari-07344b383', accent: '#7ce4a5', portrait: '/team-members/roster/parth-birari.png' },
 ]
 
 const TEAMS = [
   { id: 'core', label: 'Core leadership', color: '#4aa9db', members: MEMBERS.filter((member) => member.domain === 'Core leadership') },
-  { id: 'cloud', label: 'Cloud', color: '#57c7ff', logo: '/team-logos/cloud.webp', members: MEMBERS.filter((member) => member.domain === 'Cloud') },
-  { id: 'delivery', label: 'Finance & Sponsorship', color: '#a98bff', logo: '/team-logos/finance.webp', members: MEMBERS.filter((member) => member.domain === 'Finance & Sponsorship') },
-  { id: 'platform', label: 'Web Development', color: '#6b9cff', logo: '/team-logos/web-development.webp', members: MEMBERS.filter((member) => member.domain === 'Web Development') },
-  { id: 'security', label: 'Multimedia', color: '#36d9c4', logo: '/team-logos/multimedia.webp', members: MEMBERS.filter((member) => member.domain === 'Multimedia') },
-  { id: 'containers', label: 'Competitive Programming', color: '#58d8e8', logo: '/team-logos/competitive-programming.webp', members: MEMBERS.filter((member) => member.domain === 'Competitive Programming') },
-  { id: 'automation', label: 'Operations', color: '#f6b75d', logo: '/team-logos/operations.webp', members: MEMBERS.filter((member) => member.domain === 'Operations') },
-  { id: 'labs', label: 'App Development', color: '#ff8fbd', logo: '/team-logos/app-development.webp', members: MEMBERS.filter((member) => member.domain === 'App Development') },
-  { id: 'opensource', label: 'AI/ML', color: '#b3a0ff', logo: '/team-logos/ai-ml.webp', members: MEMBERS.filter((member) => member.domain === 'AI/ML') },
-  { id: 'community', label: 'Publicity and Outreach', color: '#7ce4a5', logo: '/team-logos/publicity.webp', members: MEMBERS.filter((member) => member.domain === 'Publicity and Outreach') },
+  { id: 'cloud', label: 'Cloud', color: '#57c7ff', logo: '/team-logos/cloud.png', members: MEMBERS.filter((member) => member.domain === 'Cloud') },
+  { id: 'delivery', label: 'Finance & Sponsorship', color: '#a98bff', logo: '/team-logos/finance.png', members: MEMBERS.filter((member) => member.domain === 'Finance & Sponsorship') },
+  { id: 'platform', label: 'Web Development', color: '#6b9cff', logo: '/team-logos/web-development.png', members: MEMBERS.filter((member) => member.domain === 'Web Development') },
+  { id: 'security', label: 'Multimedia', color: '#36d9c4', logo: '/team-logos/multimedia.png', members: MEMBERS.filter((member) => member.domain === 'Multimedia') },
+  { id: 'containers', label: 'Competitive Programming', color: '#58d8e8', logo: '/team-logos/competitive-programming.png', members: MEMBERS.filter((member) => member.domain === 'Competitive Programming') },
+  { id: 'automation', label: 'Operations', color: '#f6b75d', logo: '/team-logos/operations.png', members: MEMBERS.filter((member) => member.domain === 'Operations') },
+  { id: 'labs', label: 'App Development', color: '#ff8fbd', logo: '/team-logos/app-development.png', members: MEMBERS.filter((member) => member.domain === 'App Development') },
+  { id: 'opensource', label: 'AI/ML', color: '#b3a0ff', logo: '/team-logos/ai-ml.png', members: MEMBERS.filter((member) => member.domain === 'AI/ML') },
+  { id: 'community', label: 'Publicity and Outreach', color: '#7ce4a5', logo: '/team-logos/publicity.png', members: MEMBERS.filter((member) => member.domain === 'Publicity and Outreach') },
 ]
 
 const AUTO_OPEN_DELAY = 900
+const ENTRY_SETTLE_MS = 900
+const CARD_TRANSITION_MS = 620
+const CLOSE_TRANSITION_MS = 520
+const DOMAIN_TRANSITION_MS = 620
+const PIN_EDGE_INSET = 32
+const DOMAIN_GESTURE_QUIET_MS = 180
+const DOMAIN_BOX_WIDTH = 260
+const DOMAIN_GAP = 52
 
 function PlanetFace({ color, label, variant = 'default' }) {
   const rawId = useId()
@@ -102,9 +110,9 @@ function PlanetFace({ color, label, variant = 'default' }) {
   )
 }
 
-function DomainBox({ team, onOpen, isCore = false, isOpen = false }) {
+function DomainBox({ team, onOpen, isCore = false, isOpen = false, tabIndex }) {
   return (
-    <button type="button" data-team-id={team.id} className={`team-domain-box ${isCore ? 'is-core' : ''} ${isOpen ? 'is-open' : ''}`} style={{ '--box-accent': team.color }} onClick={(event) => onOpen(team, event.currentTarget, event.currentTarget.querySelector('.team-domain-box__face > *'))} aria-label={`Open ${team.label}`}>
+    <button type="button" data-team-id={team.id} className={`team-domain-box ${isCore ? 'is-core' : ''} ${isOpen ? 'is-open' : ''}`} style={{ '--box-accent': team.color }} tabIndex={tabIndex} onClick={(event) => onOpen(team, event.currentTarget, event.currentTarget.querySelector('.team-domain-box__face > *'))} aria-label={`Open ${team.label}`}>
       <span className="team-domain-box__face">{team.logo ? <img className="team-domain-logo" src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={isCore ? 'core' : 'default'} />}</span>
       <span className="team-domain-lens" aria-hidden="true" />
       <span className="team-domain-box__label">{team.label}</span>
@@ -112,11 +120,71 @@ function DomainBox({ team, onOpen, isCore = false, isOpen = false }) {
   )
 }
 
+function DomainCarousel({ index, onNavigate, onOpen, locked, selectedTeam }) {
+  const viewportRef = useRef(null)
+  const touchRef = useRef(null)
+  const [width, setWidth] = useState(0)
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport) return
+    const resize = () => setWidth(viewport.clientWidth)
+    resize()
+    const observer = new ResizeObserver(resize)
+    observer.observe(viewport)
+    return () => observer.disconnect()
+  }, [])
+
+  const navigate = useCallback((direction) => {
+    if (locked || index + direction < 0 || index + direction >= TEAMS.length) return false
+    onNavigate(index + direction, direction)
+    return true
+  }, [index, locked, onNavigate])
+
+  const onTouchStart = (event) => {
+    touchRef.current = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null
+  }
+  const onTouchEnd = (event) => {
+    const start = touchRef.current
+    touchRef.current = null
+    if (!start || event.changedTouches.length !== 1) return
+    const dx = start.x - event.changedTouches[0].clientX
+    const dy = start.y - event.changedTouches[0].clientY
+    if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy)) navigate(Math.sign(dx))
+  }
+  const onKeyDown = (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+    event.preventDefault()
+    const nextIndex = index + (event.key === 'ArrowRight' ? 1 : -1)
+    if (navigate(event.key === 'ArrowRight' ? 1 : -1)) {
+      requestAnimationFrame(() => viewportRef.current?.querySelectorAll('.team-domain-box')[nextIndex]?.focus({ preventScroll: true }))
+    }
+  }
+
+  return (
+    <div className="team-domain-carousel" style={{ '--domain-box-width': `${DOMAIN_BOX_WIDTH}px`, '--domain-gap': `${DOMAIN_GAP}px` }}>
+      <div ref={viewportRef} className="team-domain-carousel__viewport" onTouchStart={onTouchStart} onTouchCancel={() => { touchRef.current = null }} onTouchEnd={onTouchEnd} onKeyDown={onKeyDown} aria-label="Team domains carousel">
+        <div className="team-domain-carousel__track" style={{ transform: `translate3d(${width / 2 - DOMAIN_BOX_WIDTH / 2 - index * (DOMAIN_BOX_WIDTH + DOMAIN_GAP)}px, 0, 0)` }}>
+          {TEAMS.map((team, teamIndex) => {
+            const distance = teamIndex - index
+            const bend = Math.min(Math.abs(distance), 3)
+            return <div key={team.id} className="team-domain-carousel__slide" style={{ '--arch-y': `${bend * bend * 7}px`, '--arch-tilt': `${Math.sign(distance) * -bend * 3}deg`, '--arch-twist': `${Math.sign(distance) * -bend * 6}deg`, '--arch-scale': 1 - bend * .035 }}>
+              <DomainBox team={team} onOpen={onOpen} isCore={teamIndex === 0} isOpen={selectedTeam?.id === team.id} tabIndex={teamIndex === index ? 0 : -1} />
+            </div>
+          })}
+        </div>
+      </div>
+      <div className="team-domain-carousel__caption" aria-live="polite"><span>{TEAMS[index].label}</span><small>{String(index + 1).padStart(2, '0')} / {TEAMS.length}</small></div>
+      <div className="team-domain-carousel__controls"><button type="button" onClick={() => navigate(-1)} disabled={locked || index === 0} aria-label="Previous domain">Previous</button><button type="button" onClick={() => navigate(1)} disabled={locked || index === TEAMS.length - 1} aria-label="Next domain">Next</button></div>
+    </div>
+  )
+}
+
 function MemberCard({ member, index, active, reduced }) {
   const [portraitFailed, setPortraitFailed] = useState(false)
   const distance = index - active
   const isRear = distance !== 0
-  const style = reduced ? {} : {
+  const style = reduced ? { '--card-opacity': isRear ? 0 : 1 } : {
     '--card-x': `${distance * 300}px`,
     '--card-z': `${-Math.abs(distance) * 180}px`,
     '--card-rotate': `${distance > 0 ? Math.min(distance, 1) * 19 : 0}deg`,
@@ -126,7 +194,7 @@ function MemberCard({ member, index, active, reduced }) {
   return (
     <article className={`team-member-card ${active === index ? 'is-active' : ''} ${isRear ? 'is-rear' : ''}`} style={style} aria-hidden={active !== index}>
       <div className={`team-member-card__portrait${member.portrait ? ' has-image' : ''}`} style={{ '--portrait-accent': member.accent }}>
-        {member.portrait && !portraitFailed ? <img className="team-member-portrait-image" src={member.portrait} alt={`${member.name} portrait`} loading="lazy" decoding="async" width="280" height="340" onError={() => setPortraitFailed(true)} /> : null}
+        {member.portrait && !portraitFailed ? <img className="team-member-portrait-image" src={member.portrait} alt={`${member.name} portrait`} onError={() => setPortraitFailed(true)} /> : null}
         <span className="team-portrait-particles" aria-hidden="true" />
         {!member.portrait || portraitFailed ? <span className="team-member-initial">{member.name.charAt(0)}</span> : null}
         <span className="team-member-index">0{index + 1}</span>
@@ -146,7 +214,7 @@ function MemberCard({ member, index, active, reduced }) {
 
 function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, openerRef, originRect }) {
   const viewRef = useRef(null)
-  const gestureLock = useRef(false)
+  const gestureLock = useRef(!reduced)
   const unlockTimer = useRef(null)
   const closeTimer = useRef(null)
   const touchStartY = useRef(null)
@@ -154,21 +222,34 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   const closingRef = useRef(false)
   const [closing, setClosing] = useState(false)
   useEffect(() => { activeIndexRef.current = activeIndex }, [activeIndex])
+  useEffect(() => {
+    gestureLock.current = !reduced
+    if (!reduced) unlockTimer.current = window.setTimeout(() => { gestureLock.current = false }, CARD_TRANSITION_MS)
+    return () => { if (unlockTimer.current) window.clearTimeout(unlockTimer.current) }
+  }, [reduced])
 
-  const close = useCallback((reason = 'completed') => {
+  const close = useCallback((reason = 'completed', direction) => {
     if (closingRef.current) return
-    gestureLock.current = false
+    if (unlockTimer.current) window.clearTimeout(unlockTimer.current)
+    closingRef.current = true
     if (reduced) {
-      onClose(reason)
+      onClose(reason, direction)
       return
     }
-    closingRef.current = true
+    const view = viewRef.current
+    const carousel = view?.querySelector('.team-carousel')
+    if (view && carousel) {
+      const carouselStyle = window.getComputedStyle(carousel)
+      view.style.setProperty('--exit-opacity', window.getComputedStyle(view).opacity)
+      view.style.setProperty('--exit-card-opacity', carouselStyle.opacity)
+      view.style.setProperty('--exit-transform', carouselStyle.transform)
+    }
     setClosing(true)
-    closeTimer.current = window.setTimeout(() => onClose(reason), 650)
+    closeTimer.current = window.setTimeout(() => onClose(reason, direction), CLOSE_TRANSITION_MS)
   }, [onClose, reduced])
 
   const move = useCallback((direction) => {
-    if (gestureLock.current) return
+    if (closingRef.current || gestureLock.current) return
     gestureLock.current = true
     const current = activeIndexRef.current
     if (direction > 0 && current < team.members.length - 1) {
@@ -176,13 +257,13 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
     } else if (direction < 0 && current > 0) {
       setActiveIndex((index) => index - 1)
     } else if (direction < 0 && current === 0) {
-      close('completed')
+      close('completed', direction)
       return
     } else {
-      close('completed')
+      close('completed', direction)
       return
     }
-    unlockTimer.current = window.setTimeout(() => { gestureLock.current = false }, reduced ? 40 : 950)
+    unlockTimer.current = window.setTimeout(() => { gestureLock.current = false }, reduced ? 40 : CARD_TRANSITION_MS)
   }, [close, reduced, setActiveIndex, team.members.length])
 
   useEffect(() => {
@@ -203,11 +284,26 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
     body.style.overflow = 'hidden'
     viewRef.current?.focus({ preventScroll: true })
 
+    let lastWheelAt = -Infinity
+    let wheelNeedsQuiet = false
     const onWheel = (event) => {
+      if (event.ctrlKey) return
       if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return
-      if (Math.abs(event.deltaY) < 8) return
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1
+      const deltaY = event.deltaY * unit
+      if (deltaY === 0) return
       event.preventDefault()
-      move(event.deltaY > 0 ? 1 : -1)
+      const now = performance.now()
+      const quiet = now - lastWheelAt >= 180
+      lastWheelAt = now
+      if (closingRef.current) return
+      if (gestureLock.current || (wheelNeedsQuiet && !quiet)) {
+        wheelNeedsQuiet = true
+        return
+      }
+      // One intent per wheel burst, including momentum lasting past the lock.
+      wheelNeedsQuiet = true
+      move(deltaY > 0 ? 1 : -1)
     }
     const onTouchStart = (event) => { touchStartY.current = event.touches[0]?.clientY ?? null }
     const onTouchMove = (event) => { if (event.touches.length === 1) event.preventDefault() }
@@ -248,12 +344,12 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
   }, [close, move, openerRef])
 
   return (
-    <div ref={viewRef} className={`team-member-view ${closing ? 'is-closing' : ''}`} style={{ '--box-accent': team.color, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
+    <div ref={viewRef} className={`team-member-view ${closing ? 'is-closing' : ''}`} style={{ '--box-accent': team.color, '--card-transition': `${CARD_TRANSITION_MS}ms`, '--close-transition': `${CLOSE_TRANSITION_MS}ms`, '--origin-x': `${originRect?.x ?? window.innerWidth / 2}px`, '--origin-y': `${originRect?.y ?? window.innerHeight / 2}px` }} role="dialog" aria-modal="true" aria-label={`${team.label} members`} tabIndex={-1}>
       <div className="team-member-view__topline"><span>{team.label}</span><button type="button" onClick={() => close('button')} aria-label="Close team members"><X /></button></div>
       <div className="team-carousel" aria-label={`${team.label} member profiles`}>
         {team.members.map((member, index) => <MemberCard key={`${team.id}-${member.id}`} member={member} index={index} active={activeIndex} reduced={reduced} />)}
       </div>
-      <div className={`team-orbit-dock ${closing ? 'is-closing' : ''}`} aria-hidden="true">
+      <div className={`team-orbit-dock ${closing ? 'is-closing' : ''}`} data-team-id={team.id} aria-hidden="true">
         <div className="team-orbit-dock__rings"><span className="team-orbit-dock__slot" /></div>
         <span className="team-orbit-dock__logo">{team.logo ? <img src={team.logo} alt="" /> : <PlanetFace color={team.color} label={team.label} variant={team.id === 'core' ? 'core' : 'default'} />}</span>
         <span className="team-orbit-dock__label">{team.label}</span>
@@ -265,10 +361,16 @@ function MemberView({ team, activeIndex, setActiveIndex, onClose, reduced, opene
 
 export default function TeamSection() {
   const reduced = useReducedMotion()
+  const [webglAvailable] = useState(() => {
+    try { return Boolean(document.createElement('canvas').getContext('webgl2')) } catch { return false }
+  })
+  const carouselEnabled = !reduced && webglAvailable
   const [selectedTeam, setSelectedTeam] = useState(null)
   const [autoOpenDisabled, setAutoOpenDisabled] = useState(false)
   const [originRect, setOriginRect] = useState(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [domainIndex, setDomainIndex] = useState(0)
+  const domainIndexRef = useRef(0)
   const openerRef = useRef(null)
   const sectionRef = useRef(null)
   const selectedTeamRef = useRef(null)
@@ -280,12 +382,59 @@ export default function TeamSection() {
   const automaticDirectionRef = useRef(1)
   const autoOpenReadyRef = useRef(true)
   const autoOpenDelayTimerRef = useRef(null)
+  const pendingAdjacentTeamIdRef = useRef(null)
+  const entrySettleTimerRef = useRef(null)
+  const pinTriggerRef = useRef(null)
+  const pinActiveRef = useRef(false)
+  const domainGestureRef = useRef({ last: -Infinity, lockedUntil: 0 })
+  const bypassPinUntilRef = useRef(0)
+
+  const syncPinPosition = useCallback((index) => {
+    const pin = pinTriggerRef.current
+    if (!pin?.isActive) return
+    const progress = index / (TEAMS.length - 1)
+    const target = Math.min(pin.end - PIN_EDGE_INSET, Math.max(pin.start + PIN_EDGE_INSET, pin.start + (pin.end - pin.start) * progress))
+    const lenis = getLenis()
+    if (lenis) lenis.scrollTo(target, { immediate: true, force: true })
+    else window.scrollTo({ top: target, behavior: 'instant' })
+    ScrollTrigger.update()
+  }, [])
+
+  const selectDomain = useCallback((index) => {
+    domainIndexRef.current = index
+    setDomainIndex(index)
+    syncPinPosition(index)
+  }, [syncPinPosition])
+
+  const cancelQueuedOpening = useCallback(() => {
+    if (autoOpenDelayTimerRef.current) window.clearTimeout(autoOpenDelayTimerRef.current)
+    if (entrySettleTimerRef.current) window.clearTimeout(entrySettleTimerRef.current)
+    autoOpenDelayTimerRef.current = null
+    entrySettleTimerRef.current = null
+    pendingAdjacentTeamIdRef.current = null
+    autoOpenReadyRef.current = true
+  }, [])
+
+  useEffect(() => {
+    if (!carouselEnabled) return
+    const onLinkClick = (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null
+      const target = link?.getAttribute('href')
+      if (target === '#team') { bypassPinUntilRef.current = 0; return }
+      if (!target) return
+      bypassPinUntilRef.current = performance.now() + 2500
+      cancelQueuedOpening()
+    }
+    document.addEventListener('click', onLinkClick, true)
+    return () => document.removeEventListener('click', onLinkClick, true)
+  }, [cancelQueuedOpening, carouselEnabled])
 
   useEffect(() => {
     selectedTeamRef.current = selectedTeam
   }, [selectedTeam])
 
   const openTeam = useCallback((team, opener, logo, source = 'manual') => {
+    if (selectedTeamRef.current) return
     if (source === 'auto') {
       if (
         autoOpenDisabledRef.current ||
@@ -296,9 +445,11 @@ export default function TeamSection() {
       ) return
       autoOpenInFlightRef.current = true
       autoOpenReadyRef.current = false
+      pendingAdjacentTeamIdRef.current = null
       automaticallyOpenedTeamRef.current = team.id
       automaticDirectionRef.current = sequenceDirectionRef.current
     } else {
+      cancelQueuedOpening()
       automaticallyOpenedTeamRef.current = null
     }
 
@@ -313,7 +464,7 @@ export default function TeamSection() {
     const rect = (logo ?? opener).getBoundingClientRect()
     setOriginRect({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 })
     setSelectedTeam(team)
-  }, [])
+  }, [cancelQueuedOpening])
 
   const tryOpenExpectedTeam = useCallback((box = null, direction = sequenceDirectionRef.current) => {
     if (
@@ -321,10 +472,12 @@ export default function TeamSection() {
       selectedTeamRef.current ||
       autoOpenInFlightRef.current ||
       !autoOpenReadyRef.current ||
+      (carouselEnabled && performance.now() < bypassPinUntilRef.current) ||
       sequenceDirectionRef.current !== direction
     ) return
 
     const expectedTeam = TEAMS.find((team) => team.id === nextExpectedTeamIdRef.current)
+    if (carouselEnabled && TEAMS[domainIndexRef.current]?.id !== expectedTeam?.id) return
     const expectedBox = box?.dataset.teamId === expectedTeam?.id
       ? box
       : sectionRef.current?.querySelector(`[data-team-id="${expectedTeam?.id}"]`)
@@ -332,68 +485,236 @@ export default function TeamSection() {
 
     const rect = expectedBox.getBoundingClientRect()
     const viewportHeight = window.innerHeight
-    if (rect.top <= viewportHeight * .85 && rect.bottom >= viewportHeight * .25) {
+    const carouselRect = carouselEnabled ? sectionRef.current?.querySelector('.team-domain-carousel__viewport')?.getBoundingClientRect() : rect
+    if (carouselRect && carouselRect.top <= viewportHeight * .85 && carouselRect.bottom >= viewportHeight * .25) {
       openTeam(expectedTeam, expectedBox, expectedBox.querySelector('.team-domain-box__face > *'), 'auto')
     }
-  }, [openTeam])
+  }, [carouselEnabled, openTeam])
 
-  const closeTeam = useCallback((reason = 'completed') => {
+  const navigateDomain = useCallback((index, direction) => {
+    if (selectedTeamRef.current) return
+    cancelQueuedOpening()
+    selectDomain(index)
+    sequenceDirectionRef.current = direction
+    automaticDirectionRef.current = direction
+    nextExpectedTeamIdRef.current = TEAMS[index].id
+    if (!autoOpenDisabledRef.current) {
+      autoOpenReadyRef.current = false
+      autoOpenDelayTimerRef.current = window.setTimeout(() => {
+        autoOpenDelayTimerRef.current = null
+        autoOpenReadyRef.current = true
+        tryOpenExpectedTeam(null, direction)
+      }, AUTO_OPEN_DELAY)
+    }
+  }, [cancelQueuedOpening, selectDomain, tryOpenExpectedTeam])
+
+  useEffect(() => {
+    if (!carouselEnabled) return
+    let touchStart = null
+    const holdQueuedBoundary = (direction) => {
+      const index = domainIndexRef.current
+      return (index + direction < 0 || index + direction >= TEAMS.length) &&
+        pendingAdjacentTeamIdRef.current === TEAMS[index].id
+    }
+    const step = (direction) => {
+      const index = domainIndexRef.current
+      if (selectedTeamRef.current || performance.now() < bypassPinUntilRef.current || index + direction < 0 || index + direction >= TEAMS.length) return false
+      const now = performance.now()
+      const gesture = domainGestureRef.current
+      const quiet = now - gesture.last >= DOMAIN_GESTURE_QUIET_MS
+      gesture.last = now
+      if (!autoOpenReadyRef.current || now < gesture.lockedUntil || !quiet) return true
+      gesture.lockedUntil = now + DOMAIN_TRANSITION_MS
+      navigateDomain(index + direction, direction)
+      return true
+    }
+    const onWheel = (event) => {
+      if (!pinActiveRef.current || selectedTeamRef.current || event.ctrlKey || performance.now() < bypassPinUntilRef.current) return
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1
+      const dx = event.deltaX * unit
+      const dy = event.deltaY * unit
+      if (!dy || Math.abs(dx) >= Math.abs(dy)) return
+      const direction = Math.sign(dy)
+      if (domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) {
+        if (!holdQueuedBoundary(direction)) return
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        return
+      }
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      step(direction)
+    }
+    const onTouchStart = (event) => {
+      touchStart = pinActiveRef.current && !selectedTeamRef.current && performance.now() >= bypassPinUntilRef.current && event.touches.length === 1
+        ? { x: event.touches[0].clientX, y: event.touches[0].clientY }
+        : null
+    }
+    const onTouchMove = (event) => {
+      if (!touchStart || event.touches.length !== 1) { touchStart = null; return }
+      const dx = touchStart.x - event.touches[0].clientX
+      const dy = touchStart.y - event.touches[0].clientY
+      if (Math.abs(dy) <= Math.abs(dx)) return
+      const direction = Math.sign(dy)
+      if ((domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) && !holdQueuedBoundary(direction)) return
+      event.preventDefault()
+      event.stopImmediatePropagation()
+    }
+    const onTouchEnd = (event) => {
+      if (!touchStart || event.changedTouches.length !== 1) { touchStart = null; return }
+      const dx = touchStart.x - event.changedTouches[0].clientX
+      const dy = touchStart.y - event.changedTouches[0].clientY
+      touchStart = null
+      if (Math.abs(dy) >= 40 && Math.abs(dy) > Math.abs(dx)) step(Math.sign(dy))
+    }
+    const onKeyDown = (event) => {
+      if (!pinActiveRef.current || selectedTeamRef.current || event.repeat || performance.now() < bypassPinUntilRef.current) return
+      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [contenteditable="true"]')) return
+      const direction = ['ArrowDown', 'PageDown'].includes(event.key) ? 1 : ['ArrowUp', 'PageUp'].includes(event.key) ? -1 : 0
+      if (!direction) return
+      if (domainIndexRef.current + direction < 0 || domainIndexRef.current + direction >= TEAMS.length) {
+        if (!holdQueuedBoundary(direction)) return
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        return
+      }
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      step(direction)
+    }
+    window.addEventListener('wheel', onWheel, { passive: false, capture: true })
+    window.addEventListener('touchstart', onTouchStart, { passive: true, capture: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true, capture: true })
+    const onTouchCancel = () => { touchStart = null }
+    window.addEventListener('touchcancel', onTouchCancel, { passive: true, capture: true })
+    window.addEventListener('keydown', onKeyDown, true)
+    return () => {
+      window.removeEventListener('wheel', onWheel, true)
+      window.removeEventListener('touchstart', onTouchStart, true)
+      window.removeEventListener('touchmove', onTouchMove, true)
+      window.removeEventListener('touchend', onTouchEnd, true)
+      window.removeEventListener('touchcancel', onTouchCancel, true)
+      window.removeEventListener('keydown', onKeyDown, true)
+    }
+  }, [carouselEnabled, navigateDomain])
+
+  const closeTeam = useCallback((reason = 'completed', direction) => {
     const automaticallyOpenedTeamId = automaticallyOpenedTeamRef.current
+    const closingTeamId = selectedTeamRef.current?.id
 
     if (autoOpenDelayTimerRef.current) {
       window.clearTimeout(autoOpenDelayTimerRef.current)
       autoOpenDelayTimerRef.current = null
     }
+    pendingAdjacentTeamIdRef.current = null
 
     if (reason === 'button') {
       autoOpenDisabledRef.current = true
       setAutoOpenDisabled(true)
+      cancelQueuedOpening()
+      if (carouselEnabled && closingTeamId) selectDomain(TEAMS.findIndex((team) => team.id === closingTeamId))
     } else if (automaticallyOpenedTeamId) {
+      // Dismissal retains its existing sequence behavior; only completed
+      // traversal changes direction based on the final member gesture.
+      const completionDirection = reason === 'completed' ? direction : automaticDirectionRef.current
+      if (reason === 'completed') {
+        sequenceDirectionRef.current = completionDirection
+        automaticDirectionRef.current = completionDirection
+      }
       const currentIndex = TEAMS.findIndex((team) => team.id === automaticallyOpenedTeamId)
-      const nextTeam = TEAMS[currentIndex + automaticDirectionRef.current]
+      const nextTeam = TEAMS[currentIndex + completionDirection]
       nextExpectedTeamIdRef.current = nextTeam?.id ?? null
+      if (carouselEnabled && nextTeam && !autoOpenDisabledRef.current) pendingAdjacentTeamIdRef.current = nextTeam.id
+      if (carouselEnabled && nextTeam) selectDomain(currentIndex + completionDirection)
       if (nextTeam && !autoOpenDisabledRef.current) {
         autoOpenReadyRef.current = false
         autoOpenDelayTimerRef.current = window.setTimeout(() => {
           autoOpenDelayTimerRef.current = null
           autoOpenReadyRef.current = true
-          tryOpenExpectedTeam(null, automaticDirectionRef.current)
+          tryOpenExpectedTeam(null, completionDirection)
+          pendingAdjacentTeamIdRef.current = null
         }, AUTO_OPEN_DELAY)
       }
+    } else if (carouselEnabled && closingTeamId) {
+      selectDomain(TEAMS.findIndex((team) => team.id === closingTeamId))
     }
 
     automaticallyOpenedTeamRef.current = null
     autoOpenInFlightRef.current = false
     selectedTeamRef.current = null
     setSelectedTeam(null)
-  }, [tryOpenExpectedTeam])
+  }, [cancelQueuedOpening, carouselEnabled, selectDomain, tryOpenExpectedTeam])
 
   useEffect(() => () => {
     if (autoOpenDelayTimerRef.current) window.clearTimeout(autoOpenDelayTimerRef.current)
+    if (entrySettleTimerRef.current) window.clearTimeout(entrySettleTimerRef.current)
   }, [])
 
   useGSAP(() => {
     const media = gsap.matchMedia()
     media.add('(prefers-reduced-motion: no-preference)', () => {
-      ScrollTrigger.create({
+      const boxes = sectionRef.current.querySelectorAll('.team-domain-box')
+      const reveal = gsap.timeline({ paused: true })
+        .fromTo('.team-header > *', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: .5, stagger: .08, ease: 'power2.out' }, 0)
+        .fromTo(boxes, { opacity: 0 }, { opacity: 1, duration: .4, stagger: .035, ease: 'power2.out' }, .15)
+
+      const cancelEntry = () => cancelQueuedOpening()
+      const enterSection = (direction, initialIndex = direction > 0 ? 0 : TEAMS.length - 1) => {
+        reveal.restart()
+        cancelEntry()
+        if (autoOpenDisabledRef.current || selectedTeamRef.current || performance.now() < bypassPinUntilRef.current) return
+        sequenceDirectionRef.current = direction
+        automaticDirectionRef.current = direction
+        if (carouselEnabled) selectDomain(initialIndex)
+        nextExpectedTeamIdRef.current = TEAMS[initialIndex].id
+        autoOpenReadyRef.current = false
+        entrySettleTimerRef.current = window.setTimeout(() => {
+          entrySettleTimerRef.current = null
+          autoOpenReadyRef.current = true
+          tryOpenExpectedTeam(null, direction)
+        }, ENTRY_SETTLE_MS)
+      }
+      const pinTarget = sectionRef.current.querySelector('.team-domain-carousel')
+      const trigger = ScrollTrigger.create(carouselEnabled ? {
+        trigger: pinTarget,
+        pin: pinTarget,
+        pinSpacing: true,
+        anticipatePin: 1,
+        start: 'center center',
+        end: () => `+=${Math.max(window.innerHeight * .75, 500) * (TEAMS.length - 1)}`,
+        invalidateOnRefresh: true,
+        onEnter: () => { pinActiveRef.current = true; if (!entrySettleTimerRef.current) enterSection(1) },
+        onEnterBack: () => { pinActiveRef.current = true; if (!entrySettleTimerRef.current) enterSection(-1) },
+        onLeave: () => { pinActiveRef.current = false; cancelEntry() },
+        onLeaveBack: () => { pinActiveRef.current = false; cancelEntry() },
+        onRefresh: (self) => {
+          const wasActive = pinActiveRef.current
+          pinTriggerRef.current = self
+          pinActiveRef.current = self.isActive
+          if (self.isActive && !wasActive && !selectedTeamRef.current) {
+            requestAnimationFrame(() => {
+              if (pinTriggerRef.current === self && pinActiveRef.current && !selectedTeamRef.current && !entrySettleTimerRef.current && !autoOpenDelayTimerRef.current) {
+                enterSection(self.direction < 0 ? -1 : 1, Math.round(self.progress * (TEAMS.length - 1)))
+              }
+            })
+          }
+          if (self.isActive) requestAnimationFrame(() => {
+            if (pinTriggerRef.current === self && self.isActive) syncPinPosition(domainIndexRef.current)
+          })
+        },
+      } : {
         trigger: sectionRef.current,
         start: 'top 85%',
         end: 'bottom 25%',
-        onEnter: () => {
-          if (autoOpenDisabledRef.current) return
-          sequenceDirectionRef.current = 1
-          nextExpectedTeamIdRef.current = TEAMS[0].id
-          autoOpenReadyRef.current = true
-        },
-        onEnterBack: () => {
-          if (autoOpenDisabledRef.current) return
-          sequenceDirectionRef.current = -1
-          nextExpectedTeamIdRef.current = TEAMS[TEAMS.length - 1].id
-          autoOpenReadyRef.current = true
-        },
+        onEnter: () => enterSection(1),
+        onEnterBack: () => enterSection(-1),
+        onLeave: cancelEntry,
+        onLeaveBack: cancelEntry,
       })
+      if (carouselEnabled) pinTriggerRef.current = trigger
 
-      sectionRef.current.querySelectorAll('.team-domain-box').forEach((box) => {
+      if (!carouselEnabled) boxes.forEach((box) => {
         gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: {
@@ -415,25 +736,31 @@ export default function TeamSection() {
           .fromTo(box, { '--lens-strength': 0, '--lens-tilt': '0deg' }, { '--lens-strength': 1, '--lens-tilt': '6deg', duration: .5 }, 0)
           .to(box, { '--lens-strength': 0, '--lens-tilt': '0deg', duration: .5 }, .5)
       })
+      return () => {
+        cancelEntry()
+        pinTriggerRef.current = null
+        pinActiveRef.current = false
+      }
     })
     return () => media.revert()
-  }, { scope: sectionRef })
+  }, { scope: sectionRef, dependencies: [carouselEnabled], revertOnUpdate: true })
 
   return (
-    <section ref={sectionRef} id="team" className={`team-section${selectedTeam ? ' has-open-member' : ''}`} data-auto-open-disabled={autoOpenDisabled ? 'true' : undefined} aria-labelledby="team-heading">
+    <section ref={sectionRef} id="team" className={`team-section${carouselEnabled ? ' has-domain-carousel' : ''}${selectedTeam ? ' has-open-member' : ''}`} data-auto-open-disabled={autoOpenDisabled ? 'true' : undefined} aria-labelledby="team-heading">
       <div className="team-header">
-        <span className="team-kicker"><img src="/Logo/aws-logo-white.png" alt="AWS SBG" className="w-4 h-4 object-contain inline-block mr-1.5" /> Core above the constellation</span>
+        <span className="team-kicker"><img src="/Logo/logo-icon.png" alt="vCloudOps" /> Core above the constellation</span>
         <h2 id="team-heading">Built by students, for students</h2>
         <p>The team running workshops, mentoring lab sessions, and maintaining community infrastructure.</p>
       </div>
-      <div className="team-overview" aria-label="Team domains">
-        <DomainBox team={TEAMS[0]} onOpen={openTeam} isCore isOpen={selectedTeam?.id === TEAMS[0].id} />
-        <div className="team-domain-grid">
-          {TEAMS.slice(1).map((team) => <DomainBox key={team.id} team={team} onOpen={openTeam} isOpen={selectedTeam?.id === team.id} />)}
-        </div>
+      <div className={`team-overview${carouselEnabled ? ' is-carousel' : ''}`} aria-label="Team domains">
+        {carouselEnabled ? <DomainCarousel index={domainIndex} onNavigate={navigateDomain} onOpen={openTeam} locked={Boolean(selectedTeam)} selectedTeam={selectedTeam} /> : <>
+          <DomainBox team={TEAMS[0]} onOpen={openTeam} isCore isOpen={selectedTeam?.id === TEAMS[0].id} />
+          <div className="team-domain-grid">
+            {TEAMS.slice(1).map((team) => <DomainBox key={team.id} team={team} onOpen={openTeam} isOpen={selectedTeam?.id === team.id} />)}
+          </div>
+        </>}
       </div>
       {selectedTeam && createPortal(<MemberView team={selectedTeam} activeIndex={activeIndex} setActiveIndex={setActiveIndex} onClose={closeTeam} reduced={reduced} openerRef={openerRef} originRect={originRect} />, document.body)}
     </section>
   )
 }
-
